@@ -1,61 +1,113 @@
 
-import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
 
 const CustomCursor = () => {
-  const cursorDotRef = useRef<HTMLDivElement>(null);
-  const cursorCircleRef = useRef<HTMLDivElement>(null);
-  const [isHovering, setIsHovering] = useState(false);
+  const [position, setPosition] = useState({ x: -100, y: -100 });
+  const [hidden, setHidden] = useState(false);
+  const [clicked, setClicked] = useState(false);
+  const [linkHovered, setLinkHovered] = useState(false);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (cursorDotRef.current && cursorCircleRef.current) {
-        cursorDotRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
-        cursorCircleRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
-      }
+    const updatePosition = (e: MouseEvent) => {
+      setPosition({ x: e.clientX, y: e.clientY });
     };
 
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.tagName === 'A' || 
-          target.tagName === 'BUTTON' || 
-          target.classList.contains('interactive')) {
-        setIsHovering(true);
-      }
-    };
+    const handleLinkHoverOn = () => setLinkHovered(true);
+    const handleLinkHoverOff = () => setLinkHovered(false);
 
-    const handleMouseOut = () => {
-      setIsHovering(false);
-    };
+    const handleMouseDown = () => setClicked(true);
+    const handleMouseUp = () => setClicked(false);
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseover', handleMouseOver);
-    document.addEventListener('mouseout', handleMouseOut);
+    const handleMouseLeave = () => setHidden(true);
+    const handleMouseEnter = () => setHidden(false);
+
+    document.addEventListener('mousemove', updatePosition);
+    document.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('mouseleave', handleMouseLeave);
+    document.addEventListener('mouseenter', handleMouseEnter);
+    
+    const interactiveElements = document.querySelectorAll('a, button, .interactive');
+    interactiveElements.forEach(element => {
+      element.addEventListener('mouseenter', handleLinkHoverOn);
+      element.addEventListener('mouseleave', handleLinkHoverOff);
+    });
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseover', handleMouseOver);
-      document.removeEventListener('mouseout', handleMouseOut);
+      document.removeEventListener('mousemove', updatePosition);
+      document.removeEventListener('mousedown', handleMouseDown);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('mouseleave', handleMouseLeave);
+      document.removeEventListener('mouseenter', handleMouseEnter);
+      
+      interactiveElements.forEach(element => {
+        element.removeEventListener('mouseenter', handleLinkHoverOn);
+        element.removeEventListener('mouseleave', handleLinkHoverOff);
+      });
     };
   }, []);
+
+  // Hide regular cursor and show custom cursor only on desktop
+  useEffect(() => {
+    // Check if we're on desktop
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
+
+    if (!isMobile) {
+      document.body.style.cursor = 'none';
+    }
+
+    return () => {
+      document.body.style.cursor = 'auto';
+    };
+  }, []);
+
+  const cursorClasses = `
+    fixed pointer-events-none z-50 transition-opacity duration-300
+    ${hidden ? 'opacity-0' : 'opacity-100'}
+  `;
+
+  const dotClasses = `
+    fixed rounded-full pointer-events-none z-50 
+    transition-transform duration-150 ease-out
+    bg-primary-500 
+    ${clicked ? 'scale-50' : 'scale-100'}
+  `;
+
+  const ringClasses = `
+    fixed rounded-full pointer-events-none z-50 border 
+    transition-all duration-300 ease-out
+    border-primary-500 
+    ${linkHovered ? 'scale-150 border-opacity-20' : 'scale-100'}
+    ${clicked ? 'scale-150' : 'scale-100'}
+  `;
 
   return (
     <>
       <div 
-        ref={cursorDotRef} 
-        className="fixed top-0 left-0 w-2 h-2 bg-primary-500 rounded-full pointer-events-none z-50 -translate-x-1/2 -translate-y-1/2"
-        style={{ transform: 'translate3d(0, 0, 0)' }}
-      ></div>
-      <motion.div 
-        ref={cursorCircleRef} 
-        className="fixed top-0 left-0 w-10 h-10 border border-primary-500 rounded-full pointer-events-none z-50 -translate-x-1/2 -translate-y-1/2"
-        style={{ transform: 'translate3d(0, 0, 0)' }}
-        animate={{
-          scale: isHovering ? 1.5 : 1,
-          opacity: isHovering ? 0.5 : 0.2
+        className={dotClasses}
+        style={{
+          left: position.x,
+          top: position.y,
+          width: '8px',
+          height: '8px',
+          marginLeft: '-4px',
+          marginTop: '-4px'
         }}
-        transition={{ duration: 0.2 }}
-      ></motion.div>
+      />
+      <div 
+        className={ringClasses}
+        style={{
+          left: position.x,
+          top: position.y,
+          width: '40px',
+          height: '40px',
+          marginLeft: '-20px',
+          marginTop: '-20px',
+          backgroundColor: linkHovered ? 'rgba(76, 175, 80, 0.1)' : 'transparent'
+        }}
+      />
     </>
   );
 };
