@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import ParticleAnimation from './ParticleAnimation';
+import EnhancedParticleAnimation from './EnhancedParticleAnimation';
 
 const Hero = () => {
   // Animation variants
@@ -31,88 +31,21 @@ const Hero = () => {
 
   // Add a subtle audio experience for particle interactions
   useEffect(() => {
-    let audioContext: AudioContext | null = null;
-    let oscillator: OscillatorNode | null = null;
-    let gainNode: GainNode | null = null;
+    // Audio context is now handled inside the EnhancedParticleAnimation component
+    // This makes sure audio is initialized only after user interaction
     
-    const initAudio = () => {
-      try {
-        audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-        gainNode = audioContext.createGain();
-        gainNode.gain.value = 0; // Start with no volume
-        gainNode.connect(audioContext.destination);
-        
-        // Create oscillator for sound
-        oscillator = audioContext.createOscillator();
-        oscillator.type = 'sine';
-        oscillator.frequency.value = 220; // Base frequency
-        oscillator.connect(gainNode);
-        oscillator.start();
-      } catch (error) {
-        console.error("Audio initialization error:", error);
-      }
-    };
-    
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!audioContext || !gainNode || !oscillator) return;
-      
-      // Map mouse position to audio parameters
-      const mouseXRatio = e.clientX / window.innerWidth;
-      const mouseYRatio = e.clientY / window.innerHeight;
-      
-      // Update frequency based on X position (higher to the right)
-      oscillator.frequency.value = 220 + mouseXRatio * 220;
-      
-      // Update volume based on Y position (louder at the top)
-      const volume = Math.max(0, 0.02 * (1 - mouseYRatio * 1.2));
-      gainNode.gain.setTargetAtTime(volume, audioContext.currentTime, 0.1);
-    };
-    
-    const handleClick = () => {
-      if (!audioContext || !gainNode) return;
-      
-      // Create a short bell-like sound for clicks
-      const clickOsc = audioContext.createOscillator();
-      const clickGain = audioContext.createGain();
-      
-      clickOsc.type = 'sine';
-      clickOsc.frequency.value = 440;
-      
-      clickGain.gain.value = 0.1;
-      clickGain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.5);
-      
-      clickOsc.connect(clickGain);
-      clickGain.connect(audioContext.destination);
-      
-      clickOsc.start();
-      clickOsc.stop(audioContext.currentTime + 0.5);
-    };
-    
-    // Initialize audio on user interaction (required by browser policy)
-    const handleFirstInteraction = () => {
-      initAudio();
-      document.removeEventListener('click', handleFirstInteraction);
-    };
-    
-    document.addEventListener('click', handleFirstInteraction);
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('click', handleClick);
+    // Add smooth scroll behavior
+    document.documentElement.style.scrollBehavior = 'smooth';
     
     return () => {
-      document.removeEventListener('click', handleFirstInteraction);
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('click', handleClick);
-      
-      // Cleanup audio resources
-      if (oscillator) oscillator.stop();
-      if (audioContext) audioContext.close();
+      document.documentElement.style.scrollBehavior = 'auto';
     };
   }, []);
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Enhanced Particle Background */}
-      <ParticleAnimation />
+      <EnhancedParticleAnimation />
       
       {/* Gradient Overlay - Enhanced for better text visibility and depth */}
       <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-white/90 z-10"></div>
