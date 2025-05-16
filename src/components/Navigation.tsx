@@ -57,6 +57,89 @@ const Navigation = () => {
     setIsOpen(!isOpen);
   };
 
+  // Menu button variants for animation
+  const menuButtonVariants = {
+    open: { 
+      rotate: 90, 
+      scale: 1.2,
+      transition: { duration: 0.4, type: "spring", stiffness: 300, damping: 20 }
+    },
+    closed: { 
+      rotate: 0, 
+      scale: 1,
+      transition: { duration: 0.4, type: "spring", stiffness: 300, damping: 20 }
+    }
+  };
+  
+  // Menu icon variants for animation
+  const menuIconVariants = {
+    open: { opacity: 0, y: -10 },
+    closed: { opacity: 1, y: 0 },
+  };
+  
+  const closeIconVariants = {
+    open: { opacity: 1, y: 0 },
+    closed: { opacity: 0, y: 10 },
+  };
+  
+  // Menu overlay variants
+  const menuOverlayVariants = {
+    initial: { opacity: 0 },
+    animate: { 
+      opacity: 1,
+      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
+    },
+    exit: { 
+      opacity: 0,
+      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
+    }
+  };
+
+  // Menu item staggered animation
+  const menuListVariants = {
+    open: {
+      transition: { 
+        staggerChildren: 0.07,
+        delayChildren: 0.2,
+        staggerDirection: 1
+      }
+    },
+    closed: {
+      transition: { 
+        staggerChildren: 0.05,
+        staggerDirection: -1
+      }
+    }
+  };
+  
+  const menuItemVariants = {
+    open: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 300, damping: 24 }
+    },
+    closed: {
+      y: 50,
+      opacity: 0,
+      transition: { duration: 0.2 }
+    }
+  };
+
+  // Preview image animation
+  const previewVariants = {
+    initial: { opacity: 0, scale: 0.9 },
+    animate: { 
+      opacity: 1, 
+      scale: 1,
+      transition: { duration: 0.5 }
+    },
+    exit: { 
+      opacity: 0, 
+      scale: 0.9,
+      transition: { duration: 0.3 }
+    }
+  };
+
   return (
     <>
       <header className="fixed top-0 left-0 w-full z-50 py-6 px-6 md:px-12">
@@ -67,17 +150,35 @@ const Navigation = () => {
             </Link>
           </div>
           
-          <button 
-            className="nav-toggle z-10 w-10 h-10 flex items-center justify-center bg-white bg-opacity-20 backdrop-blur-md rounded-full hover:bg-opacity-30 transition-all"
+          <motion.button 
+            className="nav-toggle z-10 w-12 h-12 flex items-center justify-center bg-white bg-opacity-20 backdrop-blur-md rounded-full hover:bg-opacity-40 transition-all shadow-md"
             onClick={toggleMenu}
             aria-label="Toggle Menu"
+            variants={menuButtonVariants}
+            animate={isOpen ? "open" : "closed"}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
           >
-            {isOpen ? (
-              <X className="w-5 h-5 text-primary-800" />
-            ) : (
-              <Menu className="w-5 h-5 text-primary-800" />
-            )}
-          </button>
+            <motion.div 
+              className="absolute"
+              variants={menuIconVariants}
+              animate={isOpen ? "open" : "closed"}
+              initial="closed"
+              transition={{ duration: 0.2 }}
+            >
+              <Menu className="w-6 h-6 text-primary-800" />
+            </motion.div>
+            
+            <motion.div 
+              className="absolute"
+              variants={closeIconVariants}
+              animate={isOpen ? "open" : "closed"}
+              initial="closed"
+              transition={{ duration: 0.2 }}
+            >
+              <X className="w-6 h-6 text-primary-800" />
+            </motion.div>
+          </motion.button>
         </div>
       </header>
       
@@ -85,32 +186,35 @@ const Navigation = () => {
         {isOpen && (
           <motion.div 
             className="fixed inset-0 bg-white z-40 overflow-hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            variants={menuOverlayVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
               <div className="flex items-center justify-center relative">
-                <motion.nav className="text-center lg:text-left w-full px-6 md:px-12">
-                  <ul className="space-y-6 md:space-y-8">
+                <motion.nav 
+                  className="text-center lg:text-left w-full px-6 md:px-12"
+                  variants={menuListVariants}
+                  initial="closed"
+                  animate="open"
+                  exit="closed"
+                >
+                  <ul className="space-y-6 md:space-y-10">
                     {menuItems.map((item, index) => (
                       <motion.li 
                         key={item.name}
-                        initial={{ y: 40, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: -20, opacity: 0 }}
-                        transition={{ delay: index * 0.1, duration: 0.5 }}
+                        variants={menuItemVariants}
                         onMouseEnter={() => setActiveItem(index)}
                         onMouseLeave={() => setActiveItem(null)}
                       >
                         <Link 
                           to={item.path} 
-                          className="text-3xl md:text-5xl font-serif text-primary-800 hover:text-primary-600 transition-colors relative block"
+                          className="text-3xl md:text-5xl font-serif text-primary-800 hover:text-primary-600 transition-colors relative block group"
                           onClick={() => setIsOpen(false)}
                         >
                           <span className="relative z-10">{item.name}</span>
-                          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-500 transition-all duration-300 group-hover:w-full"></span>
+                          <span className="absolute bottom-0 left-0 w-0 h-1 bg-primary-500 transition-all duration-500 ease-in-out group-hover:w-full"></span>
                         </Link>
                       </motion.li>
                     ))}
@@ -119,23 +223,33 @@ const Navigation = () => {
               </div>
               
               <div className="hidden lg:block">
-                <div className="h-full w-full relative overflow-hidden">
+                <div className="h-full w-full relative overflow-hidden bg-gray-50">
                   <AnimatePresence>
                     {activeItem !== null && (
                       <motion.div
                         key={activeItem}
-                        className="absolute inset-0 bg-gray-100"
-                        initial={{ opacity: 0, scale: 1.1 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.5 }}
+                        className="absolute inset-0"
+                        variants={previewVariants}
+                        initial="initial"
+                        animate="animate"
+                        exit="exit"
                       >
                         <img 
                           src={menuItems[activeItem].preview} 
                           alt={menuItems[activeItem].name} 
                           className="w-full h-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-primary-500 bg-opacity-20"></div>
+                        <div className="absolute inset-0 bg-primary-500 bg-opacity-20 backdrop-blur-sm"></div>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <motion.h2 
+                            className="text-5xl text-white font-serif font-bold drop-shadow-lg"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2, duration: 0.5 }}
+                          >
+                            {menuItems[activeItem].name}
+                          </motion.h2>
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
