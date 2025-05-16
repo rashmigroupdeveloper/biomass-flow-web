@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
@@ -39,7 +38,7 @@ const ParticleAnimation = () => {
     rendererRef.current = renderer;
     
     // Particle system setup
-    const particleCount = Math.min(10000, Math.floor(width * height / 400));
+    const particleCount = Math.min(30000, Math.floor(width * height / 120));
     const positions = new Float32Array(particleCount * 3);
     const randomValues = new Float32Array(particleCount);
     const biomassTypes = new Float32Array(particleCount);

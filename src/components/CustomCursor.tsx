@@ -1,15 +1,20 @@
+import React, { useState, useEffect, useRef } from 'react';
 
-import React, { useState, useEffect } from 'react';
+const lerp = (start: number, end: number, amt: number) => (1 - amt) * start + amt * end;
 
 const CustomCursor = () => {
+  // Store the target mouse position
+  const targetPosition = useRef({ x: -100, y: -100 });
+  // Store the current rendered position
   const [position, setPosition] = useState({ x: -100, y: -100 });
   const [hidden, setHidden] = useState(false);
   const [clicked, setClicked] = useState(false);
   const [linkHovered, setLinkHovered] = useState(false);
+  const animationFrame = useRef<number | null>(null);
 
   useEffect(() => {
-    const updatePosition = (e: MouseEvent) => {
-      setPosition({ x: e.clientX, y: e.clientY });
+    const updateTargetPosition = (e: MouseEvent) => {
+      targetPosition.current = { x: e.clientX, y: e.clientY };
     };
 
     const handleLinkHoverOn = () => setLinkHovered(true);
@@ -21,7 +26,7 @@ const CustomCursor = () => {
     const handleMouseLeave = () => setHidden(true);
     const handleMouseEnter = () => setHidden(false);
 
-    document.addEventListener('mousemove', updatePosition);
+    document.addEventListener('mousemove', updateTargetPosition);
     document.addEventListener('mousedown', handleMouseDown);
     document.addEventListener('mouseup', handleMouseUp);
     document.addEventListener('mouseleave', handleMouseLeave);
@@ -34,7 +39,7 @@ const CustomCursor = () => {
     });
 
     return () => {
-      document.removeEventListener('mousemove', updatePosition);
+      document.removeEventListener('mousemove', updateTargetPosition);
       document.removeEventListener('mousedown', handleMouseDown);
       document.removeEventListener('mouseup', handleMouseUp);
       document.removeEventListener('mouseleave', handleMouseLeave);
@@ -44,6 +49,29 @@ const CustomCursor = () => {
         element.removeEventListener('mouseenter', handleLinkHoverOn);
         element.removeEventListener('mouseleave', handleLinkHoverOff);
       });
+    };
+  }, []);
+
+  // Animation loop for smooth cursor movement
+  useEffect(() => {
+    let isMounted = true;
+    const animate = () => {
+      setPosition(prev => {
+        const amt = 0.18; // Lower is smoother/slower, higher is snappier
+        const x = lerp(prev.x, targetPosition.current.x, amt);
+        const y = lerp(prev.y, targetPosition.current.y, amt);
+        return { x, y };
+      });
+      if (isMounted) {
+        animationFrame.current = requestAnimationFrame(animate);
+      }
+    };
+    animationFrame.current = requestAnimationFrame(animate);
+    return () => {
+      isMounted = false;
+      if (animationFrame.current) {
+        cancelAnimationFrame(animationFrame.current);
+      }
     };
   }, []);
 
@@ -62,11 +90,6 @@ const CustomCursor = () => {
       document.body.style.cursor = 'auto';
     };
   }, []);
-
-  const cursorClasses = `
-    fixed pointer-events-none z-50 transition-opacity duration-300
-    ${hidden ? 'opacity-0' : 'opacity-100'}
-  `;
 
   const dotClasses = `
     fixed rounded-full pointer-events-none z-50 
@@ -93,7 +116,9 @@ const CustomCursor = () => {
           width: '8px',
           height: '8px',
           marginLeft: '-4px',
-          marginTop: '-4px'
+          marginTop: '-4px',
+          opacity: hidden ? 0 : 1,
+          transition: 'opacity 0.3s',
         }}
       />
       <div 
@@ -105,7 +130,9 @@ const CustomCursor = () => {
           height: '40px',
           marginLeft: '-20px',
           marginTop: '-20px',
-          backgroundColor: linkHovered ? 'rgba(76, 175, 80, 0.1)' : 'transparent'
+          backgroundColor: linkHovered ? 'rgba(76, 175, 80, 0.1)' : 'transparent',
+          opacity: hidden ? 0 : 1,
+          transition: 'opacity 0.3s',
         }}
       />
     </>
