@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { useInView } from 'react-intersection-observer';
@@ -43,19 +42,23 @@ const EnhancedParticleAnimation = () => {
     try {
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
       const audioContext = new AudioContext();
-      const gainNode = audioContext.createGain();
-      gainNode.gain.value = 0; // Start with no volume
-      gainNode.connect(audioContext.destination);
       
-      // Create oscillator for sound
-      const oscillator = audioContext.createOscillator();
-      oscillator.type = 'sine';
-      oscillator.frequency.value = 220; // Base frequency
-      oscillator.connect(gainNode);
-      oscillator.start();
-      
-      audioRef.current = { audioContext, gainNode, oscillator };
-      setAudioInitialized(true);
+      // Only proceed if the audio context is not closed
+      if (audioContext.state !== 'closed') {
+        const gainNode = audioContext.createGain();
+        gainNode.gain.value = 0; // Start with no volume
+        gainNode.connect(audioContext.destination);
+        
+        // Create oscillator for sound
+        const oscillator = audioContext.createOscillator();
+        oscillator.type = 'sine';
+        oscillator.frequency.value = 220; // Base frequency
+        oscillator.connect(gainNode);
+        oscillator.start();
+        
+        audioRef.current = { audioContext, gainNode, oscillator };
+        setAudioInitialized(true);
+      }
     } catch (error) {
       console.error("Audio initialization error:", error);
     }
@@ -63,28 +66,32 @@ const EnhancedParticleAnimation = () => {
 
   // Create and play a short sound effect
   const playClickSound = () => {
-    if (!audioRef.current.audioContext) return;
+    if (!audioRef.current.audioContext || audioRef.current.audioContext.state === 'closed') return;
     
-    const { audioContext } = audioRef.current;
-    const clickOsc = audioContext.createOscillator();
-    const clickGain = audioContext.createGain();
-    
-    clickOsc.type = 'sine';
-    clickOsc.frequency.value = 440 + Math.random() * 200;
-    
-    clickGain.gain.value = 0.1;
-    clickGain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.5);
-    
-    clickOsc.connect(clickGain);
-    clickGain.connect(audioContext.destination);
-    
-    clickOsc.start();
-    clickOsc.stop(audioContext.currentTime + 0.5);
+    try {
+      const { audioContext } = audioRef.current;
+      const clickOsc = audioContext.createOscillator();
+      const clickGain = audioContext.createGain();
+      
+      clickOsc.type = 'sine';
+      clickOsc.frequency.value = 440 + Math.random() * 200;
+      
+      clickGain.gain.value = 0.1;
+      clickGain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.5);
+      
+      clickOsc.connect(clickGain);
+      clickGain.connect(audioContext.destination);
+      
+      clickOsc.start();
+      clickOsc.stop(audioContext.currentTime + 0.5);
+    } catch (error) {
+      console.error("Error playing click sound:", error);
+    }
   };
 
   // Update audio parameters based on mouse position
   const updateAudio = (e: MouseEvent) => {
-    if (!audioRef.current.audioContext || !audioRef.current.gainNode || !audioRef.current.oscillator) return;
+    if (!audioRef.current.audioContext || !audioRef.current.gainNode || !audioRef.current.oscillator || audioRef.current.audioContext.state === 'closed') return;
     
     const { oscillator, gainNode, audioContext } = audioRef.current;
     
@@ -105,7 +112,10 @@ const EnhancedParticleAnimation = () => {
   const addClickImpulse = (e: MouseEvent) => {
     if (!canvasRef.current) return;
     
-    playClickSound();
+    // Only play sound if audio is properly initialized
+    if (audioInitialized && audioRef.current.audioContext && audioRef.current.audioContext.state !== 'closed') {
+      playClickSound();
+    }
     
     const rect = canvasRef.current.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
