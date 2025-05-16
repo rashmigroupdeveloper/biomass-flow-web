@@ -1,14 +1,16 @@
+
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import CustomCursor from '@/components/CustomCursor';
 import Navigation from '@/components/Navigation';
-import Hero from '@/components/Hero';
+import LayeredParallaxHero from '@/components/LayeredParallaxHero';
 import AboutSection from '@/components/AboutSection';
 import ProductsSection from '@/components/ProductsSection';
 import ProcessSection from '@/components/ProcessSection';
 import ImpactSection from '@/components/ImpactSection';
 import ContactSection from '@/components/ContactSection';
-import Footer from '@/components/Footer';
+import EnhancedFooter from '@/components/EnhancedFooter';
+import EnhancedAnimatedStats from '@/components/EnhancedAnimatedStats';
 
 const Index = () => {
   // Add smooth scrolling
@@ -32,16 +34,17 @@ const Index = () => {
       
       {/* Main Content */}
       <main>
-        <Hero />
+        <LayeredParallaxHero />
         <AboutSection />
         <ProductsSection />
         <ProcessSection />
+        <EnhancedAnimatedStats />
         <ImpactSection />
         <ContactSection />
       </main>
       
       {/* Footer */}
-      <Footer />
+      <EnhancedFooter />
       
       {/* Grain Texture Overlay */}
       <div 
