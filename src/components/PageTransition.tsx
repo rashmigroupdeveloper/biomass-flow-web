@@ -38,17 +38,15 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
                 id="transitionCanvas"
                 options={{
                   particleCount: 100,
-                  particleMinSize: 2,
-                  particleMaxSize: 6,
-                  baseHue: 120,
+                  particleSize: 4, // Combined min/max into a single size
+                  particleColor: '#81c784',
                   backgroundColor: 'transparent',
-                  flowIntensity: 2,
+                  flowSpeed: 1.2,
                   flowDirection: 'circular',
-                  speedFactor: 1.2,
+                  interactionStrength: 1.5,
                   connectionRadius: 100,
-                  connectionOpacity: 0.2,
-                  mouseInteraction: false,
-                  responsive: false,
+                  colorVariation: 20,
+                  densityFactor: 0.0002,
                 }}
               />
             </div>

@@ -1,19 +1,30 @@
 
 import React, { useEffect, useRef, forwardRef, useImperativeHandle, ForwardedRef } from 'react';
-import { BiomassParticleSystem } from '../utils/particle-system';
+import { BiomassFlowFieldSystem } from '../utils/flow-field-particles';
 
 export interface ParticleCanvasProps {
   id: string;
   className?: string;
-  options?: Record<string, any>;
+  options?: {
+    particleCount?: number;
+    particleSize?: number;
+    particleColor?: string;
+    backgroundColor?: string;
+    flowSpeed?: number;
+    flowDirection?: 'upward' | 'circular' | 'wave' | 'custom';
+    interactionStrength?: number;
+    connectionRadius?: number;
+    colorVariation?: number;
+    densityFactor?: number;
+  };
 }
 
 export interface ParticleCanvasRef {
-  getSystem: () => BiomassParticleSystem | null;
+  getSystem: () => BiomassFlowFieldSystem | null;
 }
 
 const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanvasProps, ref: ForwardedRef<ParticleCanvasRef>) => {
-  const systemRef = useRef<BiomassParticleSystem | null>(null);
+  const systemRef = useRef<BiomassFlowFieldSystem | null>(null);
   
   // Expose the system instance via ref
   useImperativeHandle(ref, () => ({
@@ -24,24 +35,21 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
     // Initialize particle system when component mounts
     const defaultOptions = {
       particleCount: 150,
-      particleMinSize: 1,
-      particleMaxSize: 4,
-      baseHue: 120, // Green hue
-      backgroundColor: 'rgba(46, 125, 50, 0.05)', // Very subtle green background
-      flowIntensity: 1.2,
-      flowDirection: 'upward',
-      speedFactor: 0.6,
+      particleSize: 2.5,
+      particleColor: '#81c784',
+      backgroundColor: 'rgba(46, 125, 50, 0.05)',
+      flowSpeed: 1.2,
+      flowDirection: 'upward' as const,
+      interactionStrength: 1.5,
       connectionRadius: 120,
-      connectionOpacity: 0.12,
-      mouseInteraction: true,
-      responsive: true,
+      colorVariation: 15,
       densityFactor: 0.00009,
     };
 
     const mergedOptions = { ...defaultOptions, ...options };
     
     // Create and start the particle system
-    systemRef.current = new BiomassParticleSystem(id, mergedOptions);
+    systemRef.current = new BiomassFlowFieldSystem(id, mergedOptions);
     systemRef.current.start();
     
     // Cleanup function to destroy the particle system when component unmounts
@@ -68,7 +76,5 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
     />
   );
 });
-
-ParticleCanvas.displayName = 'ParticleCanvas';
 
 export default ParticleCanvas;

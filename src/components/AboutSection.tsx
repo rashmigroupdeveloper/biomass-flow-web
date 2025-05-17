@@ -1,12 +1,13 @@
 
-import React, { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 
 const AboutSection = () => {
-  const containerRef = useRef<HTMLElement>(null);
-  const isInView = useInView(containerRef, { once: true, amount: 0.2 });
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.2
+  });
 
   // Animation variants
   const containerVariants = {
@@ -14,255 +15,144 @@ const AboutSection = () => {
     visible: { 
       opacity: 1,
       transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3,
+        staggerChildren: 0.1,
+        delayChildren: 0.2
       }
     }
   };
-  
+
   const itemVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: { 
-      opacity: 1,
+      opacity: 1, 
       y: 0,
-      transition: {
-        duration: 0.7,
-        ease: [0.22, 1, 0.36, 1]
-      }
+      transition: { duration: 0.8, ease: "easeOut" }
     }
-  };
-
-  const imageVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.8,
-        ease: [0.22, 1, 0.36, 1]
-      }
-    }
-  };
-
-  // Image hover animation
-  const imageHoverVariants = {
-    rest: { scale: 1 },
-    hover: { scale: 1.02, transition: { duration: 0.3 } }
   };
 
   return (
     <section 
-      ref={containerRef} 
-      id="about-section" 
-      className="py-16 md:py-24 lg:py-32 bg-white overflow-hidden"
+      ref={ref} 
+      className="relative py-20 md:py-32 bg-white overflow-hidden"
     >
-      <div className="container mx-auto px-6 md:px-12">
-        <motion.div 
-          className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center"
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-        >
-          {/* About Content */}
-          <motion.div variants={itemVariants}>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-primary-800 mb-6">
-              Pioneering <span className="text-primary-600">Sustainable</span> Biomass Solutions
-            </h2>
-            
+      {/* Decorative elements */}
+      <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-primary-50 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-float"></div>
+      <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-primary-100 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-float animation-delay-2000"></div>
+      
+      <div className="container mx-auto px-6 md:px-12 relative">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Image with creative flourish */}
+          <motion.div 
+            className="order-2 lg:order-1 relative"
+            variants={itemVariants}
+            initial="hidden"
+            animate={inView ? 'visible' : 'hidden'}
+          >
             <motion.div 
-              className="w-24 h-1.5 bg-primary-500 mb-8"
-              initial={{ width: 0 }}
-              animate={isInView ? { width: 96 } : { width: 0 }}
-              transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
-            />
+              className="absolute -top-4 -left-4 w-24 h-24 bg-primary-200 rounded-lg z-0"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={inView ? { scale: 1, opacity: 0.7 } : { scale: 0, opacity: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+            ></motion.div>
             
-            <div className="space-y-4 text-gray-700">
-              <p className="text-lg">
-                At Rashmi 6 Paradigm, we transform agricultural waste into valuable renewable energy resources. Our innovative approach helps industries reduce carbon footprints while meeting their energy needs sustainably.
-              </p>
-              <p>
-                Founded on the principles of environmental stewardship and technological innovation, we have been at the forefront of the biomass industry for over a decade, delivering high-quality bio pellets, activated carbon, and charcoal briquettes.
-              </p>
-              <p>
-                Our commitment to sustainability drives everything we do – from sourcing raw materials responsibly to implementing energy-efficient manufacturing processes.
-              </p>
+            <div className="relative z-10">
+              <div className="rounded-lg overflow-hidden shadow-2xl">
+                <img 
+                  src="/placeholder.svg" 
+                  alt="Biomass Pellet Production" 
+                  className="w-full h-auto object-cover"
+                />
+              </div>
             </div>
-
+            
             <motion.div 
-              className="mt-10 flex flex-wrap gap-4"
-              variants={itemVariants}
-            >
-              <Link 
-                to="/about"
-                className="flex items-center space-x-2 text-primary-600 font-medium hover:text-primary-700 group"
-              >
-                <span>Learn more about our story</span>
-                <motion.div
-                  className="inline-block"
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ repeat: Infinity, duration: 1.5, repeatDelay: 2 }}
-                >
-                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                </motion.div>
-              </Link>
-            </motion.div>
+              className="absolute -bottom-6 -right-6 w-48 h-48 bg-primary-100 rounded-full mix-blend-multiply filter blur-lg opacity-70 z-0"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={inView ? { scale: 1, opacity: 0.7 } : { scale: 0, opacity: 0 }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+            ></motion.div>
           </motion.div>
           
-          {/* Images */}
+          {/* Content */}
           <motion.div 
-            className="relative"
-            variants={imageVariants}
+            className="order-1 lg:order-2"
+            variants={containerVariants}
+            initial="hidden"
+            animate={inView ? 'visible' : 'hidden'}
           >
-            <motion.div
-              className="absolute -top-8 -left-8 w-32 h-32 bg-primary-100 rounded-full -z-10"
-              animate={{
-                scale: [1, 1.1, 1],
-                opacity: [0.5, 0.7, 0.5]
-              }}
-              transition={{ 
-                duration: 8, 
-                repeat: Infinity,
-                repeatType: "reverse" 
-              }}
-            />
-            
-            <motion.div
-              className="grid grid-cols-2 gap-4"
-              initial="rest"
-              whileHover="hover"
+            <motion.span 
+              variants={itemVariants}
+              className="inline-block text-primary-500 font-medium tracking-wider uppercase text-sm mb-2"
             >
-              <motion.div className="space-y-4">
-                <motion.div 
-                  className="rounded-lg overflow-hidden shadow-lg"
-                  variants={imageHoverVariants}
-                >
-                  <img 
-                    src="https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?auto=format&fit=crop&w=600&q=80" 
-                    alt="Biomass pellets production" 
-                    className="w-full h-auto object-cover aspect-[4/3]"
-                  />
-                </motion.div>
-                <motion.div 
-                  className="rounded-lg overflow-hidden shadow-lg lg:mt-8"
-                  variants={imageHoverVariants}
-                >
-                  <img 
-                    src="https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?auto=format&fit=crop&w=600&q=80" 
-                    alt="Factory worker examining biomass pellets" 
-                    className="w-full h-auto object-cover aspect-square"
-                  />
-                </motion.div>
+              About Us
+            </motion.span>
+            
+            <motion.h2 
+              variants={itemVariants}
+              className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-gray-900 mb-4"
+            >
+              Leading the <span className="text-primary-500">Green Revolution</span> in Energy
+            </motion.h2>
+            
+            <motion.div 
+              variants={itemVariants}
+              className="bg-primary-500 w-20 h-1.5 mb-6"
+            ></motion.div>
+            
+            <motion.p 
+              variants={itemVariants}
+              className="text-gray-600 mb-6 leading-relaxed"
+            >
+              Rashmi 6 Paradigm Limited is a venture of the Rashmi Group, dedicated to producing premium quality biomass pellets, activated carbon, and charcoal products. Our focus is on delivering sustainable, environmentally friendly energy solutions that help industries reduce their carbon footprint by replacing traditional fossil fuels.
+            </motion.p>
+            
+            <motion.p 
+              variants={itemVariants}
+              className="text-gray-600 mb-8 leading-relaxed"
+            >
+              With state-of-the-art facilities in Kolkata and Kharagpur, India, we combine innovation with sustainability to create products that power industries while preserving our planet for future generations.
+            </motion.p>
+            
+            <motion.div 
+              variants={containerVariants}
+              className="grid grid-cols-2 gap-6 pt-4"
+            >
+              <motion.div 
+                variants={itemVariants}
+                className="flex flex-col p-4 border border-primary-100 rounded-lg bg-white hover:border-primary-300 transition-colors duration-300 shadow-sm hover:shadow-md"
+              >
+                <span className="text-3xl font-bold text-primary-500">5+</span>
+                <span className="text-sm text-gray-500">Years of Experience</span>
               </motion.div>
               
-              <motion.div className="space-y-4 mt-8">
-                <motion.div 
-                  className="rounded-lg overflow-hidden shadow-lg"
-                  variants={imageHoverVariants}
-                >
-                  <img 
-                    src="https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=crop&w=600&q=80" 
-                    alt="Sustainable forest management" 
-                    className="w-full h-auto object-cover aspect-square"
-                  />
-                </motion.div>
-                <motion.div 
-                  className="rounded-lg overflow-hidden shadow-lg"
-                  variants={imageHoverVariants}
-                >
-                  <img 
-                    src="https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=600&q=80" 
-                    alt="Biomass energy production" 
-                    className="w-full h-auto object-cover aspect-[4/3]"
-                  />
-                </motion.div>
+              <motion.div 
+                variants={itemVariants}
+                className="flex flex-col p-4 border border-primary-100 rounded-lg bg-white hover:border-primary-300 transition-colors duration-300 shadow-sm hover:shadow-md"
+              >
+                <span className="text-3xl font-bold text-primary-500">20K+</span>
+                <span className="text-sm text-gray-500">Tons Produced Annually</span>
+              </motion.div>
+              
+              <motion.div 
+                variants={itemVariants}
+                className="flex flex-col p-4 border border-primary-100 rounded-lg bg-white hover:border-primary-300 transition-colors duration-300 shadow-sm hover:shadow-md"
+              >
+                <span className="text-3xl font-bold text-primary-500">38M</span>
+                <span className="text-sm text-gray-500">CO₂ Reduction (Tons)</span>
+              </motion.div>
+              
+              <motion.div 
+                variants={itemVariants}
+                className="flex flex-col p-4 border border-primary-100 rounded-lg bg-white hover:border-primary-300 transition-colors duration-300 shadow-sm hover:shadow-md"
+              >
+                <span className="text-3xl font-bold text-primary-500">100%</span>
+                <span className="text-sm text-gray-500">Sustainable Sourcing</span>
               </motion.div>
             </motion.div>
-            
-            <motion.div
-              className="absolute -bottom-12 -right-12 w-40 h-40 bg-primary-50 rounded-full -z-10"
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.4, 0.6, 0.4]
-              }}
-              transition={{ 
-                duration: 10, 
-                repeat: Infinity,
-                repeatType: "reverse",
-                delay: 2 
-              }}
-            />
           </motion.div>
-        </motion.div>
-        
-        {/* Stats */}
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-24"
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-        >
-          <StatCard 
-            number="10+"
-            label="Years of Experience"
-            delay={0.1}
-          />
-          <StatCard 
-            number="500K"
-            label="Tons of Biomass Processed"
-            delay={0.2}
-          />
-          <StatCard 
-            number="150K"
-            label="Tons of CO₂ Reduced"
-            delay={0.3}
-          />
-          <StatCard 
-            number="200+"
-            label="Client Industries"
-            delay={0.4}
-          />
-        </motion.div>
+        </div>
       </div>
     </section>
-  );
-};
-
-interface StatCardProps {
-  number: string;
-  label: string;
-  delay?: number;
-}
-
-const StatCard = ({ number, label, delay = 0 }: StatCardProps) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(cardRef, { once: true, amount: 0.5 });
-
-  return (
-    <motion.div
-      ref={cardRef}
-      className="bg-white p-6 rounded-xl shadow-md border border-gray-100 text-center"
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      transition={{ 
-        duration: 0.6, 
-        delay,
-        ease: [0.22, 1, 0.36, 1]
-      }}
-      whileHover={{ y: -5, transition: { duration: 0.2 } }}
-    >
-      <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-        <div className="w-6 h-6 bg-primary-500 rounded-full" />
-      </div>
-      <motion.h3 
-        className="text-3xl md:text-4xl font-bold text-primary-700 mb-2"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
-        transition={{ duration: 0.8, delay: delay + 0.3 }}
-      >
-        {number}
-      </motion.h3>
-      <p className="text-gray-600">{label}</p>
-    </motion.div>
   );
 };
 

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import ParticleCanvas from './ParticleCanvas';
 
 const Hero = () => {
-  // Animation variants
+  // Enhanced animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { 
@@ -29,17 +29,15 @@ const Hero = () => {
     }
   };
 
-  const letterVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: 0.05 * i,
-        duration: 0.6,
-        ease: [0.22, 1, 0.36, 1]
-      }
-    })
+  // Floating animation for the decorative elements
+  const floatingAnimation = {
+    y: [0, -10, 0],
+    transition: {
+      duration: 3,
+      repeat: Infinity,
+      repeatType: "reverse" as const,
+      ease: "easeInOut"
+    }
   };
 
   useEffect(() => {
@@ -51,34 +49,27 @@ const Hero = () => {
     };
   }, []);
 
-  // Split the headline text for letter animation
-  const titleText1 = "Turning Waste";
-  const titleText2 = "Into Energy";
-  
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Biomass Particle Animation */}
+      {/* Updated Biomass Particle Animation with lighter appearance */}
       <ParticleCanvas 
         id="biomassCanvas"
         options={{
           particleCount: 180,
-          particleMinSize: 1,
-          particleMaxSize: 4,
-          baseHue: 120, // Green hue
-          backgroundColor: 'rgba(46, 125, 50, 0.05)',
-          flowIntensity: 1.2,
+          particleSize: 2.5,
+          particleColor: '#81c784',
+          backgroundColor: 'rgba(255, 255, 255, 0.03)', // Lighter background
+          flowSpeed: 0.9,
           flowDirection: 'upward',
-          speedFactor: 0.7,
+          interactionStrength: 1.2,
           connectionRadius: 150,
-          connectionOpacity: 0.15,
-          mouseInteraction: true,
-          responsive: true,
+          colorVariation: 15,
           densityFactor: 0.0001,
         }}
       />
       
-      {/* Gradient Overlay - Enhanced for better text visibility and depth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/50 via-transparent to-white/90 z-10"></div>
+      {/* Enhanced Gradient Overlay - Lighter for better visibility */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/30 to-white/80 z-10"></div>
       
       {/* Content */}
       <div className="container mx-auto px-6 md:px-12 z-20 pt-20">
@@ -88,42 +79,35 @@ const Hero = () => {
           initial="hidden"
           animate="visible"
         >
-          <motion.h1 
-            className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-primary-800 mb-4 drop-shadow-sm"
+          <motion.div 
+            className="mb-8"
             variants={itemVariants}
           >
-            <span className="block mb-2 text-shadow-light">
-              {titleText1.split('').map((letter, i) => (
-                <motion.span
-                  key={i}
-                  custom={i}
-                  variants={letterVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className="inline-block"
-                >
-                  {letter === ' ' ? '\u00A0' : letter}
-                </motion.span>
-              ))}
-            </span>
-            <span className="block text-primary-600 text-shadow-light">
-              {titleText2.split('').map((letter, i) => (
-                <motion.span
-                  key={i}
-                  custom={i + titleText1.length}
-                  variants={letterVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className="inline-block"
-                >
-                  {letter === ' ' ? '\u00A0' : letter}
-                </motion.span>
-              ))}
+            <img 
+              src="/lovable-uploads/b8ae8a7d-fba7-4a4d-860f-81420e70265f.png" 
+              alt="Rashmi 6 Paradigm Limited" 
+              className="h-24 md:h-28 w-auto mx-auto lg:mx-0"
+            />
+          </motion.div>
+          
+          <motion.h1 
+            className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-primary-800 mb-4 text-center lg:text-left"
+            variants={itemVariants}
+          >
+            Turning Waste <br className="hidden md:block" />
+            Into <span className="text-primary-500 relative inline-block">
+              Energy
+              <motion.span 
+                className="absolute -bottom-1 left-0 w-full h-1 bg-primary-300 rounded-full"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ delay: 1.2, duration: 0.8, ease: "easeOut" }}
+              ></motion.span>
             </span>
           </motion.h1>
           
           <motion.p 
-            className="text-lg md:text-xl text-gray-800 mb-8 max-w-2xl text-shadow-sm"
+            className="text-lg md:text-xl text-gray-700 mb-8 text-center lg:text-left"
             variants={itemVariants}
           >
             Sustainable biomass solutions for a greener tomorrow. 
@@ -131,61 +115,67 @@ const Hero = () => {
           </motion.p>
           
           <motion.div 
-            className="flex flex-col sm:flex-row gap-4"
+            className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
             variants={itemVariants}
           >
             <Link 
-              to="/products/bio-pellets" 
-              className="interactive group px-8 py-3 bg-primary-500 text-white font-medium rounded-md overflow-hidden relative hover:bg-primary-600 transition-colors duration-300 transform hover:-translate-y-1 inline-flex items-center justify-center"
+              to="/products" 
+              className="group px-8 py-3 bg-primary-500 text-white font-medium rounded-lg overflow-hidden relative hover:bg-primary-600 transition-colors duration-300"
             >
+              <span className="relative z-10">Explore Products</span>
               <motion.span 
-                className="relative z-10"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Explore Products
-              </motion.span>
-              <motion.span 
-                className="absolute bottom-0 left-0 w-full h-1 bg-primary-300"
-                initial={{ scaleX: 0 }}
-                whileHover={{ scaleX: 1 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                style={{ originX: 0 }}
-              />
+                className="absolute bottom-0 left-0 w-full h-1 bg-primary-300 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"
+                whileHover={{ scale: 1 }}
+              ></motion.span>
             </Link>
             <Link 
               to="/about" 
-              className="interactive group px-8 py-3 border border-primary-500 text-primary-700 font-medium rounded-md overflow-hidden relative hover:bg-primary-50 transition-colors duration-300 transform hover:-translate-y-1 inline-flex items-center justify-center"
+              className="group px-8 py-3 border border-primary-500 text-primary-500 font-medium rounded-lg overflow-hidden relative hover:bg-primary-50 transition-colors duration-300"
             >
+              <span className="relative z-10">Our Mission</span>
               <motion.span 
-                className="relative z-10"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Our Mission
-              </motion.span>
-              <motion.span 
-                className="absolute bottom-0 left-0 w-full h-1 bg-primary-300"
-                initial={{ scaleX: 0 }}
-                whileHover={{ scaleX: 1 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                style={{ originX: 0 }}
-              />
+                className="absolute bottom-0 left-0 w-full h-1 bg-primary-300 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"
+                whileHover={{ scale: 1 }}
+              ></motion.span>
             </Link>
           </motion.div>
           
-          {/* Added subtitle highlighting sustainability */}
+          {/* Enhanced subtitle with animation */}
           <motion.div 
-            className="mt-12 flex items-center"
+            className="mt-12 flex items-center justify-center lg:justify-start"
             variants={itemVariants}
           >
-            <div className="h-px bg-primary-300 w-12 mr-4"></div>
+            <motion.div 
+              className="h-px bg-primary-300 w-12 mr-4"
+              initial={{ width: 0 }}
+              animate={{ width: 48 }}
+              transition={{ delay: 1.4, duration: 0.8 }}
+            ></motion.div>
             <p className="text-sm uppercase tracking-wider text-primary-700 font-medium">Engineering a sustainable tomorrow</p>
           </motion.div>
+          
+          {/* Decorative floating particles */}
+          <motion.div 
+            className="absolute top-20 right-20 w-8 h-8 rounded-full bg-primary-200 opacity-40 hidden lg:block"
+            animate={floatingAnimation}
+          />
+          <motion.div 
+            className="absolute bottom-40 left-20 w-6 h-6 rounded-full bg-primary-300 opacity-30 hidden lg:block"
+            animate={{
+              ...floatingAnimation,
+              transition: {
+                delay: 0.5,
+                duration: 4,
+                repeat: Infinity,
+                repeatType: "reverse",
+                ease: "easeInOut"
+              }
+            }}
+          />
         </motion.div>
       </div>
       
-      {/* Scroll Indicator - Enhanced with smoother animation */}
+      {/* Enhanced Scroll Indicator with smoother animation */}
       <motion.div 
         className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20"
         initial={{ opacity: 0, y: -10 }}
@@ -200,12 +190,14 @@ const Hero = () => {
       >
         <motion.div 
           className="flex flex-col items-center cursor-pointer"
-          onClick={() => {
-            const aboutSection = document.getElementById('about-section');
-            if (aboutSection) aboutSection.scrollIntoView({ behavior: 'smooth' });
-          }}
           whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => {
+            window.scrollBy({
+              top: window.innerHeight,
+              behavior: 'smooth'
+            });
+          }}
         >
           <span className="text-sm text-gray-600 mb-2 font-light tracking-wider">Scroll</span>
           <motion.svg 
@@ -214,14 +206,13 @@ const Hero = () => {
             viewBox="0 0 24 24" 
             fill="none" 
             xmlns="http://www.w3.org/2000/svg"
-            animate={{ 
+            animate={{
               y: [0, 5, 0],
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              repeatType: "loop",
-              ease: "easeInOut"
+              transition: {
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }
             }}
           >
             <path 
