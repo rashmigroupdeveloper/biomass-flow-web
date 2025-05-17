@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import ParticleCanvas from './ParticleCanvas';
 
 const ImpactSection = () => {
   const [ref, inView] = useInView({
@@ -57,6 +58,28 @@ const ImpactSection = () => {
       ref={ref}
       className="py-20 md:py-32 bg-primary-50 relative overflow-hidden"
     >
+      {/* Environmental Impact Particle Animation */}
+      <div className="absolute inset-0 z-0">
+        <ParticleCanvas 
+          id="environmentCanvas"
+          options={{
+            particleCount: 100,
+            particleMinSize: 2,
+            particleMaxSize: 5,
+            baseHue: 140, // Deeper green for environmental theme
+            backgroundColor: 'rgba(46, 125, 50, 0.04)',
+            flowIntensity: 0.9,
+            flowDirection: 'circular',
+            speedFactor: 0.5,
+            connectionRadius: 150,
+            connectionOpacity: 0.2,
+            mouseInteraction: true,
+            responsive: true,
+            densityFactor: 0.00007,
+          }}
+        />
+      </div>
+      
       {/* Decorative elements */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-primary-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70"></div>
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70"></div>

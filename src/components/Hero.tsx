@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import EnhancedParticleAnimation from './EnhancedParticleAnimation';
+import ParticleCanvas from './ParticleCanvas';
 
 const Hero = () => {
   // Animation variants
@@ -29,11 +29,7 @@ const Hero = () => {
     }
   };
 
-  // Add a subtle audio experience for particle interactions
   useEffect(() => {
-    // Audio context is now handled inside the EnhancedParticleAnimation component
-    // This makes sure audio is initialized only after user interaction
-    
     // Add smooth scroll behavior
     document.documentElement.style.scrollBehavior = 'smooth';
     
@@ -44,8 +40,25 @@ const Hero = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Enhanced Particle Background */}
-      <EnhancedParticleAnimation />
+      {/* Biomass Particle Animation */}
+      <ParticleCanvas 
+        id="biomassCanvas"
+        options={{
+          particleCount: 180,
+          particleMinSize: 1,
+          particleMaxSize: 4,
+          baseHue: 120, // Green hue
+          backgroundColor: 'rgba(46, 125, 50, 0.05)',
+          flowIntensity: 1.2,
+          flowDirection: 'upward',
+          speedFactor: 0.7,
+          connectionRadius: 150,
+          connectionOpacity: 0.15,
+          mouseInteraction: true,
+          responsive: true,
+          densityFactor: 0.0001,
+        }}
+      />
       
       {/* Gradient Overlay - Enhanced for better text visibility and depth */}
       <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-white/90 z-10"></div>
@@ -79,7 +92,7 @@ const Hero = () => {
             variants={itemVariants}
           >
             <Link 
-              to="/products" 
+              to="/products/bio-pellets" 
               className="interactive group px-8 py-3 bg-primary-500 text-white font-medium rounded overflow-hidden relative hover:bg-primary-600 transition-colors duration-300 transform hover:-translate-y-1 inline-flex items-center justify-center"
             >
               <span className="relative z-10">Explore Products</span>
@@ -137,11 +150,6 @@ const Hero = () => {
           </svg>
         </div>
       </motion.div>
-      
-      {/* Enhanced decorative blobs with better positioning and animation */}
-      <div className="hidden md:block absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float"></div>
-      <div className="hidden md:block absolute -bottom-[15%] -right-[10%] w-[45%] h-[45%] bg-primary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-float animation-delay-2000"></div>
-      <div className="hidden md:block absolute top-[40%] -right-[20%] w-[30%] h-[30%] bg-primary-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float animation-delay-4000"></div>
     </div>
   );
 };

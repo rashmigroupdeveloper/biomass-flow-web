@@ -1,7 +1,8 @@
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useEffect } from 'react';
+import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import ParticleCanvas from './ParticleCanvas';
 
 const steps = [
   {
@@ -35,13 +36,38 @@ const ProcessSection = () => {
     triggerOnce: false,
     threshold: 0.1
   });
+  
+  const particleRef = useRef<any>(null);
 
   return (
     <section 
       ref={ref}
       className="py-20 md:py-32 bg-white relative overflow-hidden"
     >
-      <div className="container mx-auto px-6 md:px-12">
+      {/* Process section particle animation */}
+      <div className="absolute inset-0 z-0">
+        <ParticleCanvas 
+          id="processCanvas"
+          options={{
+            particleCount: 100,
+            particleMinSize: 1,
+            particleMaxSize: 3.5,
+            baseHue: 100, // More yellowish green
+            backgroundColor: 'rgba(76, 175, 80, 0.03)',
+            flowIntensity: 1.5,
+            flowDirection: 'custom', // Custom left-to-right flow
+            speedFactor: 0.7,
+            connectionRadius: 100,
+            connectionOpacity: 0.1,
+            mouseInteraction: true,
+            responsive: true,
+            densityFactor: 0.00007,
+          }}
+          ref={particleRef}
+        />
+      </div>
+
+      <div className="container mx-auto px-6 md:px-12 relative z-10">
         <div className="text-center mb-16">
           <motion.h2 
             className="text-3xl md:text-5xl font-serif font-bold text-gray-900 mb-4"

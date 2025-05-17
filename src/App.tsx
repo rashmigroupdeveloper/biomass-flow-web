@@ -14,6 +14,7 @@ import QualityPolicy from "@/pages/QualityPolicy";
 import Certificates from "@/pages/Certificates";
 import Contact from "@/pages/Contact";
 import NotFound from "@/pages/NotFound";
+import PageTransition from "@/components/PageTransition";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
@@ -26,20 +27,22 @@ const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/products/bio-pellets" element={<BioPellets />} />
-              <Route path="/products/activated-carbon" element={<ActivatedCarbon />} />
-              <Route path="/products/charcoal-briquettes" element={<CharcoalBriquettes />} />
-              <Route path="/policy" element={<QualityPolicy />} />
-              <Route path="/certificates" element={<Certificates />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/process" element={<BioPellets />} /> {/* Temporary route until proper Process page is created */}
-              <Route path="/impact" element={<About />} /> {/* Temporary route until proper Impact page is created */}
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <PageTransition>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/products/bio-pellets" element={<BioPellets />} />
+                <Route path="/products/activated-carbon" element={<ActivatedCarbon />} />
+                <Route path="/products/charcoal-briquettes" element={<CharcoalBriquettes />} />
+                <Route path="/policy" element={<QualityPolicy />} />
+                <Route path="/certificates" element={<Certificates />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/process" element={<BioPellets />} /> {/* Temporary route until proper Process page is created */}
+                <Route path="/impact" element={<About />} /> {/* Temporary route until proper Impact page is created */}
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </PageTransition>
           </BrowserRouter>
         </TooltipProvider>
       </QueryClientProvider>
