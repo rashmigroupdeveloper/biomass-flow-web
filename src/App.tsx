@@ -5,7 +5,7 @@ import Index from './pages/Index';
 import About from './pages/About';
 import Products from './pages/Products';
 import Process from './pages/Process';
-import Contact from './pages/About';
+import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
 import BioPellets from './pages/BioPellets';
 import ActivatedCarbon from './pages/ActivatedCarbon';
