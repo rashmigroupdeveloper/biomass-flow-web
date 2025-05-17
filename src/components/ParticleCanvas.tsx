@@ -1,15 +1,24 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, forwardRef, useImperativeHandle, ForwardedRef } from 'react';
 import { BiomassParticleSystem } from '../utils/biomass-particles';
 
-interface ParticleCanvasProps {
+export interface ParticleCanvasProps {
   id: string;
   className?: string;
   options?: Record<string, any>;
 }
 
-const ParticleCanvas = ({ id, className, options = {} }: ParticleCanvasProps) => {
+export interface ParticleCanvasRef {
+  getSystem: () => BiomassParticleSystem | null;
+}
+
+const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanvasProps, ref: ForwardedRef<ParticleCanvasRef>) => {
   const systemRef = useRef<BiomassParticleSystem | null>(null);
+  
+  // Expose the system instance via ref
+  useImperativeHandle(ref, () => ({
+    getSystem: () => systemRef.current
+  }));
   
   useEffect(() => {
     // Initialize particle system when component mounts
@@ -58,6 +67,6 @@ const ParticleCanvas = ({ id, className, options = {} }: ParticleCanvasProps) =>
       }}
     />
   );
-};
+});
 
 export default ParticleCanvas;

@@ -2,7 +2,7 @@
 import React, { useRef, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import ParticleCanvas from './ParticleCanvas';
+import ParticleCanvas, { ParticleCanvasRef } from './ParticleCanvas';
 
 const steps = [
   {
@@ -37,7 +37,7 @@ const ProcessSection = () => {
     threshold: 0.1
   });
   
-  const particleRef = useRef<any>(null);
+  const particleRef = useRef<ParticleCanvasRef>(null);
 
   return (
     <section 
