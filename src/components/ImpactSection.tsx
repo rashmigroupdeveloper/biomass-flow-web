@@ -1,49 +1,89 @@
-import React, { useRef } from 'react';
+
+import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import ParticleCanvas, { ParticleCanvasRef } from './ParticleCanvas';
-
-// Fix the impact stats
-const impactStats = [
-  { label: 'Waste Repurposed', value: '50,000+', suffix: 'Tons', description: 'Agricultural and wood waste diverted from landfills and open burning' },
-  { label: 'CO₂ Reduction', value: '75,000+', suffix: 'Tons', description: 'Carbon dioxide emissions prevented through sustainable practices' },
-  { label: 'Energy Generated', value: '120+', suffix: 'GWh', description: 'Clean energy produced from our biomass products annually' },
-  { label: 'Farmer Partnerships', value: '2,500+', suffix: '', description: 'Local farmers benefiting from our waste-to-energy initiatives' }
-];
+import ParticleCanvas from './ParticleCanvas';
 
 const ImpactSection = () => {
   const [ref, inView] = useInView({
-    triggerOnce: false,
-    threshold: 0.1
+    triggerOnce: true,
+    threshold: 0.2
   });
   
-  const particleRef = useRef<ParticleCanvasRef>(null);
-  
+  const carbonChartRef = useRef<HTMLDivElement>(null);
+  const emissionsChartRef = useRef<HTMLDivElement>(null);
+  const sustainabilityChartRef = useRef<HTMLDivElement>(null);
+
+  // Animation for charts when they come into view
+  useEffect(() => {
+    if (inView) {
+      if (carbonChartRef.current) {
+        carbonChartRef.current.style.width = '38%';
+      }
+      if (emissionsChartRef.current) {
+        emissionsChartRef.current.style.width = '65%';
+      }
+      if (sustainabilityChartRef.current) {
+        sustainabilityChartRef.current.style.width = '90%';
+      }
+    }
+  }, [inView]);
+
+  const metrics = [
+    {
+      title: "Carbon Reduction",
+      description: "A 5% reduction in coal consumption through biomass co-firing yields an annual reduction of approximately 38 million metric tons of CO2 emissions.",
+      percentage: 38,
+      color: "bg-primary-500",
+      ref: carbonChartRef
+    },
+    {
+      title: "Reduced Emissions",
+      description: "Biomass co-firing effectively lowers net CO2, PM, SO2, and often NOx emissions when compared to coal combustion.",
+      percentage: 65,
+      color: "bg-primary-600",
+      ref: emissionsChartRef
+    },
+    {
+      title: "Carbon Neutrality",
+      description: "The subsequent generation of plants effectively offsets the CO2 emissions from the combustion of agro-residues, making it carbon-neutral.",
+      percentage: 90,
+      color: "bg-primary-700",
+      ref: sustainabilityChartRef
+    }
+  ];
+
   return (
     <section 
       ref={ref}
-      className="py-20 md:py-32 bg-primary-900 text-white relative overflow-hidden"
+      className="py-20 md:py-32 bg-primary-50 relative overflow-hidden"
     >
-      {/* Impact section particle animation with different style */}
+      {/* Environmental Impact Particle Animation */}
       <div className="absolute inset-0 z-0">
         <ParticleCanvas 
-          id="impactCanvas"
+          id="environmentCanvas"
           options={{
-            particleCount: 200,
-            particleSize: 3, // Combined min/max into one value
-            particleColor: '#81c784',
-            backgroundColor: 'rgba(27, 94, 32, 0.5)',
-            flowSpeed: 0.8,
-            flowDirection: 'wave',
-            interactionStrength: 1.0,
+            particleCount: 100,
+            particleMinSize: 2,
+            particleMaxSize: 5,
+            baseHue: 140, // Deeper green for environmental theme
+            backgroundColor: 'rgba(46, 125, 50, 0.04)',
+            flowIntensity: 0.9,
+            flowDirection: 'circular',
+            speedFactor: 0.5,
             connectionRadius: 150,
-            colorVariation: 10,
-            densityFactor: 0.00012,
+            connectionOpacity: 0.2,
+            mouseInteraction: true,
+            responsive: true,
+            densityFactor: 0.00007,
           }}
-          ref={particleRef}
         />
       </div>
-
+      
+      {/* Decorative elements */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-primary-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70"></div>
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70"></div>
+      
       <div className="container mx-auto px-6 md:px-12 relative z-10">
         <div className="text-center mb-16">
           <motion.h2 
@@ -65,25 +105,27 @@ const ImpactSection = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {impactStats.map((stat, index) => (
+          {metrics.map((metric, index) => (
             <motion.div 
-              key={stat.label}
+              key={metric.title}
               className="bg-white rounded-xl shadow-lg p-8"
               initial={{ opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.8, delay: index * 0.2 }}
             >
-              <h3 className="text-2xl font-serif font-bold text-gray-900 mb-3">{stat.label}</h3>
-              <p className="text-gray-600 mb-6">{stat.description}</p>
+              <h3 className="text-2xl font-serif font-bold text-gray-900 mb-3">{metric.title}</h3>
+              <p className="text-gray-600 mb-6">{metric.description}</p>
               
               <div className="mt-6">
                 <div className="flex justify-between mb-2">
                   <span className="text-sm font-medium text-gray-600">Improvement</span>
-                  <span className="text-sm font-medium text-primary-600">{stat.value}{stat.suffix}</span>
+                  <span className="text-sm font-medium text-primary-600">{metric.percentage}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
                   <div 
-                    className="h-2.5 rounded-full transition-all duration-1000 ease-out" 
+                    ref={metric.ref}
+                    className={`${metric.color} h-2.5 rounded-full transition-all duration-1000 ease-out`} 
+                    style={{ width: '0%' }}
                   ></div>
                 </div>
               </div>
