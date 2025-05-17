@@ -35,6 +35,8 @@ const App = () => {
               <Route path="/policy" element={<QualityPolicy />} />
               <Route path="/certificates" element={<Certificates />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/process" element={<BioPellets />} /> {/* Temporary route until proper Process page is created */}
+              <Route path="/impact" element={<About />} /> {/* Temporary route until proper Impact page is created */}
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

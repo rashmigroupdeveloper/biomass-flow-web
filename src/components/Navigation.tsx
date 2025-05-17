@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { X, Menu } from 'lucide-react';
+import { X, Menu, ChevronDown } from 'lucide-react';
 
+// Updated menu structure with subcategories
 const menuItems = [
   {
     name: 'Home',
@@ -18,7 +19,24 @@ const menuItems = [
   {
     name: 'Products',
     path: '/products',
-    preview: '/placeholder.svg'
+    preview: '/placeholder.svg',
+    submenu: [
+      {
+        name: 'Bio Pellets',
+        path: '/products/bio-pellets',
+        preview: '/placeholder.svg'
+      },
+      {
+        name: 'Activated Carbon',
+        path: '/products/activated-carbon',
+        preview: '/placeholder.svg'
+      },
+      {
+        name: 'Charcoal Briquettes',
+        path: '/products/charcoal-briquettes',
+        preview: '/placeholder.svg'
+      }
+    ]
   },
   {
     name: 'Process',
@@ -40,6 +58,7 @@ const menuItems = [
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<number | null>(null);
+  const [expandedSubmenus, setExpandedSubmenus] = useState<number[]>([]);
   
   useEffect(() => {
     if (isOpen) {
@@ -55,6 +74,15 @@ const Navigation = () => {
   
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+    setExpandedSubmenus([]); // Reset expanded submenus when toggling main menu
+  };
+
+  const toggleSubmenu = (index: number) => {
+    setExpandedSubmenus(prev => 
+      prev.includes(index) 
+        ? prev.filter(i => i !== index) 
+        : [...prev, index]
+    );
   };
 
   // Menu button variants for animation
@@ -122,6 +150,25 @@ const Navigation = () => {
       y: 50,
       opacity: 0,
       transition: { duration: 0.2 }
+    }
+  };
+
+  const submenuItemVariants = {
+    open: {
+      height: "auto",
+      opacity: 1,
+      transition: { 
+        height: { duration: 0.3, ease: "easeOut" },
+        opacity: { duration: 0.3, ease: "easeOut" }
+      }
+    },
+    closed: {
+      height: 0,
+      opacity: 0,
+      transition: { 
+        height: { duration: 0.3, ease: "easeOut" },
+        opacity: { duration: 0.2, ease: "easeOut" }
+      }
     }
   };
 
@@ -194,28 +241,72 @@ const Navigation = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
               <div className="flex items-center justify-center relative">
                 <motion.nav 
-                  className="text-center lg:text-left w-full px-6 md:px-12"
+                  className="text-center lg:text-left w-full px-6 md:px-12 max-h-[90vh] overflow-y-auto"
                   variants={menuListVariants}
                   initial="closed"
                   animate="open"
                   exit="closed"
                 >
-                  <ul className="space-y-6 md:space-y-10">
+                  <ul className="space-y-6 md:space-y-8">
                     {menuItems.map((item, index) => (
                       <motion.li 
                         key={item.name}
                         variants={menuItemVariants}
+                        className="relative"
                         onMouseEnter={() => setActiveItem(index)}
                         onMouseLeave={() => setActiveItem(null)}
                       >
-                        <Link 
-                          to={item.path} 
-                          className="text-3xl md:text-5xl font-serif text-primary-800 hover:text-primary-600 transition-colors relative block group"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          <span className="relative z-10">{item.name}</span>
-                          <span className="absolute bottom-0 left-0 w-0 h-1 bg-primary-500 transition-all duration-500 ease-in-out group-hover:w-full"></span>
-                        </Link>
+                        {item.submenu ? (
+                          <>
+                            <button 
+                              onClick={() => toggleSubmenu(index)}
+                              className="text-3xl md:text-5xl font-serif text-primary-800 hover:text-primary-600 transition-colors relative flex items-center justify-center lg:justify-start group w-full"
+                            >
+                              <span className="relative z-10">{item.name}</span>
+                              <ChevronDown 
+                                className={`ml-2 transition-transform duration-300 ${expandedSubmenus.includes(index) ? 'rotate-180' : ''}`}
+                                size={expandedSubmenus.includes(index) ? 28 : 24}
+                              />
+                              <span className="absolute bottom-0 left-0 w-0 h-1 bg-primary-500 transition-all duration-500 ease-in-out group-hover:w-full"></span>
+                            </button>
+                            
+                            <motion.ul 
+                              variants={submenuItemVariants}
+                              initial="closed"
+                              animate={expandedSubmenus.includes(index) ? "open" : "closed"}
+                              className="overflow-hidden pl-6 md:pl-10"
+                            >
+                              {item.submenu.map((subItem) => (
+                                <motion.li 
+                                  key={subItem.name}
+                                  variants={{
+                                    open: { opacity: 1, y: 0 },
+                                    closed: { opacity: 0, y: 20 }
+                                  }}
+                                  className="my-3 md:my-4"
+                                >
+                                  <Link 
+                                    to={subItem.path} 
+                                    className="text-xl md:text-2xl font-serif text-primary-700 hover:text-primary-500 transition-colors relative inline-block group"
+                                    onClick={() => setIsOpen(false)}
+                                  >
+                                    <span className="relative z-10">{subItem.name}</span>
+                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-400 transition-all duration-500 ease-in-out group-hover:w-full"></span>
+                                  </Link>
+                                </motion.li>
+                              ))}
+                            </motion.ul>
+                          </>
+                        ) : (
+                          <Link 
+                            to={item.path} 
+                            className="text-3xl md:text-5xl font-serif text-primary-800 hover:text-primary-600 transition-colors relative block group"
+                            onClick={() => setIsOpen(false)}
+                          >
+                            <span className="relative z-10">{item.name}</span>
+                            <span className="absolute bottom-0 left-0 w-0 h-1 bg-primary-500 transition-all duration-500 ease-in-out group-hover:w-full"></span>
+                          </Link>
+                        )}
                       </motion.li>
                     ))}
                   </ul>
