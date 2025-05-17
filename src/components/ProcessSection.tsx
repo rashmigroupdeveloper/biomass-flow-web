@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
@@ -50,17 +49,14 @@ const ProcessSection = () => {
           id="processCanvas"
           options={{
             particleCount: 100,
-            particleMinSize: 1,
-            particleMaxSize: 3.5,
-            baseHue: 100, // More yellowish green
+            particleSize: 2.5, // Using a standard size instead of min/max
+            particleColor: '#81c784',
             backgroundColor: 'rgba(76, 175, 80, 0.03)',
-            flowIntensity: 1.5,
+            flowSpeed: 1.5,
             flowDirection: 'custom', // Custom left-to-right flow
-            speedFactor: 0.7,
+            interactionStrength: 1.2,
             connectionRadius: 100,
-            connectionOpacity: 0.1,
-            mouseInteraction: true,
-            responsive: true,
+            colorVariation: 15,
             densityFactor: 0.00007,
           }}
           ref={particleRef}
