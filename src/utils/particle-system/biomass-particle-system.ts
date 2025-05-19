@@ -135,7 +135,9 @@ export class BiomassParticleSystem {
   private applyMouseInteraction(particle: Particle, delta: number): void {
     if (!this.mousePosition || !this.options.mouseInteraction) return;
     
-    this.flowPatterns.applyMouseInfluence(particle, this.mousePosition, delta);
+    // Fix: Pass only two arguments instead of three
+    // The FlowPatterns.applyMouseInfluence method should expect (particle, mousePosition) 
+    this.flowPatterns.applyMouseInfluence(particle, this.mousePosition);
   }
   
   private applyFlowPatterns(particle: Particle, delta: number): void {
