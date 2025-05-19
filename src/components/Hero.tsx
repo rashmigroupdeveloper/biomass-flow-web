@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -40,7 +39,7 @@ const Hero = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Biomass Particle Animation */}
+      {/* Biomass Particle Animation - Updated with lighter background */}
       <ParticleCanvas 
         id="biomassCanvas"
         options={{
@@ -48,7 +47,7 @@ const Hero = () => {
           particleMinSize: 1,
           particleMaxSize: 4,
           baseHue: 120, // Green hue
-          backgroundColor: 'rgba(46, 125, 50, 0.05)',
+          backgroundColor: 'rgba(240, 247, 240, 0.6)', // Much lighter background for better visibility
           flowIntensity: 1.2,
           flowDirection: 'upward',
           speedFactor: 0.7,
@@ -60,8 +59,8 @@ const Hero = () => {
         }}
       />
       
-      {/* Gradient Overlay - Enhanced for better text visibility and depth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-white/90 z-10"></div>
+      {/* Gradient Overlay - Updated for better text visibility and depth */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-white/30 to-white/80 z-10"></div>
       
       {/* Content */}
       <div className="container mx-auto px-6 md:px-12 z-20 pt-20">
