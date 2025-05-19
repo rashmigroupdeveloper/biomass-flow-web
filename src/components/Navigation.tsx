@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -188,15 +189,11 @@ const Navigation = () => {
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-50 py-4 px-6 md:px-12">
+      <header className="fixed top-0 left-0 w-full z-50 py-6 px-6 md:px-12">
         <div className="flex justify-between items-center">
           <div className="logo z-10">
-            <Link to="/" className="flex items-center">
-              <img 
-                src="/images/logo.png" 
-                alt="Rashmi 6 Paradigm Logo" 
-                className="h-12 md:h-16 w-auto"
-              />
+            <Link to="/" className="font-serif text-2xl font-bold text-primary-800 hover:text-primary-600 transition-colors">
+              Rashmi<span className="text-primary-500">6</span>
             </Link>
           </div>
           

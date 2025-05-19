@@ -23,21 +23,19 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
   useEffect(() => {
     // Initialize particle system when component mounts
     const defaultOptions = {
-      particleCount: 220,
-      particleMinSize: 1.5,
-      particleMaxSize: 6.0,
+      particleCount: 150,
+      particleMinSize: 1,
+      particleMaxSize: 4,
       baseHue: 120, // Green hue
       backgroundColor: 'rgba(46, 125, 50, 0.05)', // Very subtle green background
-      flowIntensity: 2.0,
+      flowIntensity: 1.2,
       flowDirection: 'upward',
-      speedFactor: 0.9,
-      connectionRadius: 160,
-      connectionOpacity: 0.18,
+      speedFactor: 0.6,
+      connectionRadius: 120,
+      connectionOpacity: 0.12,
       mouseInteraction: true,
       responsive: true,
-      densityFactor: 0.00015,
-      grassEffect: true, // Enhanced grass effect
-      particleVariety: true, // Enhanced variety in particles
+      densityFactor: 0.00009,
     };
 
     const mergedOptions = { ...defaultOptions, ...options };
@@ -70,7 +68,5 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
     />
   );
 });
-
-ParticleCanvas.displayName = 'ParticleCanvas';
 
 export default ParticleCanvas;

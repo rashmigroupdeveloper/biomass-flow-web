@@ -1,3 +1,4 @@
+
 import { Particle, Vector2D, ParticleSystemOptions } from './types';
 
 export class FlowPatterns {
@@ -13,22 +14,11 @@ export class FlowPatterns {
   updateTime(delta: number): void {
     this.time += delta * 0.001;
   }
-
-  updateOptions(options: ParticleSystemOptions): void {
-    this.options = options;
-  }
   
   applyFlow(particle: Particle, delta: number): void {
     const flowType = this.options.flowDirection || 'upward';
     const intensity = this.options.flowIntensity || 1;
     const speedFactor = this.options.speedFactor || 0.5;
-    const grassEffect = this.options.grassEffect || false;
-    
-    // Apply special grass effect if enabled
-    if (grassEffect) {
-      this.applyGrassFlow(particle, intensity, speedFactor, delta);
-      return;
-    }
     
     // Base flow patterns
     switch (flowType) {
@@ -49,59 +39,12 @@ export class FlowPatterns {
     }
   }
   
-  private applyGrassFlow(particle: Particle, intensity: number, speedFactor: number, delta: number): void {
-    // Stronger upward movement for grass effect
-    const verticalPosition = particle.y / this.canvas.height;
-    
-    // More vertical movement at the top (like grass blade tips)
-    const baseUpwardForce = 0.004 * intensity;
-    const heightAdjustedForce = baseUpwardForce * (1 + (1 - verticalPosition) * 0.8);
-    
-    // Apply stronger upward force for grass-like appearance
-    particle.speedY -= heightAdjustedForce * (1 + Math.sin(this.time + particle.x * 0.02) * 0.3) * delta;
-    
-    // Add horizontal swaying for grass-like movement
-    const swayIntensity = 0.0015 * intensity;
-    const swayFrequency = 2.0;
-    const swayEffect = Math.sin(this.time * swayFrequency + particle.y * 0.01) * swayIntensity * delta;
-    
-    // More swaying for particles higher up (like grass tips)
-    const heightBasedSway = swayEffect * (1 + (1 - verticalPosition) * 1.5);
-    particle.speedX += heightBasedSway;
-    
-    // Add more natural randomness
-    if (Math.random() < 0.02) {
-      const smallRandom = (Math.random() - 0.5) * 0.001 * intensity;
-      particle.speedX += smallRandom * delta;
-    }
-    
-    // Apply speed limits but allow faster upward movement for grass
-    this.limitSpeed(particle, speedFactor, true);
-    
-    // Update position
-    particle.x += particle.speedX * speedFactor * delta;
-    particle.y += particle.speedY * speedFactor * delta;
-  }
-  
   private applyUpwardFlow(particle: Particle, intensity: number, speedFactor: number, delta: number): void {
-    // Enhanced upward motion with gentle swaying
-    const verticalPosition = particle.y / this.canvas.height;
+    // Gentle rising motion
+    particle.speedY -= 0.002 * intensity * delta;
     
-    // Stronger upward movement for particles higher in the canvas
-    const baseUpwardForce = 0.003 * intensity;
-    const heightAdjustedForce = baseUpwardForce * (1 + (1 - verticalPosition) * 0.5);
-    
-    // Apply upward force with natural variation
-    particle.speedY -= heightAdjustedForce * (1 + Math.sin(this.time + particle.x * 0.01) * 0.2) * delta;
-    
-    // Add some horizontal drift with variation based on particle properties
-    const wiggle = Math.sin(this.time * 0.5 + particle.y * 0.02 + particle.hue * 0.1) * 0.001;
-    particle.speedX += wiggle * intensity * delta;
-    
-    // Add more natural randomness
-    if (Math.random() < 0.01) {
-      particle.speedX += (Math.random() - 0.5) * 0.002 * intensity;
-    }
+    // Add some horizontal drift
+    particle.speedX += (Math.random() - 0.5) * 0.002 * intensity * delta;
     
     // Apply speed limits
     this.limitSpeed(particle, speedFactor);
@@ -145,14 +88,11 @@ export class FlowPatterns {
     // Horizontal flow with wave pattern
     const yPosition = particle.y / this.canvas.height;
     
-    // Enhanced wave effect based on x position and time
-    const waveStrength = Math.sin(particle.x * 0.01 + this.time) * 0.15 * intensity;
+    // Wave effect based on x position and time
+    const waveStrength = Math.sin(particle.x * 0.01 + this.time) * 0.1 * intensity;
     
     particle.speedX = 0.5 * intensity * delta * 0.01;
     particle.speedY = waveStrength * delta * 0.01;
-    
-    // Add vertical drift based on the wave's position
-    particle.speedY += Math.cos(particle.x * 0.02 + this.time * 1.5) * 0.05 * delta * 0.01;
     
     // Apply speed limits
     this.limitSpeed(particle, speedFactor);
@@ -163,18 +103,11 @@ export class FlowPatterns {
   }
   
   private applyCustomFlow(particle: Particle, intensity: number, speedFactor: number, delta: number): void {
-    // Left to right flow for process section with organic movement
+    // Left to right flow for process section
     particle.speedX += 0.001 * intensity * delta;
     
-    // More dynamic vertical drift based on horizontal position
-    const horizontalPosition = particle.x / this.canvas.width;
-    const verticalDrift = Math.sin(horizontalPosition * Math.PI * 4 + this.time) * 0.0015 * intensity;
-    particle.speedY += verticalDrift * delta;
-    
-    // Add some natural randomness
-    if (Math.random() < 0.02) {
-      particle.speedY += (Math.random() - 0.5) * 0.001 * intensity;
-    }
+    // Slight vertical drift
+    particle.speedY += (Math.random() - 0.5) * 0.001 * intensity * delta;
     
     // Apply speed limits
     this.limitSpeed(particle, speedFactor);
@@ -184,35 +117,31 @@ export class FlowPatterns {
     particle.y += particle.speedY * speedFactor * delta;
   }
   
-  private limitSpeed(particle: Particle, speedFactor: number, isGrass: boolean = false): void {
-    // For grass, allow faster upward movement
-    const maxSpeedY = isGrass ? 0.8 * speedFactor : 0.5 * speedFactor;
-    const maxSpeedX = 0.4 * speedFactor;
+  private limitSpeed(particle: Particle, speedFactor: number): void {
+    const maxSpeed = 0.5 * speedFactor;
     
     // Limit horizontal speed
-    if (particle.speedX > maxSpeedX) {
-      particle.speedX = maxSpeedX;
-    } else if (particle.speedX < -maxSpeedX) {
-      particle.speedX = -maxSpeedX;
+    if (particle.speedX > maxSpeed) {
+      particle.speedX = maxSpeed;
+    } else if (particle.speedX < -maxSpeed) {
+      particle.speedX = -maxSpeed;
     }
     
-    // Limit vertical speed, but allow faster upward (negative Y) for grass
-    if (particle.speedY > maxSpeedY) {
-      particle.speedY = maxSpeedY;
-    } else if (particle.speedY < -maxSpeedY * 1.5) { // Allow 50% faster upward for grass
-      particle.speedY = -maxSpeedY * 1.5;
+    // Limit vertical speed
+    if (particle.speedY > maxSpeed) {
+      particle.speedY = maxSpeed;
+    } else if (particle.speedY < -maxSpeed) {
+      particle.speedY = -maxSpeed;
     }
     
-    // Apply some damping, less for grass to maintain upward momentum
-    const dampFactor = isGrass ? 0.995 : 0.99;
-    particle.speedX *= dampFactor;
-    
-    if (!isGrass || particle.speedY > 0) {
-      particle.speedY *= dampFactor;
-    }
+    // Apply some damping
+    particle.speedX *= 0.99;
+    particle.speedY *= 0.99;
   }
   
-  applyMouseInfluence(particle: Particle, mousePos: Vector2D): void {
+  applyMouseInfluence(particle: Particle, mousePos: Vector2D | null, delta: number): void {
+    if (!mousePos) return;
+    
     const dx = mousePos.x - particle.x;
     const dy = mousePos.y - particle.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
@@ -220,9 +149,8 @@ export class FlowPatterns {
     
     if (distance < influence) {
       const force = (influence - distance) / influence;
-      const repelFactor = 0.03;
-      particle.speedX -= (dx / distance) * force * repelFactor;
-      particle.speedY -= (dy / distance) * force * repelFactor;
+      particle.speedX += (dx / distance) * force * 0.02 * delta;
+      particle.speedY += (dy / distance) * force * 0.02 * delta;
     }
   }
 }

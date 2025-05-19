@@ -1,3 +1,4 @@
+
 import { ParticleSystemOptions, Particle, Vector2D } from './types';
 import { ParticleFactory } from './particle-factory';
 import { FlowPatterns } from './flow-patterns';
@@ -16,26 +17,23 @@ export class BiomassParticleSystem {
   private particleFactory: ParticleFactory;
   private flowPatterns: FlowPatterns;
   private renderer: ParticleRenderer;
-  private time: number = 0;
   
   constructor(canvasId: string, options: ParticleSystemOptions = {}) {
     // Set default options
     this.options = {
-      particleCount: 180,
-      particleMinSize: 1.2,
-      particleMaxSize: 4.5,
+      particleCount: 150,
+      particleMinSize: 1,
+      particleMaxSize: 3,
       baseHue: 120,
       backgroundColor: 'rgba(46, 125, 50, 0.05)',
-      flowIntensity: 1.5,
+      flowIntensity: 1,
       flowDirection: 'upward',
-      speedFactor: 0.8,
-      connectionRadius: 140,
-      connectionOpacity: 0.15,
+      speedFactor: 0.5,
+      connectionRadius: 100,
+      connectionOpacity: 0.1,
       mouseInteraction: true,
       responsive: true,
-      densityFactor: 0.0001,
-      grassEffect: false,
-      particleVariety: false,
+      densityFactor: 0.00007,
       ...options
     };
     
@@ -127,7 +125,7 @@ export class BiomassParticleSystem {
         
         // Adjust particle count based on canvas size
         const area = this.canvas.width * this.canvas.height;
-        const targetCount = Math.floor(area * (this.options.densityFactor || 0.0001));
+        const targetCount = Math.floor(area * (this.options.densityFactor || 0.00007));
         
         // Only recreate particles if count differs significantly
         if (Math.abs(targetCount - this.particles.length) > 10) {
@@ -144,7 +142,7 @@ export class BiomassParticleSystem {
     this.lastUpdateTime = performance.now();
     
     // Create initial particles
-    const count = this.options.particleCount || 180;
+    const count = this.options.particleCount || 150;
     this.particles = this.particleFactory.createParticles(count);
     
     // Start animation loop
@@ -164,12 +162,6 @@ export class BiomassParticleSystem {
     this.removeEventListeners();
     this.particles = [];
   }
-
-  updateOptions(newOptions: Partial<ParticleSystemOptions>): void {
-    this.options = { ...this.options, ...newOptions };
-    this.flowPatterns.updateOptions(this.options);
-    this.renderer.updateOptions(this.options);
-  }
   
   private animate = (): void => {
     if (!this.isRunning) return;
@@ -177,9 +169,6 @@ export class BiomassParticleSystem {
     const currentTime = performance.now();
     const delta = currentTime - this.lastUpdateTime;
     this.lastUpdateTime = currentTime;
-    
-    // Update global time
-    this.time += delta * 0.001;
     
     // Update time for flow patterns
     this.flowPatterns.updateTime(delta);
@@ -190,7 +179,7 @@ export class BiomassParticleSystem {
     // Update and draw particles
     this.updateParticles(delta);
     this.renderer.drawConnections(this.particles);
-    this.renderer.drawParticles(this.particles, this.time);
+    this.renderer.drawParticles(this.particles);
     
     // Request next frame
     this.animationFrameId = requestAnimationFrame(this.animate);
@@ -203,41 +192,11 @@ export class BiomassParticleSystem {
       
       // Apply mouse influence if enabled
       if (this.options.mouseInteraction && this.mousePos) {
-        this.flowPatterns.applyMouseInfluence(particle, this.mousePos);
-      }
-      
-      // Apply grass effect if enabled
-      if (this.options.grassEffect) {
-        this.applyGrassEffect(particle, delta);
+        this.flowPatterns.applyMouseInfluence(particle, this.mousePos, delta);
       }
       
       // Check if particle is out of bounds and reset if necessary
       this.particleFactory.resetParticle(particle);
     });
-  }
-  
-  private applyGrassEffect(particle: Particle, delta: number): void {
-    // Enhanced grass-like effect
-    const swayFactor = 0.3; // Increased from 0.2
-    const swaySpeed = 1.8;  // Increased from 1.5
-    
-    // Bottom particles move less, top particles sway more (like grass)
-    const verticalPosition = 1 - (particle.y / this.canvas.height);
-    const swayAmount = verticalPosition * swayFactor;
-    
-    // Enhanced horizontal swaying based on time and position
-    particle.x += Math.sin(this.time * swaySpeed + particle.y * 0.01) * swayAmount * delta * 0.08;
-    
-    // Enhance upward movement for particles at the top
-    if (verticalPosition > 0.5) {
-      // Stronger upward force for more prominent grass effect
-      const upwardForce = 0.0005 * verticalPosition * delta;
-      particle.speedY -= upwardForce;
-    }
-    
-    // Add slight random movement for a more natural look
-    if (Math.random() < 0.01) {
-      particle.speedX += (Math.random() - 0.5) * 0.001;
-    }
   }
 }

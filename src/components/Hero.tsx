@@ -1,13 +1,10 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import ParticleCanvas, { ParticleCanvasRef } from './ParticleCanvas';
+import ParticleCanvas from './ParticleCanvas';
 
 const Hero = () => {
-  // Ref for particle system
-  const particleRef = useRef<ParticleCanvasRef>(null);
-  
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -36,56 +33,35 @@ const Hero = () => {
     // Add smooth scroll behavior
     document.documentElement.style.scrollBehavior = 'smooth';
     
-    // Optional: Add scroll interaction with particles
-    const handleScroll = () => {
-      if (particleRef.current?.getSystem()) {
-        const scrollY = window.scrollY;
-        const viewportHeight = window.innerHeight;
-        const scrollRatio = Math.min(scrollY / viewportHeight, 1);
-        
-        // Adjust particle behavior based on scroll
-        particleRef.current.getSystem()?.updateOptions({
-          flowIntensity: 2.0 + scrollRatio * 0.5,
-          baseHue: 120 - scrollRatio * 10
-        });
-      }
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    
     return () => {
       document.documentElement.style.scrollBehavior = 'auto';
-      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Enhanced Biomass Particle Animation with more prominent grass-like effect */}
+      {/* Biomass Particle Animation */}
       <ParticleCanvas 
-        ref={particleRef}
         id="biomassCanvas"
         options={{
-          particleCount: 280,
-          particleMinSize: 1.5,
-          particleMaxSize: 6.0,
+          particleCount: 180,
+          particleMinSize: 1,
+          particleMaxSize: 4,
           baseHue: 120, // Green hue
-          backgroundColor: 'rgba(240, 247, 240, 0.5)', // Lighter background for better visibility
-          flowIntensity: 2.0,
+          backgroundColor: 'rgba(46, 125, 50, 0.05)',
+          flowIntensity: 1.2,
           flowDirection: 'upward',
-          speedFactor: 0.9,
-          connectionRadius: 160,
-          connectionOpacity: 0.18,
+          speedFactor: 0.7,
+          connectionRadius: 150,
+          connectionOpacity: 0.15,
           mouseInteraction: true,
           responsive: true,
-          densityFactor: 0.00015,
-          grassEffect: true, // Enhance grass-like effect
-          particleVariety: true, // Enable varied particle shapes
+          densityFactor: 0.0001,
         }}
       />
       
-      {/* Enhanced Gradient Overlay for better text visibility and depth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/30 to-white/70 z-10"></div>
+      {/* Gradient Overlay - Enhanced for better text visibility and depth */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-white/90 z-10"></div>
       
       {/* Content */}
       <div className="container mx-auto px-6 md:px-12 z-20 pt-20">
@@ -131,7 +107,7 @@ const Hero = () => {
             </Link>
           </motion.div>
           
-          {/* Sustainability subtitle with enhanced animation */}
+          {/* Added subtitle highlighting sustainability */}
           <motion.div 
             className="mt-12 flex items-center"
             variants={itemVariants}
@@ -142,7 +118,7 @@ const Hero = () => {
         </motion.div>
       </div>
       
-      {/* Enhanced Scroll Indicator with smoother animation */}
+      {/* Scroll Indicator - Enhanced with smoother animation */}
       <motion.div 
         className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20"
         initial={{ opacity: 0, y: -10 }}
@@ -163,7 +139,6 @@ const Hero = () => {
             viewBox="0 0 24 24" 
             fill="none" 
             xmlns="http://www.w3.org/2000/svg"
-            className="animate-bounce"
           >
             <path 
               d="M12 5L12 19M12 19L18 13M12 19L6 13" 

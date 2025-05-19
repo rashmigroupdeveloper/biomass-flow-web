@@ -38,44 +38,30 @@ const ProcessSection = () => {
   });
   
   const particleRef = useRef<ParticleCanvasRef>(null);
-  
-  // This effect changes the particle flow direction based on scroll position
-  useEffect(() => {
-    if (inView && particleRef.current) {
-      const system = particleRef.current.getSystem();
-      if (system) {
-        system.updateOptions({
-          flowDirection: 'custom',
-          flowIntensity: 1.8
-        });
-      }
-    }
-  }, [inView]);
 
   return (
     <section 
       ref={ref}
       className="py-20 md:py-32 bg-white relative overflow-hidden"
     >
-      {/* Enhanced Process section particle animation */}
+      {/* Process section particle animation */}
       <div className="absolute inset-0 z-0">
         <ParticleCanvas 
           id="processCanvas"
           options={{
-            particleCount: 140,
+            particleCount: 100,
             particleMinSize: 1,
-            particleMaxSize: 3.8,
+            particleMaxSize: 3.5,
             baseHue: 100, // More yellowish green
             backgroundColor: 'rgba(76, 175, 80, 0.03)',
-            flowIntensity: 1.8,
+            flowIntensity: 1.5,
             flowDirection: 'custom', // Custom left-to-right flow
-            speedFactor: 0.8,
-            connectionRadius: 120,
-            connectionOpacity: 0.12,
+            speedFactor: 0.7,
+            connectionRadius: 100,
+            connectionOpacity: 0.1,
             mouseInteraction: true,
             responsive: true,
-            densityFactor: 0.00009,
-            particleVariety: true,
+            densityFactor: 0.00007,
           }}
           ref={particleRef}
         />
@@ -102,14 +88,8 @@ const ProcessSection = () => {
         </div>
         
         <div className="relative">
-          {/* Vertical timeline line with enhanced animation */}
-          <motion.div 
-            className="absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-1 bg-primary-100"
-            initial={{ scaleY: 0 }}
-            animate={inView ? { scaleY: 1 } : { scaleY: 0 }}
-            transition={{ duration: 1.5, ease: "easeOut" }}
-            style={{ transformOrigin: "top" }}
-          ></motion.div>
+          {/* Vertical timeline line */}
+          <div className="absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-1 bg-primary-100"></div>
           
           {steps.map((step, index) => (
             <div 
@@ -117,20 +97,15 @@ const ProcessSection = () => {
               className="mb-24 last:mb-0"
             >
               <div className={`flex flex-col items-center ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}>
-                {/* Enhanced process step marker */}
-                <motion.div 
-                  className="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full bg-white border-4 border-primary-500 z-10"
-                  initial={{ scale: 0 }}
-                  animate={inView ? { scale: 1 } : { scale: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 + index * 0.2 }}
-                />
+                {/* Process step marker */}
+                <div className="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full bg-white border-4 border-primary-500 z-10"></div>
                 
-                {/* Content with enhanced animation */}
+                {/* Content */}
                 <motion.div 
                   className={`lg:w-1/2 p-6 ${index % 2 === 0 ? 'lg:pr-16 lg:text-right' : 'lg:pl-16'}`}
                   initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
                   animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                  transition={{ duration: 0.8, delay: index * 0.2 }}
+                  transition={{ duration: 0.8, delay: index * 0.1 }}
                 >
                   <span className="inline-block bg-primary-100 text-primary-800 rounded-full px-3 py-1 text-sm font-medium mb-2">
                     Step {step.id}
@@ -139,22 +114,19 @@ const ProcessSection = () => {
                   <p className="text-gray-600">{step.description}</p>
                 </motion.div>
                 
-                {/* Image with enhanced hover effect */}
+                {/* Image */}
                 <motion.div 
                   className={`mt-6 lg:mt-0 lg:w-1/2 ${index % 2 === 0 ? 'lg:pl-16' : 'lg:pr-16'}`}
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.8, delay: index * 0.2 + 0.2 }}
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.98 }}
+                  transition={{ duration: 0.8, delay: index * 0.1 + 0.2 }}
                 >
-                  <div className="rounded-lg overflow-hidden shadow-lg group transition-all duration-300">
+                  <div className="rounded-lg overflow-hidden shadow-lg">
                     <img 
                       src={step.image} 
                       alt={step.title} 
-                      className="w-full h-64 object-cover transition-all duration-700 group-hover:scale-105"
+                      className="w-full h-64 object-cover"
                     />
-                    <div className="absolute inset-0 bg-primary-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
                   </div>
                 </motion.div>
               </div>

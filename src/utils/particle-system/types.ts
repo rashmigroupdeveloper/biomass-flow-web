@@ -13,8 +13,6 @@ export interface ParticleSystemOptions {
   mouseInteraction?: boolean;
   responsive?: boolean;
   densityFactor?: number;
-  grassEffect?: boolean;
-  particleVariety?: boolean;
 }
 
 export interface Particle {
@@ -24,11 +22,6 @@ export interface Particle {
   speedX: number;
   speedY: number;
   hue: number;
-  opacity?: number;
-  type?: number;
-  length?: number; // For grass blade length
-  width?: number;  // For grass blade width
-  angle?: number;  // For grass blade angle
 }
 
 export type Vector2D = {
