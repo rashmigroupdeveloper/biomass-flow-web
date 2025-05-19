@@ -8,6 +8,7 @@ import AboutParallaxHero from '@/components/AboutParallaxHero';
 import AboutAnimatedStats from '@/components/AboutAnimatedStats';
 import EnhancedButton from '@/components/EnhancedButton';
 import EnhancedFooter from '@/components/EnhancedFooter';
+import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
 
 const About = () => {
   const [ref1, inView1] = useInView({
@@ -54,7 +55,11 @@ const About = () => {
                 </EnhancedButton>
               </div>
             </div>
-            <div className="relative">
+            <motion.div 
+              className="relative"
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
               <div className="absolute -top-6 -left-6 w-24 h-24 bg-primary-200 rounded-lg z-0"></div>
               <motion.div 
                 className="relative z-10 rounded-lg overflow-hidden shadow-xl"
@@ -68,9 +73,15 @@ const About = () => {
                   alt="Our Facility" 
                   className="w-full h-auto object-cover"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary-800/50 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end">
+                  <div className="p-4 text-white">
+                    <h3 className="font-bold text-xl">Our Modern Facility</h3>
+                    <p className="text-sm">State-of-the-art manufacturing plant in Eastern India</p>
+                  </div>
+                </div>
               </motion.div>
               <div className="absolute -bottom-8 -right-8 w-36 h-36 bg-primary-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 z-0"></div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -90,38 +101,40 @@ const About = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <motion.div 
-              className="bg-white p-8 rounded-lg shadow-lg"
+              className="bg-white p-8 rounded-lg shadow-lg group hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
               initial={{ opacity: 0, y: 30 }}
               animate={inView1 ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-primary-200 transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary-600 group-hover:text-primary-700 transition-colors duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-serif font-bold text-primary-800 mb-4">Our Vision</h3>
-              <p className="text-gray-600">
+              <h3 className="text-2xl font-serif font-bold text-primary-800 mb-4 group-hover:text-primary-600 transition-colors">Our Vision</h3>
+              <p className="text-gray-600 group-hover:text-gray-700 transition-colors">
                 To be the global leader in sustainable energy solutions, setting new standards of excellence, innovation, and environmental stewardship. We envision a world where clean energy solutions are accessible to all, leading to a greener, more sustainable future.
               </p>
+              <div className="h-1 w-0 bg-primary-500 mt-6 group-hover:w-full transition-all duration-700 ease-out"></div>
             </motion.div>
             
             <motion.div 
-              className="bg-white p-8 rounded-lg shadow-lg"
+              className="bg-white p-8 rounded-lg shadow-lg group hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
               initial={{ opacity: 0, y: 30 }}
               animate={inView1 ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-primary-200 transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary-600 group-hover:text-primary-700 transition-colors duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-serif font-bold text-primary-800 mb-4">Our Mission</h3>
-              <p className="text-gray-600">
+              <h3 className="text-2xl font-serif font-bold text-primary-800 mb-4 group-hover:text-primary-600 transition-colors">Our Mission</h3>
+              <p className="text-gray-600 group-hover:text-gray-700 transition-colors">
                 To manufacture and deliver high-quality Activated Carbon, Bio Pellets, and Charcoal Briquettes that meet and exceed customer expectations while minimizing environmental impact. We are committed to continuous innovation, operational excellence, and ethical business practices that benefit our customers, employees, and communities.
               </p>
+              <div className="h-1 w-0 bg-primary-500 mt-6 group-hover:w-full transition-all duration-700 ease-out"></div>
             </motion.div>
           </div>
         </div>
@@ -141,59 +154,111 @@ const About = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <motion.div 
-              className="bg-white p-6 rounded-lg shadow-md text-center hover:shadow-xl transition-shadow duration-300"
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView2 ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              whileHover={{ y: -5, transition: { duration: 0.3 } }}
-            >
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6 mx-auto">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-primary-800 mb-3">Integrity</h3>
-              <p className="text-gray-600">
-                We conduct our business with the highest ethical standards, fostering trust and transparency in all our relationships.
-              </p>
-            </motion.div>
+            <HoverCard openDelay={0} closeDelay={200}>
+              <HoverCardTrigger asChild>
+                <motion.div 
+                  className="bg-white p-6 rounded-lg shadow-md text-center hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={inView2 ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                  whileHover={{ y: -5, transition: { duration: 0.3 } }}
+                >
+                  <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold text-primary-800 mb-3">Integrity</h3>
+                  <p className="text-gray-600">
+                    We conduct our business with the highest ethical standards, fostering trust and transparency in all our relationships.
+                  </p>
+                </motion.div>
+              </HoverCardTrigger>
+              <HoverCardContent className="bg-white p-4 shadow-lg rounded-lg w-80">
+                <div className="flex flex-col space-y-2">
+                  <h4 className="font-bold text-lg text-primary-700">Integrity in Action</h4>
+                  <p className="text-sm text-gray-600">
+                    Our commitment to integrity means transparent business practices, honest communication with stakeholders, and upholding ethical standards in all operations. We believe trust is the foundation of lasting business relationships.
+                  </p>
+                  <ul className="text-sm text-gray-600 list-disc pl-5 mt-2">
+                    <li>Transparent supply chain</li>
+                    <li>Fair dealings with partners</li>
+                    <li>Honest product specifications</li>
+                  </ul>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
             
-            <motion.div 
-              className="bg-white p-6 rounded-lg shadow-md text-center hover:shadow-xl transition-shadow duration-300"
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView2 ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              whileHover={{ y: -5, transition: { duration: 0.3 } }}
-            >
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6 mx-auto">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-primary-800 mb-3">Innovation</h3>
-              <p className="text-gray-600">
-                We continuously seek new and better ways to serve our customers, driving progress through creativity and adaptability.
-              </p>
-            </motion.div>
+            <HoverCard openDelay={0} closeDelay={200}>
+              <HoverCardTrigger asChild>
+                <motion.div 
+                  className="bg-white p-6 rounded-lg shadow-md text-center hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={inView2 ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  whileHover={{ y: -5, transition: { duration: 0.3 } }}
+                >
+                  <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold text-primary-800 mb-3">Innovation</h3>
+                  <p className="text-gray-600">
+                    We continuously seek new and better ways to serve our customers, driving progress through creativity and adaptability.
+                  </p>
+                </motion.div>
+              </HoverCardTrigger>
+              <HoverCardContent className="bg-white p-4 shadow-lg rounded-lg w-80">
+                <div className="flex flex-col space-y-2">
+                  <h4 className="font-bold text-lg text-primary-700">Innovation Excellence</h4>
+                  <p className="text-sm text-gray-600">
+                    Our R&D team continuously explores new technologies to improve our products' efficiency and environmental impact. We invest in cutting-edge solutions and foster a culture that encourages creative problem-solving.
+                  </p>
+                  <ul className="text-sm text-gray-600 list-disc pl-5 mt-2">
+                    <li>Advanced manufacturing processes</li>
+                    <li>Proprietary biomass formulations</li>
+                    <li>Innovative testing methodologies</li>
+                  </ul>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
             
-            <motion.div 
-              className="bg-white p-6 rounded-lg shadow-md text-center hover:shadow-xl transition-shadow duration-300"
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView2 ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              whileHover={{ y: -5, transition: { duration: 0.3 } }}
-            >
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6 mx-auto">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-primary-800 mb-3">Sustainability</h3>
-              <p className="text-gray-600">
-                We are committed to environmental stewardship, striving to minimize our ecological footprint and promote sustainable practices.
-              </p>
-            </motion.div>
+            <HoverCard openDelay={0} closeDelay={200}>
+              <HoverCardTrigger asChild>
+                <motion.div 
+                  className="bg-white p-6 rounded-lg shadow-md text-center hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={inView2 ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  whileHover={{ y: -5, transition: { duration: 0.3 } }}
+                >
+                  <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold text-primary-800 mb-3">Sustainability</h3>
+                  <p className="text-gray-600">
+                    We are committed to environmental stewardship, striving to minimize our ecological footprint and promote sustainable practices.
+                  </p>
+                </motion.div>
+              </HoverCardTrigger>
+              <HoverCardContent className="bg-white p-4 shadow-lg rounded-lg w-80">
+                <div className="flex flex-col space-y-2">
+                  <h4 className="font-bold text-lg text-primary-700">Our Sustainability Commitment</h4>
+                  <p className="text-sm text-gray-600">
+                    Sustainability is at the core of everything we do. From sourcing raw materials responsibly to implementing energy-efficient manufacturing processes, we're dedicated to preserving our planet for future generations.
+                  </p>
+                  <ul className="text-sm text-gray-600 list-disc pl-5 mt-2">
+                    <li>Carbon footprint reduction</li>
+                    <li>Waste reduction initiatives</li>
+                    <li>Renewable energy utilization</li>
+                    <li>Water conservation programs</li>
+                  </ul>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
           </div>
         </div>
       </section>
