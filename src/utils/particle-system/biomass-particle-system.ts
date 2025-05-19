@@ -2,7 +2,7 @@
 import { Particle, ParticleSystemOptions } from './types';
 import { ParticleRenderer } from './renderer';
 import { ParticleFactory } from './particle-factory';
-import { applyUpwardFlow, applyDownwardFlow, applyCircularFlow, applyRadialFlow, applyNoiseFlow } from './flow-patterns';
+import { FlowPatterns, applyUpwardFlow, applyDownwardFlow, applyCircularFlow, applyRadialFlow, applyNoiseFlow } from './flow-patterns';
 
 export class BiomassParticleSystem {
   private canvas: HTMLCanvasElement;
@@ -13,6 +13,7 @@ export class BiomassParticleSystem {
   private mousePosition: { x: number, y: number } | null = null;
   private isRunning = false;
   private animationFrame: number | null = null;
+  private flowPatterns: FlowPatterns;
   
   constructor(canvasId: string, options: ParticleSystemOptions = {}) {
     // Find the canvas element
@@ -50,8 +51,9 @@ export class BiomassParticleSystem {
       ...options
     };
     
-    // Initialize the renderer
+    // Initialize the renderer and flow patterns
     this.renderer = new ParticleRenderer(this.ctx, this.options);
+    this.flowPatterns = new FlowPatterns(this.canvas, this.options);
     
     // Create particles
     this.createParticles();
@@ -129,52 +131,25 @@ export class BiomassParticleSystem {
     this.particles = factory.createParticles(count);
   }
   
-  private applyMouseInteraction(particle: Particle): void {
+  private applyMouseInteraction(particle: Particle, delta: number): void {
     if (!this.mousePosition || !this.options.mouseInteraction) return;
     
-    const dx = this.mousePosition.x - particle.x;
-    const dy = this.mousePosition.y - particle.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    const maxDistance = 120;
-    
-    // Interact with nearby particles
-    if (distance < maxDistance && distance > 0) {
-      const force = (1 - distance / maxDistance) * 0.03;
-      particle.speedX += dx * force;
-      particle.speedY += dy * force;
-    }
+    this.flowPatterns.applyMouseInfluence(particle, this.mousePosition, delta);
   }
   
-  private applyFlowPatterns(particle: Particle): void {
+  private applyFlowPatterns(particle: Particle, delta: number): void {
     const intensity = this.options.flowIntensity || 1.0;
     
-    switch (this.options.flowDirection) {
-      case 'upward':
-        applyUpwardFlow(particle, intensity);
-        break;
-      case 'downward':
-        applyDownwardFlow(particle, intensity);
-        break;
-      case 'circular':
-        applyCircularFlow(particle, this.canvas.width / 2, this.canvas.height / 2, intensity);
-        break;
-      case 'radial':
-        applyRadialFlow(particle, this.canvas.width / 2, this.canvas.height / 2, intensity);
-        break;
-      case 'noise':
-        applyNoiseFlow(particle, intensity, Date.now() / 10000);
-        break;
-      default:
-        applyUpwardFlow(particle, intensity);
-    }
+    // Using the FlowPatterns class for more sophisticated flow control
+    this.flowPatterns.applyFlow(particle, delta);
   }
   
-  private updateParticle(particle: Particle): void {
+  private updateParticle(particle: Particle, delta: number): void {
     // Apply flow patterns
-    this.applyFlowPatterns(particle);
+    this.applyFlowPatterns(particle, delta);
     
     // Apply mouse interaction
-    this.applyMouseInteraction(particle);
+    this.applyMouseInteraction(particle, delta);
     
     // Apply maximum speed limit
     const maxSpeed = 2 * (this.options.speedFactor || 1.0);
@@ -205,7 +180,15 @@ export class BiomassParticleSystem {
     else if (particle.y > this.canvas.height) particle.y = 0;
   }
   
-  private animate = (): void => {
+  private animate = (timestamp: number): void => {
+    // Track time for animation
+    static let lastTime = 0;
+    const delta = timestamp - lastTime;
+    lastTime = timestamp;
+    
+    // Update flow patterns time
+    this.flowPatterns.updateTime(delta);
+    
     // Clear the canvas
     this.renderer.clear();
     
@@ -214,7 +197,7 @@ export class BiomassParticleSystem {
     
     // Then update and draw individual particles
     for (const particle of this.particles) {
-      this.updateParticle(particle);
+      this.updateParticle(particle, delta);
     }
     
     this.renderer.drawParticles(this.particles);
@@ -231,7 +214,7 @@ export class BiomassParticleSystem {
   start(): void {
     if (!this.isRunning) {
       this.isRunning = true;
-      this.animate();
+      this.animationFrame = requestAnimationFrame(this.animate);
     }
   }
   
@@ -272,6 +255,7 @@ export class BiomassParticleSystem {
   updateOptions(options: Partial<ParticleSystemOptions>): void {
     this.options = { ...this.options, ...options };
     this.renderer = new ParticleRenderer(this.ctx, this.options);
+    this.flowPatterns = new FlowPatterns(this.canvas, this.options);
     
     // Recreate particles if count or size options changed
     if ('particleCount' in options || 'particleMinSize' in options || 'particleMaxSize' in options || 'densityFactor' in options) {

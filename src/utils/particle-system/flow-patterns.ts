@@ -154,3 +154,47 @@ export class FlowPatterns {
     }
   }
 }
+
+// Export standalone flow pattern functions for backward compatibility
+export function applyUpwardFlow(particle: Particle, intensity: number): void {
+  particle.speedY -= 0.002 * intensity;
+  particle.speedX += (Math.random() - 0.5) * 0.002 * intensity;
+}
+
+export function applyDownwardFlow(particle: Particle, intensity: number): void {
+  particle.speedY += 0.002 * intensity;
+  particle.speedX += (Math.random() - 0.5) * 0.002 * intensity;
+}
+
+export function applyCircularFlow(particle: Particle, centerX: number, centerY: number, intensity: number): void {
+  const dx = particle.x - centerX;
+  const dy = particle.y - centerY;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  
+  const angle = Math.atan2(dy, dx);
+  const newAngle = angle + 0.0005 * intensity;
+  
+  particle.speedX = -Math.sin(newAngle) * 0.5 * intensity;
+  particle.speedY = Math.cos(newAngle) * 0.5 * intensity;
+}
+
+export function applyRadialFlow(particle: Particle, centerX: number, centerY: number, intensity: number): void {
+  const dx = particle.x - centerX;
+  const dy = particle.y - centerY;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  
+  if (distance > 0) {
+    const factor = 0.01 * intensity / distance;
+    particle.speedX += dx * factor;
+    particle.speedY += dy * factor;
+  }
+}
+
+export function applyNoiseFlow(particle: Particle, intensity: number, time: number): void {
+  // Simple noise-based flow
+  const noiseX = Math.sin(particle.x * 0.01 + time) * Math.cos(particle.y * 0.01 + time * 0.5);
+  const noiseY = Math.sin(particle.y * 0.01 + time) * Math.cos(particle.x * 0.01 + time * 0.5);
+  
+  particle.speedX += noiseX * 0.01 * intensity;
+  particle.speedY += noiseY * 0.01 * intensity;
+}
