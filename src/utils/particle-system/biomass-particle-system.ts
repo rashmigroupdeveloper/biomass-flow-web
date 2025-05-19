@@ -1,202 +1,281 @@
 
-import { ParticleSystemOptions, Particle, Vector2D } from './types';
-import { ParticleFactory } from './particle-factory';
-import { FlowPatterns } from './flow-patterns';
+import { Particle, ParticleSystemOptions } from './types';
 import { ParticleRenderer } from './renderer';
+import { ParticleFactory } from './particle-factory';
+import { applyUpwardFlow, applyDownwardFlow, applyCircularFlow, applyRadialFlow, applyNoiseFlow } from './flow-patterns';
 
 export class BiomassParticleSystem {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private particles: Particle[] = [];
-  private options: ParticleSystemOptions;
-  private isRunning: boolean = false;
-  private animationFrameId: number | null = null;
-  private lastUpdateTime: number = 0;
-  private mousePos: Vector2D | null = null;
-  
-  private particleFactory: ParticleFactory;
-  private flowPatterns: FlowPatterns;
   private renderer: ParticleRenderer;
+  private options: ParticleSystemOptions;
+  private mousePosition: { x: number, y: number } | null = null;
+  private isRunning = false;
+  private animationFrame: number | null = null;
   
   constructor(canvasId: string, options: ParticleSystemOptions = {}) {
-    // Set default options
+    // Find the canvas element
+    const canvasElement = document.getElementById(canvasId);
+    if (!canvasElement || !(canvasElement instanceof HTMLCanvasElement)) {
+      throw new Error(`Canvas element with id "${canvasId}" not found.`);
+    }
+    this.canvas = canvasElement;
+    
+    // Get the 2D rendering context
+    const context = this.canvas.getContext('2d');
+    if (!context) {
+      throw new Error('Failed to get 2D rendering context from canvas.');
+    }
+    this.ctx = context;
+    
+    // Set canvas size to match its display size
+    this.resizeCanvas();
+    
+    // Merge default options with provided options
     this.options = {
       particleCount: 150,
       particleMinSize: 1,
-      particleMaxSize: 3,
-      baseHue: 120,
+      particleMaxSize: 4,
+      baseHue: 120, // Default to green
       backgroundColor: 'rgba(46, 125, 50, 0.05)',
-      flowIntensity: 1,
+      flowIntensity: 1.0,
       flowDirection: 'upward',
-      speedFactor: 0.5,
+      speedFactor: 1.0,
       connectionRadius: 100,
       connectionOpacity: 0.1,
       mouseInteraction: true,
       responsive: true,
-      densityFactor: 0.00007,
+      densityFactor: 0.00015,
       ...options
     };
     
-    // Initialize canvas
-    this.canvas = document.getElementById(canvasId) as HTMLCanvasElement;
-    if (!this.canvas) {
-      throw new Error(`Canvas with id "${canvasId}" not found`);
-    }
-    
-    const ctx = this.canvas.getContext('2d');
-    if (!ctx) {
-      throw new Error('Could not get 2D context from canvas');
-    }
-    this.ctx = ctx;
-    
-    // Initialize particle system components
-    this.particleFactory = new ParticleFactory(this.canvas, this.options);
-    this.flowPatterns = new FlowPatterns(this.canvas, this.options);
+    // Initialize the renderer
     this.renderer = new ParticleRenderer(this.ctx, this.options);
     
-    // Setup event listeners
-    this.setupEventListeners();
+    // Create particles
+    this.createParticles();
     
-    // Set initial canvas size
-    this.resizeCanvas();
+    // Add event listeners for mouse interaction and responsive canvas
+    this.setupEventListeners();
+  }
+  
+  private resizeCanvas(): void {
+    // Set canvas dimensions to match its CSS display size
+    this.canvas.width = this.canvas.clientWidth;
+    this.canvas.height = this.canvas.clientHeight;
   }
   
   private setupEventListeners(): void {
-    // Mouse interaction
+    // Handle window resize event for responsive canvas
+    if (this.options.responsive) {
+      window.addEventListener('resize', () => {
+        this.resizeCanvas();
+        this.createParticles(); // Recreate particles to match new canvas size
+      });
+    }
+    
+    // Handle mouse interaction
     if (this.options.mouseInteraction) {
-      this.canvas.addEventListener('mousemove', this.handleMouseMove);
-      this.canvas.addEventListener('mouseleave', this.handleMouseLeave);
-      this.canvas.addEventListener('touchmove', this.handleTouchMove);
-      this.canvas.addEventListener('touchend', this.handleMouseLeave);
-    }
-    
-    // Responsive canvas size
-    if (this.options.responsive) {
-      window.addEventListener('resize', this.handleResize);
-    }
-  }
-  
-  private removeEventListeners(): void {
-    if (this.options.mouseInteraction) {
-      this.canvas.removeEventListener('mousemove', this.handleMouseMove);
-      this.canvas.removeEventListener('mouseleave', this.handleMouseLeave);
-      this.canvas.removeEventListener('touchmove', this.handleTouchMove);
-      this.canvas.removeEventListener('touchend', this.handleMouseLeave);
-    }
-    
-    if (this.options.responsive) {
-      window.removeEventListener('resize', this.handleResize);
-    }
-  }
-  
-  private handleMouseMove = (e: MouseEvent): void => {
-    const rect = this.canvas.getBoundingClientRect();
-    this.mousePos = {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
-    };
-  };
-  
-  private handleTouchMove = (e: TouchEvent): void => {
-    if (e.touches.length > 0) {
-      e.preventDefault();
-      const rect = this.canvas.getBoundingClientRect();
-      this.mousePos = {
-        x: e.touches[0].clientX - rect.left,
-        y: e.touches[0].clientY - rect.top
-      };
-    }
-  };
-  
-  private handleMouseLeave = (): void => {
-    this.mousePos = null;
-  };
-  
-  private handleResize = (): void => {
-    this.resizeCanvas();
-  };
-  
-  private resizeCanvas(): void {
-    if (this.options.responsive) {
-      const parent = this.canvas.parentElement;
-      if (parent) {
-        this.canvas.width = parent.clientWidth;
-        this.canvas.height = parent.clientHeight;
-        
-        // Adjust particle count based on canvas size
-        const area = this.canvas.width * this.canvas.height;
-        const targetCount = Math.floor(area * (this.options.densityFactor || 0.00007));
-        
-        // Only recreate particles if count differs significantly
-        if (Math.abs(targetCount - this.particles.length) > 10) {
-          this.particles = this.particleFactory.createParticles(targetCount);
-        }
-      }
+      this.canvas.addEventListener('mousemove', (e) => {
+        const rect = this.canvas.getBoundingClientRect();
+        this.mousePosition = {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top
+        };
+      });
+      
+      this.canvas.addEventListener('mouseleave', () => {
+        this.mousePosition = null;
+      });
+      
+      // Handle touch events for mobile
+      this.canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        const rect = this.canvas.getBoundingClientRect();
+        this.mousePosition = {
+          x: e.touches[0].clientX - rect.left,
+          y: e.touches[0].clientY - rect.top
+        };
+      }, { passive: false });
+      
+      this.canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const rect = this.canvas.getBoundingClientRect();
+        this.mousePosition = {
+          x: e.touches[0].clientX - rect.left,
+          y: e.touches[0].clientY - rect.top
+        };
+      }, { passive: false });
+      
+      this.canvas.addEventListener('touchend', () => {
+        this.mousePosition = null;
+      });
     }
   }
   
-  start(): void {
-    if (this.isRunning) return;
+  private createParticles(): void {
+    const factory = new ParticleFactory(this.canvas.width, this.canvas.height, this.options);
     
-    this.isRunning = true;
-    this.lastUpdateTime = performance.now();
+    // Calculate number of particles based on canvas area and density factor
+    let count = this.options.particleCount || 150;
+    if (this.options.densityFactor) {
+      const area = this.canvas.width * this.canvas.height;
+      count = Math.floor(area * this.options.densityFactor);
+      // Apply min/max constraints
+      count = Math.max(50, Math.min(500, count));
+    }
     
-    // Create initial particles
-    const count = this.options.particleCount || 150;
-    this.particles = this.particleFactory.createParticles(count);
-    
-    // Start animation loop
-    this.animate();
+    this.particles = factory.createParticles(count);
   }
   
-  stop(): void {
-    this.isRunning = false;
-    if (this.animationFrameId !== null) {
-      cancelAnimationFrame(this.animationFrameId);
-      this.animationFrameId = null;
+  private applyMouseInteraction(particle: Particle): void {
+    if (!this.mousePosition || !this.options.mouseInteraction) return;
+    
+    const dx = this.mousePosition.x - particle.x;
+    const dy = this.mousePosition.y - particle.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const maxDistance = 120;
+    
+    // Interact with nearby particles
+    if (distance < maxDistance && distance > 0) {
+      const force = (1 - distance / maxDistance) * 0.03;
+      particle.speedX += dx * force;
+      particle.speedY += dy * force;
     }
   }
   
-  destroy(): void {
-    this.stop();
-    this.removeEventListeners();
-    this.particles = [];
+  private applyFlowPatterns(particle: Particle): void {
+    const intensity = this.options.flowIntensity || 1.0;
+    
+    switch (this.options.flowDirection) {
+      case 'upward':
+        applyUpwardFlow(particle, intensity);
+        break;
+      case 'downward':
+        applyDownwardFlow(particle, intensity);
+        break;
+      case 'circular':
+        applyCircularFlow(particle, this.canvas.width / 2, this.canvas.height / 2, intensity);
+        break;
+      case 'radial':
+        applyRadialFlow(particle, this.canvas.width / 2, this.canvas.height / 2, intensity);
+        break;
+      case 'noise':
+        applyNoiseFlow(particle, intensity, Date.now() / 10000);
+        break;
+      default:
+        applyUpwardFlow(particle, intensity);
+    }
+  }
+  
+  private updateParticle(particle: Particle): void {
+    // Apply flow patterns
+    this.applyFlowPatterns(particle);
+    
+    // Apply mouse interaction
+    this.applyMouseInteraction(particle);
+    
+    // Apply maximum speed limit
+    const maxSpeed = 2 * (this.options.speedFactor || 1.0);
+    const currentSpeed = Math.sqrt(particle.speedX * particle.speedX + particle.speedY * particle.speedY);
+    
+    if (currentSpeed > maxSpeed) {
+      particle.speedX = (particle.speedX / currentSpeed) * maxSpeed;
+      particle.speedY = (particle.speedY / currentSpeed) * maxSpeed;
+    }
+    
+    // Add a small amount of randomness
+    particle.speedX += (Math.random() - 0.5) * 0.1;
+    particle.speedY += (Math.random() - 0.5) * 0.1;
+    
+    // Apply friction
+    particle.speedX *= 0.98;
+    particle.speedY *= 0.98;
+    
+    // Update position
+    particle.x += particle.speedX;
+    particle.y += particle.speedY;
+    
+    // Handle boundaries - wrap around edges
+    if (particle.x < 0) particle.x = this.canvas.width;
+    else if (particle.x > this.canvas.width) particle.x = 0;
+    
+    if (particle.y < 0) particle.y = this.canvas.height;
+    else if (particle.y > this.canvas.height) particle.y = 0;
   }
   
   private animate = (): void => {
-    if (!this.isRunning) return;
-    
-    const currentTime = performance.now();
-    const delta = currentTime - this.lastUpdateTime;
-    this.lastUpdateTime = currentTime;
-    
-    // Update time for flow patterns
-    this.flowPatterns.updateTime(delta);
-    
-    // Clear canvas
+    // Clear the canvas
     this.renderer.clear();
     
-    // Update and draw particles
-    this.updateParticles(delta);
+    // First draw connections between particles
     this.renderer.drawConnections(this.particles);
+    
+    // Then update and draw individual particles
+    for (const particle of this.particles) {
+      this.updateParticle(particle);
+    }
+    
     this.renderer.drawParticles(this.particles);
     
-    // Request next frame
-    this.animationFrameId = requestAnimationFrame(this.animate);
+    // Continue animation loop if running
+    if (this.isRunning) {
+      this.animationFrame = requestAnimationFrame(this.animate);
+    }
   };
   
-  private updateParticles(delta: number): void {
-    this.particles.forEach(particle => {
-      // Apply flow patterns
-      this.flowPatterns.applyFlow(particle, delta);
-      
-      // Apply mouse influence if enabled
-      if (this.options.mouseInteraction && this.mousePos) {
-        this.flowPatterns.applyMouseInfluence(particle, this.mousePos, delta);
-      }
-      
-      // Check if particle is out of bounds and reset if necessary
-      this.particleFactory.resetParticle(particle);
-    });
+  /**
+   * Start the particle animation
+   */
+  start(): void {
+    if (!this.isRunning) {
+      this.isRunning = true;
+      this.animate();
+    }
+  }
+  
+  /**
+   * Stop the particle animation
+   */
+  stop(): void {
+    this.isRunning = false;
+    if (this.animationFrame !== null) {
+      cancelAnimationFrame(this.animationFrame);
+      this.animationFrame = null;
+    }
+  }
+  
+  /**
+   * Clean up resources and stop animation
+   */
+  destroy(): void {
+    this.stop();
+    
+    // Remove event listeners
+    if (this.options.responsive) {
+      window.removeEventListener('resize', this.resizeCanvas);
+    }
+    
+    if (this.options.mouseInteraction) {
+      this.canvas.removeEventListener('mousemove', () => {});
+      this.canvas.removeEventListener('mouseleave', () => {});
+      this.canvas.removeEventListener('touchstart', () => {});
+      this.canvas.removeEventListener('touchmove', () => {});
+      this.canvas.removeEventListener('touchend', () => {});
+    }
+  }
+  
+  /**
+   * Update system options
+   */
+  updateOptions(options: Partial<ParticleSystemOptions>): void {
+    this.options = { ...this.options, ...options };
+    this.renderer = new ParticleRenderer(this.ctx, this.options);
+    
+    // Recreate particles if count or size options changed
+    if ('particleCount' in options || 'particleMinSize' in options || 'particleMaxSize' in options || 'densityFactor' in options) {
+      this.createParticles();
+    }
   }
 }
