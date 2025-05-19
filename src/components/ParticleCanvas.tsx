@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef, forwardRef, useImperativeHandle, ForwardedRef } from 'react';
-import { BiomassParticleSystem } from '../utils/particle-system';
+import { BiomassParticleSystem } from '../utils/biomass-particles';
 
 export interface ParticleCanvasProps {
   id: string;
