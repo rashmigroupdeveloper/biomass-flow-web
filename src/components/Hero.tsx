@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -39,28 +40,30 @@ const Hero = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Biomass Particle Animation - Updated with lighter background */}
+      {/* Enhanced Biomass Particle Animation with grass-like effect */}
       <ParticleCanvas 
         id="biomassCanvas"
         options={{
-          particleCount: 180,
-          particleMinSize: 1,
-          particleMaxSize: 4,
+          particleCount: 220,
+          particleMinSize: 1.2,
+          particleMaxSize: 4.5,
           baseHue: 120, // Green hue
-          backgroundColor: 'rgba(240, 247, 240, 0.6)', // Much lighter background for better visibility
-          flowIntensity: 1.2,
+          backgroundColor: 'rgba(240, 247, 240, 0.6)', // Lighter background for better visibility
+          flowIntensity: 1.7,
           flowDirection: 'upward',
-          speedFactor: 0.7,
+          speedFactor: 0.8,
           connectionRadius: 150,
           connectionOpacity: 0.15,
           mouseInteraction: true,
           responsive: true,
           densityFactor: 0.0001,
+          grassEffect: true, // Enable grass-like effect
+          particleVariety: true, // Enable varied particle shapes
         }}
       />
       
-      {/* Gradient Overlay - Updated for better text visibility and depth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-white/30 to-white/80 z-10"></div>
+      {/* Enhanced Gradient Overlay for better text visibility and depth */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-white/20 to-white/80 z-10"></div>
       
       {/* Content */}
       <div className="container mx-auto px-6 md:px-12 z-20 pt-20">
@@ -106,7 +109,7 @@ const Hero = () => {
             </Link>
           </motion.div>
           
-          {/* Added subtitle highlighting sustainability */}
+          {/* Sustainability subtitle with enhanced animation */}
           <motion.div 
             className="mt-12 flex items-center"
             variants={itemVariants}
@@ -117,7 +120,7 @@ const Hero = () => {
         </motion.div>
       </div>
       
-      {/* Scroll Indicator - Enhanced with smoother animation */}
+      {/* Enhanced Scroll Indicator with smoother animation */}
       <motion.div 
         className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20"
         initial={{ opacity: 0, y: -10 }}
@@ -138,6 +141,7 @@ const Hero = () => {
             viewBox="0 0 24 24" 
             fill="none" 
             xmlns="http://www.w3.org/2000/svg"
+            className="animate-bounce"
           >
             <path 
               d="M12 5L12 19M12 19L18 13M12 19L6 13" 

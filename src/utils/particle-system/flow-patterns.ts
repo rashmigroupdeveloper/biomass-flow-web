@@ -14,6 +14,10 @@ export class FlowPatterns {
   updateTime(delta: number): void {
     this.time += delta * 0.001;
   }
+
+  updateOptions(options: ParticleSystemOptions): void {
+    this.options = options;
+  }
   
   applyFlow(particle: Particle, delta: number): void {
     const flowType = this.options.flowDirection || 'upward';
@@ -40,11 +44,24 @@ export class FlowPatterns {
   }
   
   private applyUpwardFlow(particle: Particle, intensity: number, speedFactor: number, delta: number): void {
-    // Gentle rising motion
-    particle.speedY -= 0.002 * intensity * delta;
+    // Enhanced upward motion with gentle swaying
+    const verticalPosition = particle.y / this.canvas.height;
     
-    // Add some horizontal drift
-    particle.speedX += (Math.random() - 0.5) * 0.002 * intensity * delta;
+    // Stronger upward movement for particles higher in the canvas
+    const baseUpwardForce = 0.003 * intensity;
+    const heightAdjustedForce = baseUpwardForce * (1 + (1 - verticalPosition) * 0.5);
+    
+    // Apply upward force with natural variation
+    particle.speedY -= heightAdjustedForce * (1 + Math.sin(this.time + particle.x * 0.01) * 0.2) * delta;
+    
+    // Add some horizontal drift with variation based on particle properties
+    const wiggle = Math.sin(this.time * 0.5 + particle.y * 0.02 + particle.hue * 0.1) * 0.001;
+    particle.speedX += wiggle * intensity * delta;
+    
+    // Add more natural randomness
+    if (Math.random() < 0.01) {
+      particle.speedX += (Math.random() - 0.5) * 0.002 * intensity;
+    }
     
     // Apply speed limits
     this.limitSpeed(particle, speedFactor);
@@ -88,11 +105,14 @@ export class FlowPatterns {
     // Horizontal flow with wave pattern
     const yPosition = particle.y / this.canvas.height;
     
-    // Wave effect based on x position and time
-    const waveStrength = Math.sin(particle.x * 0.01 + this.time) * 0.1 * intensity;
+    // Enhanced wave effect based on x position and time
+    const waveStrength = Math.sin(particle.x * 0.01 + this.time) * 0.15 * intensity;
     
     particle.speedX = 0.5 * intensity * delta * 0.01;
     particle.speedY = waveStrength * delta * 0.01;
+    
+    // Add vertical drift based on the wave's position
+    particle.speedY += Math.cos(particle.x * 0.02 + this.time * 1.5) * 0.05 * delta * 0.01;
     
     // Apply speed limits
     this.limitSpeed(particle, speedFactor);
@@ -103,11 +123,18 @@ export class FlowPatterns {
   }
   
   private applyCustomFlow(particle: Particle, intensity: number, speedFactor: number, delta: number): void {
-    // Left to right flow for process section
+    // Left to right flow for process section with organic movement
     particle.speedX += 0.001 * intensity * delta;
     
-    // Slight vertical drift
-    particle.speedY += (Math.random() - 0.5) * 0.001 * intensity * delta;
+    // More dynamic vertical drift based on horizontal position
+    const horizontalPosition = particle.x / this.canvas.width;
+    const verticalDrift = Math.sin(horizontalPosition * Math.PI * 4 + this.time) * 0.0015 * intensity;
+    particle.speedY += verticalDrift * delta;
+    
+    // Add some natural randomness
+    if (Math.random() < 0.02) {
+      particle.speedY += (Math.random() - 0.5) * 0.001 * intensity;
+    }
     
     // Apply speed limits
     this.limitSpeed(particle, speedFactor);
@@ -139,9 +166,7 @@ export class FlowPatterns {
     particle.speedY *= 0.99;
   }
   
-  applyMouseInfluence(particle: Particle, mousePos: Vector2D | null, delta: number): void {
-    if (!mousePos) return;
-    
+  applyMouseInfluence(particle: Particle, mousePos: Vector2D): void {
     const dx = mousePos.x - particle.x;
     const dy = mousePos.y - particle.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
@@ -149,8 +174,9 @@ export class FlowPatterns {
     
     if (distance < influence) {
       const force = (influence - distance) / influence;
-      particle.speedX += (dx / distance) * force * 0.02 * delta;
-      particle.speedY += (dy / distance) * force * 0.02 * delta;
+      const repelFactor = 0.03;
+      particle.speedX -= (dx / distance) * force * repelFactor;
+      particle.speedY -= (dy / distance) * force * repelFactor;
     }
   }
 }
