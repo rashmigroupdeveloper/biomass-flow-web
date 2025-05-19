@@ -139,8 +139,7 @@ export class FlowPatterns {
     particle.speedY *= 0.99;
   }
   
-  // Fixed method to accept only two parameters instead of three
-  applyMouseInfluence(particle: Particle, mousePos: Vector2D | null): void {
+  applyMouseInfluence(particle: Particle, mousePos: Vector2D | null, delta: number): void {
     if (!mousePos) return;
     
     const dx = mousePos.x - particle.x;
@@ -150,10 +149,8 @@ export class FlowPatterns {
     
     if (distance < influence) {
       const force = (influence - distance) / influence;
-      // Using a fixed delta value or getting it from class state would be better
-      const effectiveDelta = 16; // Approximately 60fps delta time
-      particle.speedX += (dx / distance) * force * 0.02 * effectiveDelta;
-      particle.speedY += (dy / distance) * force * 0.02 * effectiveDelta;
+      particle.speedX += (dx / distance) * force * 0.02 * delta;
+      particle.speedY += (dy / distance) * force * 0.02 * delta;
     }
   }
 }
