@@ -69,6 +69,4 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
   );
 });
 
-ParticleCanvas.displayName = 'ParticleCanvas';
-
 export default ParticleCanvas;

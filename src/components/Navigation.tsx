@@ -1,331 +1,364 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { X, Menu, ChevronDown } from 'lucide-react';
+
+// Updated menu structure with subcategories
+const menuItems = [
+  {
+    name: 'Home',
+    path: '/',
+    preview: '/placeholder.svg'
+  },
+  {
+    name: 'About',
+    path: '/about',
+    preview: '/placeholder.svg'
+  },
+  {
+    name: 'Products',
+    path: '/products',
+    preview: '/placeholder.svg',
+    submenu: [
+      {
+        name: 'Bio Pellets',
+        path: '/products/bio-pellets',
+        preview: '/placeholder.svg'
+      },
+      {
+        name: 'Activated Carbon',
+        path: '/products/activated-carbon',
+        preview: '/placeholder.svg'
+      },
+      {
+        name: 'Charcoal Briquettes',
+        path: '/products/charcoal-briquettes',
+        preview: '/placeholder.svg'
+      }
+    ]
+  },
+  {
+    name: 'Process',
+    path: '/process',
+    preview: '/placeholder.svg'
+  },
+  {
+    name: 'Impact',
+    path: '/impact',
+    preview: '/placeholder.svg'
+  },
+  {
+    name: 'Contact',
+    path: '/contact',
+    preview: '/placeholder.svg'
+  }
+];
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const location = useLocation();
+  const [activeItem, setActiveItem] = useState<number | null>(null);
+  const [expandedSubmenus, setExpandedSubmenus] = useState<number[]>([]);
   
   useEffect(() => {
-    // Close mobile menu when route changes
-    setIsOpen(false);
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
     
-    // Handle scroll events
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+    return () => {
+      document.body.style.overflow = 'auto';
     };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [location]);
-
-  // Links data
-  const links = [
-    { name: 'Home', path: '/' },
-    { name: 'About', path: '/about' },
-    { name: 'Products', hasChildren: true, children: [
-      { name: 'Bio Pellets', path: '/products/bio-pellets' },
-      { name: 'Activated Carbon', path: '/products/activated-carbon' },
-      { name: 'Charcoal Briquettes', path: '/products/charcoal-briquettes' },
-    ]},
-    { name: 'Process', path: '/process' },
-    { name: 'Impact', path: '/impact' },
-    { name: 'Contact', path: '/contact' }
-  ];
-
-  const headerClasses = cn(
-    'fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b',
-    {
-      'bg-white/95 backdrop-blur-sm shadow-sm border-gray-200': scrolled,
-      'bg-transparent border-transparent': !scrolled
-    }
-  );
-
-  // Animation variants
-  const navigationVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      transition: { 
-        type: 'spring',
-        stiffness: 100,
-        duration: 0.3,
-        delay: 0.1
-      }
-    }
+  }, [isOpen]);
+  
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+    setExpandedSubmenus([]); // Reset expanded submenus when toggling main menu
   };
 
-  const navItemVariants = {
-    hidden: { opacity: 0, y: -10 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: 0.05 * i,
-        duration: 0.5,
-        ease: [0.22, 1, 0.36, 1]
-      }
-    })
+  const toggleSubmenu = (index: number) => {
+    setExpandedSubmenus(prev => 
+      prev.includes(index) 
+        ? prev.filter(i => i !== index) 
+        : [...prev, index]
+    );
+  };
+
+  // Menu button variants for animation
+  const menuButtonVariants = {
+    open: { 
+      rotate: 90, 
+      scale: 1.2,
+      transition: { duration: 0.4, type: "spring", stiffness: 300, damping: 20 }
+    },
+    closed: { 
+      rotate: 0, 
+      scale: 1,
+      transition: { duration: 0.4, type: "spring", stiffness: 300, damping: 20 }
+    }
   };
   
-  const mobileNavVariants = {
-    closed: { 
-      x: '100%',
+  // Menu icon variants for animation
+  const menuIconVariants = {
+    open: { opacity: 0, y: -10 },
+    closed: { opacity: 1, y: 0 },
+  };
+  
+  const closeIconVariants = {
+    open: { opacity: 1, y: 0 },
+    closed: { opacity: 0, y: 10 },
+  };
+  
+  // Menu overlay variants
+  const menuOverlayVariants = {
+    initial: { opacity: 0 },
+    animate: { 
+      opacity: 1,
+      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
+    },
+    exit: { 
       opacity: 0,
-      transition: {
-        type: 'spring',
-        stiffness: 300,
-        damping: 30
+      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
+    }
+  };
+
+  // Menu item staggered animation
+  const menuListVariants = {
+    open: {
+      transition: { 
+        staggerChildren: 0.07,
+        delayChildren: 0.2,
+        staggerDirection: 1
       }
     },
-    open: { 
-      x: '0%',
-      opacity: 1,
-      transition: {
-        type: 'spring',
-        stiffness: 300,
-        damping: 30,
-        staggerChildren: 0.07,
-        delayChildren: 0.1
+    closed: {
+      transition: { 
+        staggerChildren: 0.05,
+        staggerDirection: -1
       }
     }
   };
   
-  const mobileNavItemVariants = {
-    closed: { x: 50, opacity: 0 },
-    open: { x: 0, opacity: 1 }
-  };
-  
-  const mobileChildLinkVariants = {
-    closed: { x: 20, opacity: 0 },
-    open: { x: 0, opacity: 1 }
-  };
-  
-  // Custom hover effect for desktop menu items
-  const hoverEffect = {
-    whileHover: { scale: 1.03 }
+  const menuItemVariants = {
+    open: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 300, damping: 24 }
+    },
+    closed: {
+      y: 50,
+      opacity: 0,
+      transition: { duration: 0.2 }
+    }
   };
 
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  
+  const submenuItemVariants = {
+    open: {
+      height: "auto",
+      opacity: 1,
+      transition: { 
+        height: { duration: 0.3, ease: "easeOut" },
+        opacity: { duration: 0.3, ease: "easeOut" }
+      }
+    },
+    closed: {
+      height: 0,
+      opacity: 0,
+      transition: { 
+        height: { duration: 0.3, ease: "easeOut" },
+        opacity: { duration: 0.2, ease: "easeOut" }
+      }
+    }
+  };
+
+  // Preview image animation
+  const previewVariants = {
+    initial: { opacity: 0, scale: 0.9 },
+    animate: { 
+      opacity: 1, 
+      scale: 1,
+      transition: { duration: 0.5 }
+    },
+    exit: { 
+      opacity: 0, 
+      scale: 0.9,
+      transition: { duration: 0.3 }
+    }
+  };
+
   return (
-    <header className={headerClasses}>
-      <motion.div 
-        className="container mx-auto px-6 py-4 flex items-center justify-between"
-        variants={navigationVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {/* Logo */}
-        <Link to="/" className="z-50 relative">
-          <motion.div 
-            className="flex items-center gap-2" 
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <img 
-              src="/logo.png" 
-              alt="Rashmi 6 Paradigm Logo" 
-              className="h-10 w-auto"
-            />
-            <span className="text-xl font-medium text-primary-800">Rashmi 6</span>
-          </motion.div>
-        </Link>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-1">
-          {links.map((link, index) => (
-            <motion.div
-              key={link.name}
-              custom={index}
-              variants={navItemVariants}
-              initial="hidden"
-              animate="visible"
-              className="relative"
-              onHoverStart={() => setHoveredIndex(index)}
-              onHoverEnd={() => setHoveredIndex(null)}
-            >
-              {link.hasChildren ? (
-                <div className="relative group">
-                  <button 
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors hover:text-primary-600 ${
-                      location.pathname.includes('/products') ? 'text-primary-600' : (scrolled ? 'text-gray-800' : 'text-gray-800')
-                    }`}
-                  >
-                    {link.name}
-                    <span className="ml-1">▾</span>
-                  </button>
-                  
-                  <motion.div 
-                    className="absolute left-0 mt-2 w-56 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden z-50 invisible group-hover:visible"
-                    initial={{ opacity: 0, y: 10, height: 0 }}
-                    animate={{ 
-                      opacity: hoveredIndex === index ? 1 : 0, 
-                      y: hoveredIndex === index ? 0 : 10,
-                      height: hoveredIndex === index ? 'auto' : 0
-                    }}
-                    transition={{ 
-                      duration: 0.2,
-                      ease: [0.04, 0.62, 0.23, 0.98] 
-                    }}
-                  >
-                    <div className="py-1">
-                      {link.children?.map((childLink, childIndex) => (
-                        <motion.div
-                          key={childLink.name}
-                          variants={mobileChildLinkVariants}
-                          whileHover={{ backgroundColor: 'rgba(76, 175, 80, 0.1)' }}
-                        >
-                          <Link
-                            to={childLink.path}
-                            className={`block px-4 py-2 text-sm ${
-                              location.pathname === childLink.path 
-                              ? 'text-primary-600 font-medium' 
-                              : 'text-gray-700'
-                            }`}
-                          >
-                            {childLink.name}
-                          </Link>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </motion.div>
-                </div>
-              ) : (
-                <motion.div {...hoverEffect}>
-                  <Link
-                    to={link.path}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors hover:text-primary-600 ${
-                      location.pathname === link.path 
-                      ? 'text-primary-600' 
-                      : (scrolled ? 'text-gray-800' : 'text-gray-800')
-                    }`}
-                  >
-                    {link.name}
-                  </Link>
-                </motion.div>
-              )}
-              
-              {location.pathname === link.path && !link.hasChildren && (
-                <motion.div
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500 rounded-full mx-4"
-                  layoutId="navbar-indicator"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                />
-              )}
-            </motion.div>
-          ))}
-          
-          <motion.div
-            variants={navItemVariants}
-            custom={links.length}
-            initial="hidden"
-            animate="visible"
-          >
-            <Link 
-              to="/contact" 
-              className="ml-4 px-4 py-2 rounded-md bg-primary-500 text-white hover:bg-primary-600 transition-colors duration-300"
-            >
-              Get in Touch
+    <>
+      <header className="fixed top-0 left-0 w-full z-50 py-6 px-6 md:px-12">
+        <div className="flex justify-between items-center">
+          <div className="logo z-10">
+            <Link to="/" className="font-serif text-2xl font-bold text-primary-800 hover:text-primary-600 transition-colors">
+              Rashmi<span className="text-primary-500">6</span>
             </Link>
-          </motion.div>
-        </nav>
-        
-        {/* Mobile Menu Button */}
-        <div className="md:hidden z-50">
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setIsOpen(!isOpen)}
-            className={`p-2 rounded-md ${
-              isOpen ? 'text-gray-900' : (scrolled ? 'text-gray-900' : 'text-gray-800')
-            }`}
-            aria-label={isOpen ? "Close menu" : "Open menu"}
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </motion.button>
-        </div>
-      </motion.div>
-      
-      {/* Mobile Navigation */}
-      <motion.div
-        className="md:hidden fixed inset-y-0 right-0 w-full bg-white z-40 shadow-xl"
-        variants={mobileNavVariants}
-        initial="closed"
-        animate={isOpen ? "open" : "closed"}
-      >
-        <div className="h-full flex flex-col pt-20 pb-6 px-6 overflow-y-auto">
-          <div className="flex-grow">
-            {links.map((link, index) => (
-              <motion.div
-                key={link.name}
-                variants={mobileNavItemVariants}
-                className="py-2"
-              >
-                {link.hasChildren ? (
-                  <div className="mb-2">
-                    <h3 className="font-medium text-lg text-gray-900 mb-2">{link.name}</h3>
-                    <div className="pl-4 border-l-2 border-primary-200 space-y-2">
-                      {link.children?.map((childLink) => (
-                        <motion.div
-                          key={childLink.name}
-                          variants={mobileChildLinkVariants}
-                          whileTap={{ scale: 0.97 }}
-                        >
-                          <Link
-                            to={childLink.path}
-                            className={`block py-1 ${
-                              location.pathname === childLink.path 
-                              ? 'text-primary-600 font-medium' 
-                              : 'text-gray-700'
-                            }`}
-                            onClick={() => setIsOpen(false)}
-                          >
-                            {childLink.name}
-                          </Link>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <motion.div whileTap={{ scale: 0.97 }}>
-                    <Link
-                      to={link.path}
-                      className={`block py-2 text-lg ${
-                        location.pathname === link.path 
-                        ? 'text-primary-600 font-medium' 
-                        : 'text-gray-900'
-                      }`}
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {link.name}
-                    </Link>
-                  </motion.div>
-                )}
-              </motion.div>
-            ))}
           </div>
           
-          <motion.div variants={mobileNavItemVariants} className="pt-4 mt-6 border-t border-gray-200">
-            <Link 
-              to="/contact" 
-              className="block w-full py-3 px-4 rounded-md text-center font-medium bg-primary-500 text-white hover:bg-primary-600 transition-colors duration-300"
-              onClick={() => setIsOpen(false)}
+          <motion.button 
+            className="nav-toggle z-10 w-12 h-12 flex items-center justify-center bg-white bg-opacity-20 backdrop-blur-md rounded-full hover:bg-opacity-40 transition-all shadow-md"
+            onClick={toggleMenu}
+            aria-label="Toggle Menu"
+            variants={menuButtonVariants}
+            animate={isOpen ? "open" : "closed"}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <motion.div 
+              className="absolute"
+              variants={menuIconVariants}
+              animate={isOpen ? "open" : "closed"}
+              initial="closed"
+              transition={{ duration: 0.2 }}
             >
-              Get in Touch
-            </Link>
-          </motion.div>
+              <Menu className="w-6 h-6 text-primary-800" />
+            </motion.div>
+            
+            <motion.div 
+              className="absolute"
+              variants={closeIconVariants}
+              animate={isOpen ? "open" : "closed"}
+              initial="closed"
+              transition={{ duration: 0.2 }}
+            >
+              <X className="w-6 h-6 text-primary-800" />
+            </motion.div>
+          </motion.button>
         </div>
-      </motion.div>
-    </header>
+      </header>
+      
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div 
+            className="fixed inset-0 bg-white z-40 overflow-hidden"
+            variants={menuOverlayVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
+              <div className="flex items-center justify-center relative">
+                <motion.nav 
+                  className="text-center lg:text-left w-full px-6 md:px-12 max-h-[90vh] overflow-y-auto"
+                  variants={menuListVariants}
+                  initial="closed"
+                  animate="open"
+                  exit="closed"
+                >
+                  <ul className="space-y-6 md:space-y-8">
+                    {menuItems.map((item, index) => (
+                      <motion.li 
+                        key={item.name}
+                        variants={menuItemVariants}
+                        className="relative"
+                        onMouseEnter={() => setActiveItem(index)}
+                        onMouseLeave={() => setActiveItem(null)}
+                      >
+                        {item.submenu ? (
+                          <>
+                            <button 
+                              onClick={() => toggleSubmenu(index)}
+                              className="text-3xl md:text-5xl font-serif text-primary-800 hover:text-primary-600 transition-colors relative flex items-center justify-center lg:justify-start group w-full"
+                            >
+                              <span className="relative z-10">{item.name}</span>
+                              <ChevronDown 
+                                className={`ml-2 transition-transform duration-300 ${expandedSubmenus.includes(index) ? 'rotate-180' : ''}`}
+                                size={expandedSubmenus.includes(index) ? 28 : 24}
+                              />
+                              <span className="absolute bottom-0 left-0 w-0 h-1 bg-primary-500 transition-all duration-500 ease-in-out group-hover:w-full"></span>
+                            </button>
+                            
+                            <motion.ul 
+                              variants={submenuItemVariants}
+                              initial="closed"
+                              animate={expandedSubmenus.includes(index) ? "open" : "closed"}
+                              className="overflow-hidden pl-6 md:pl-10"
+                            >
+                              {item.submenu.map((subItem) => (
+                                <motion.li 
+                                  key={subItem.name}
+                                  variants={{
+                                    open: { opacity: 1, y: 0 },
+                                    closed: { opacity: 0, y: 20 }
+                                  }}
+                                  className="my-3 md:my-4"
+                                >
+                                  <Link 
+                                    to={subItem.path} 
+                                    className="text-xl md:text-2xl font-serif text-primary-700 hover:text-primary-500 transition-colors relative inline-block group"
+                                    onClick={() => setIsOpen(false)}
+                                  >
+                                    <span className="relative z-10">{subItem.name}</span>
+                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-400 transition-all duration-500 ease-in-out group-hover:w-full"></span>
+                                  </Link>
+                                </motion.li>
+                              ))}
+                            </motion.ul>
+                          </>
+                        ) : (
+                          <Link 
+                            to={item.path} 
+                            className="text-3xl md:text-5xl font-serif text-primary-800 hover:text-primary-600 transition-colors relative block group"
+                            onClick={() => setIsOpen(false)}
+                          >
+                            <span className="relative z-10">{item.name}</span>
+                            <span className="absolute bottom-0 left-0 w-0 h-1 bg-primary-500 transition-all duration-500 ease-in-out group-hover:w-full"></span>
+                          </Link>
+                        )}
+                      </motion.li>
+                    ))}
+                  </ul>
+                </motion.nav>
+              </div>
+              
+              <div className="hidden lg:block">
+                <div className="h-full w-full relative overflow-hidden bg-gray-50">
+                  <AnimatePresence>
+                    {activeItem !== null && (
+                      <motion.div
+                        key={activeItem}
+                        className="absolute inset-0"
+                        variants={previewVariants}
+                        initial="initial"
+                        animate="animate"
+                        exit="exit"
+                      >
+                        <img 
+                          src={menuItems[activeItem].preview} 
+                          alt={menuItems[activeItem].name} 
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-primary-500 bg-opacity-20 backdrop-blur-sm"></div>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <motion.h2 
+                            className="text-5xl text-white font-serif font-bold drop-shadow-lg"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2, duration: 0.5 }}
+                          >
+                            {menuItems[activeItem].name}
+                          </motion.h2>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  
+                  {activeItem === null && (
+                    <div className="flex items-center justify-center h-full bg-primary-50">
+                      <p className="text-primary-800 text-opacity-30 text-2xl font-serif">
+                        Hover for preview
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
