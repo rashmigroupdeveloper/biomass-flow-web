@@ -2,7 +2,7 @@
 import { Particle, ParticleSystemOptions } from './types';
 import { ParticleRenderer } from './renderer';
 import { ParticleFactory } from './particle-factory';
-import { FlowPatterns, applyUpwardFlow, applyDownwardFlow, applyCircularFlow, applyRadialFlow, applyNoiseFlow } from './flow-patterns';
+import { FlowPatterns } from './flow-patterns';
 
 export class BiomassParticleSystem {
   private canvas: HTMLCanvasElement;
@@ -14,6 +14,7 @@ export class BiomassParticleSystem {
   private isRunning = false;
   private animationFrame: number | null = null;
   private flowPatterns: FlowPatterns;
+  private lastTime = 0; // Move lastTime to be a class property instead of static in method
   
   constructor(canvasId: string, options: ParticleSystemOptions = {}) {
     // Find the canvas element
@@ -138,8 +139,6 @@ export class BiomassParticleSystem {
   }
   
   private applyFlowPatterns(particle: Particle, delta: number): void {
-    const intensity = this.options.flowIntensity || 1.0;
-    
     // Using the FlowPatterns class for more sophisticated flow control
     this.flowPatterns.applyFlow(particle, delta);
   }
@@ -181,10 +180,9 @@ export class BiomassParticleSystem {
   }
   
   private animate = (timestamp: number): void => {
-    // Track time for animation
-    static let lastTime = 0;
-    const delta = timestamp - lastTime;
-    lastTime = timestamp;
+    // Track time for animation - using class property instead of static local variable
+    const delta = timestamp - this.lastTime;
+    this.lastTime = timestamp;
     
     // Update flow patterns time
     this.flowPatterns.updateTime(delta);
