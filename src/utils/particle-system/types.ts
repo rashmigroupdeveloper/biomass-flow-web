@@ -26,6 +26,9 @@ export interface Particle {
   hue: number;
   opacity?: number;
   type?: number;
+  length?: number; // For grass blade length
+  width?: number;  // For grass blade width
+  angle?: number;  // For grass blade angle
 }
 
 export type Vector2D = {

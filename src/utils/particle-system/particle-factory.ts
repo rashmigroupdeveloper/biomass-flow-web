@@ -26,27 +26,44 @@ export class ParticleFactory {
       // For grass effect, adjust particle distribution
       if (grassEffect) {
         // Make more particles at the bottom, fewer at the top
-        y = canvasHeight * (1 - Math.pow(Math.random(), 2));
+        y = canvasHeight * (1 - Math.pow(Math.random(), 1.5));
         
         // Smaller particles at the bottom, larger at the top
         const normalizedY = 1 - (y / canvasHeight); // 0 at bottom, 1 at top
         size = minSize + (maxSize - minSize) * (normalizedY * 0.8 + Math.random() * 0.2);
+        
+        // Additional grass-specific properties
+        const length = size * (1 + normalizedY * 3); // Longer blades higher up
+        const width = size * 0.5;
+        const angle = (Math.random() - 0.5) * 0.3; // Slight random angle
+        
+        particles.push({
+          x: Math.random() * canvasWidth,
+          y: y,
+          size: size,
+          speedX: (Math.random() - 0.5) * 0.2,
+          speedY: -Math.random() * 0.3 - 0.1, // Mostly upward movement
+          hue: baseHue + Math.random() * 15 - 10 + normalizedY * 15, // More yellow-green at tips
+          type: Math.floor(Math.random() * 4), // For variety in particle shapes
+          length: length, // Grass blade length
+          width: width,  // Grass blade width
+          angle: angle   // Grass blade angle
+        });
+      } else {
+        // Standard particles
+        const hueVariation = 10;
+        const hue = baseHue + Math.random() * hueVariation - (hueVariation/2);
+        
+        particles.push({
+          x: Math.random() * canvasWidth,
+          y: y,
+          size: size,
+          speedX: (Math.random() - 0.5) * 0.5,
+          speedY: (Math.random() - 0.5) * 0.5,
+          hue: hue,
+          type: Math.floor(Math.random() * 4) // For variety in particle shapes
+        });
       }
-      
-      // Add variation to the hue based on vertical position
-      const normalizedY = 1 - (y / canvasHeight);
-      const hueVariation = grassEffect ? 15 : 10;
-      const hue = baseHue + Math.random() * hueVariation - (hueVariation/2) + normalizedY * 10;
-      
-      particles.push({
-        x: Math.random() * canvasWidth,
-        y: y,
-        size: size,
-        speedX: (Math.random() - 0.5) * 0.5,
-        speedY: grassEffect ? -Math.random() * 0.2 - 0.1 : (Math.random() - 0.5) * 0.5,
-        hue: hue,
-        type: Math.floor(Math.random() * 4) // For variety in particle shapes
-      });
     }
     
     return particles;
@@ -73,19 +90,35 @@ export class ParticleFactory {
         
         // Reset speed for a natural re-entry
         particle.speedX = (Math.random() - 0.5) * 0.3;
-        particle.speedY = -Math.random() * 0.2 - 0.1;
+        particle.speedY = -Math.random() * 0.3 - 0.1;
         
         // Refresh particle appearance
         particle.size = Math.random() * (maxSize - minSize) + minSize;
-        particle.hue = baseHue + Math.random() * 20 - 10;
+        
+        // More vibrant green at the bottom
+        particle.hue = baseHue - 5 + Math.random() * 10;
+        
+        // Reset grass-specific properties if they exist
+        if (particle.length !== undefined) {
+          particle.length = particle.size * 1.5;
+        }
+        if (particle.width !== undefined) {
+          particle.width = particle.size * 0.5;
+        }
+        if (particle.angle !== undefined) {
+          particle.angle = (Math.random() - 0.5) * 0.3;
+        }
       } else {
         particle.y = this.canvas.height + 50;
       }
     } else if (particle.y > this.canvas.height + 50) {
-      // If using grass effect, respawn at the top edges to create circulation
+      // If using grass effect, respawn at slightly different position
       if (grassEffect) {
-        particle.y = -10;
+        particle.y = this.canvas.height * 0.9; // Appear near bottom
         particle.x = Math.random() * this.canvas.width;
+        
+        // Start with upward momentum
+        particle.speedY = -Math.random() * 0.2 - 0.1;
       } else {
         particle.y = -50;
       }
@@ -94,11 +127,16 @@ export class ParticleFactory {
     // Occasionally reset particle properties for variety
     if (Math.random() < 0.01) {
       particle.size = Math.random() * (maxSize - minSize) + minSize;
-      particle.hue = baseHue + Math.random() * 20 - 10;
       
       if (grassEffect) {
-        // For grass effect, ensure upward movement predominates
+        // For grass effect, vary the green hues with height
+        const normalizedY = 1 - (particle.y / this.canvas.height);
+        particle.hue = baseHue + Math.random() * 15 - 10 + normalizedY * 15;
+        
+        // Ensure upward movement predominates
         particle.speedY = -Math.random() * 0.3 - 0.1;
+      } else {
+        particle.hue = baseHue + Math.random() * 20 - 10;
       }
     }
     

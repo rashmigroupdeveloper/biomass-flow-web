@@ -1,4 +1,3 @@
-
 import { Particle, Vector2D, ParticleSystemOptions } from './types';
 
 export class FlowPatterns {
@@ -23,6 +22,13 @@ export class FlowPatterns {
     const flowType = this.options.flowDirection || 'upward';
     const intensity = this.options.flowIntensity || 1;
     const speedFactor = this.options.speedFactor || 0.5;
+    const grassEffect = this.options.grassEffect || false;
+    
+    // Apply special grass effect if enabled
+    if (grassEffect) {
+      this.applyGrassFlow(particle, intensity, speedFactor, delta);
+      return;
+    }
     
     // Base flow patterns
     switch (flowType) {
@@ -41,6 +47,40 @@ export class FlowPatterns {
       default:
         this.applyUpwardFlow(particle, intensity, speedFactor, delta);
     }
+  }
+  
+  private applyGrassFlow(particle: Particle, intensity: number, speedFactor: number, delta: number): void {
+    // Stronger upward movement for grass effect
+    const verticalPosition = particle.y / this.canvas.height;
+    
+    // More vertical movement at the top (like grass blade tips)
+    const baseUpwardForce = 0.004 * intensity;
+    const heightAdjustedForce = baseUpwardForce * (1 + (1 - verticalPosition) * 0.8);
+    
+    // Apply stronger upward force for grass-like appearance
+    particle.speedY -= heightAdjustedForce * (1 + Math.sin(this.time + particle.x * 0.02) * 0.3) * delta;
+    
+    // Add horizontal swaying for grass-like movement
+    const swayIntensity = 0.0015 * intensity;
+    const swayFrequency = 2.0;
+    const swayEffect = Math.sin(this.time * swayFrequency + particle.y * 0.01) * swayIntensity * delta;
+    
+    // More swaying for particles higher up (like grass tips)
+    const heightBasedSway = swayEffect * (1 + (1 - verticalPosition) * 1.5);
+    particle.speedX += heightBasedSway;
+    
+    // Add more natural randomness
+    if (Math.random() < 0.02) {
+      const smallRandom = (Math.random() - 0.5) * 0.001 * intensity;
+      particle.speedX += smallRandom * delta;
+    }
+    
+    // Apply speed limits but allow faster upward movement for grass
+    this.limitSpeed(particle, speedFactor, true);
+    
+    // Update position
+    particle.x += particle.speedX * speedFactor * delta;
+    particle.y += particle.speedY * speedFactor * delta;
   }
   
   private applyUpwardFlow(particle: Particle, intensity: number, speedFactor: number, delta: number): void {
@@ -144,26 +184,32 @@ export class FlowPatterns {
     particle.y += particle.speedY * speedFactor * delta;
   }
   
-  private limitSpeed(particle: Particle, speedFactor: number): void {
-    const maxSpeed = 0.5 * speedFactor;
+  private limitSpeed(particle: Particle, speedFactor: number, isGrass: boolean = false): void {
+    // For grass, allow faster upward movement
+    const maxSpeedY = isGrass ? 0.8 * speedFactor : 0.5 * speedFactor;
+    const maxSpeedX = 0.4 * speedFactor;
     
     // Limit horizontal speed
-    if (particle.speedX > maxSpeed) {
-      particle.speedX = maxSpeed;
-    } else if (particle.speedX < -maxSpeed) {
-      particle.speedX = -maxSpeed;
+    if (particle.speedX > maxSpeedX) {
+      particle.speedX = maxSpeedX;
+    } else if (particle.speedX < -maxSpeedX) {
+      particle.speedX = -maxSpeedX;
     }
     
-    // Limit vertical speed
-    if (particle.speedY > maxSpeed) {
-      particle.speedY = maxSpeed;
-    } else if (particle.speedY < -maxSpeed) {
-      particle.speedY = -maxSpeed;
+    // Limit vertical speed, but allow faster upward (negative Y) for grass
+    if (particle.speedY > maxSpeedY) {
+      particle.speedY = maxSpeedY;
+    } else if (particle.speedY < -maxSpeedY * 1.5) { // Allow 50% faster upward for grass
+      particle.speedY = -maxSpeedY * 1.5;
     }
     
-    // Apply some damping
-    particle.speedX *= 0.99;
-    particle.speedY *= 0.99;
+    // Apply some damping, less for grass to maintain upward momentum
+    const dampFactor = isGrass ? 0.995 : 0.99;
+    particle.speedX *= dampFactor;
+    
+    if (!isGrass || particle.speedY > 0) {
+      particle.speedY *= dampFactor;
+    }
   }
   
   applyMouseInfluence(particle: Particle, mousePos: Vector2D): void {

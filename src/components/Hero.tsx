@@ -1,10 +1,13 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import ParticleCanvas from './ParticleCanvas';
+import ParticleCanvas, { ParticleCanvasRef } from './ParticleCanvas';
 
 const Hero = () => {
+  // Ref for particle system
+  const particleRef = useRef<ParticleCanvasRef>(null);
+  
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -33,37 +36,56 @@ const Hero = () => {
     // Add smooth scroll behavior
     document.documentElement.style.scrollBehavior = 'smooth';
     
+    // Optional: Add scroll interaction with particles
+    const handleScroll = () => {
+      if (particleRef.current?.getSystem()) {
+        const scrollY = window.scrollY;
+        const viewportHeight = window.innerHeight;
+        const scrollRatio = Math.min(scrollY / viewportHeight, 1);
+        
+        // Adjust particle behavior based on scroll
+        particleRef.current.getSystem()?.updateOptions({
+          flowIntensity: 2.0 + scrollRatio * 0.5,
+          baseHue: 120 - scrollRatio * 10
+        });
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    
     return () => {
       document.documentElement.style.scrollBehavior = 'auto';
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Enhanced Biomass Particle Animation with grass-like effect */}
+      {/* Enhanced Biomass Particle Animation with more prominent grass-like effect */}
       <ParticleCanvas 
+        ref={particleRef}
         id="biomassCanvas"
         options={{
-          particleCount: 220,
-          particleMinSize: 1.2,
-          particleMaxSize: 4.5,
+          particleCount: 280,
+          particleMinSize: 1.5,
+          particleMaxSize: 6.0,
           baseHue: 120, // Green hue
-          backgroundColor: 'rgba(240, 247, 240, 0.6)', // Lighter background for better visibility
-          flowIntensity: 1.7,
+          backgroundColor: 'rgba(240, 247, 240, 0.5)', // Lighter background for better visibility
+          flowIntensity: 2.0,
           flowDirection: 'upward',
-          speedFactor: 0.8,
-          connectionRadius: 150,
-          connectionOpacity: 0.15,
+          speedFactor: 0.9,
+          connectionRadius: 160,
+          connectionOpacity: 0.18,
           mouseInteraction: true,
           responsive: true,
-          densityFactor: 0.0001,
-          grassEffect: true, // Enable grass-like effect
+          densityFactor: 0.00015,
+          grassEffect: true, // Enhance grass-like effect
           particleVariety: true, // Enable varied particle shapes
         }}
       />
       
       {/* Enhanced Gradient Overlay for better text visibility and depth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-white/20 to-white/80 z-10"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/30 to-white/70 z-10"></div>
       
       {/* Content */}
       <div className="container mx-auto px-6 md:px-12 z-20 pt-20">

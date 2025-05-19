@@ -23,21 +23,21 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
   useEffect(() => {
     // Initialize particle system when component mounts
     const defaultOptions = {
-      particleCount: 180,
-      particleMinSize: 1.2,
-      particleMaxSize: 4.5,
+      particleCount: 220,
+      particleMinSize: 1.5,
+      particleMaxSize: 6.0,
       baseHue: 120, // Green hue
       backgroundColor: 'rgba(46, 125, 50, 0.05)', // Very subtle green background
-      flowIntensity: 1.5,
+      flowIntensity: 2.0,
       flowDirection: 'upward',
-      speedFactor: 0.8,
-      connectionRadius: 140,
-      connectionOpacity: 0.15,
+      speedFactor: 0.9,
+      connectionRadius: 160,
+      connectionOpacity: 0.18,
       mouseInteraction: true,
       responsive: true,
-      densityFactor: 0.0001,
-      grassEffect: true, // New option for grass-like effect
-      particleVariety: true, // New option for more varied particles
+      densityFactor: 0.00015,
+      grassEffect: true, // Enhanced grass effect
+      particleVariety: true, // Enhanced variety in particles
     };
 
     const mergedOptions = { ...defaultOptions, ...options };

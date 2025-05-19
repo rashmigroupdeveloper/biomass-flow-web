@@ -1,4 +1,3 @@
-
 import { ParticleSystemOptions, Particle, Vector2D } from './types';
 import { ParticleFactory } from './particle-factory';
 import { FlowPatterns } from './flow-patterns';
@@ -218,20 +217,27 @@ export class BiomassParticleSystem {
   }
   
   private applyGrassEffect(particle: Particle, delta: number): void {
-    // Make particles sway like grass
-    const swayFactor = 0.2;
-    const swaySpeed = 1.5;
+    // Enhanced grass-like effect
+    const swayFactor = 0.3; // Increased from 0.2
+    const swaySpeed = 1.8;  // Increased from 1.5
     
     // Bottom particles move less, top particles sway more (like grass)
     const verticalPosition = 1 - (particle.y / this.canvas.height);
     const swayAmount = verticalPosition * swayFactor;
     
-    // Gentle horizontal swaying based on time and position
-    particle.x += Math.sin(this.time * swaySpeed + particle.y * 0.01) * swayAmount * delta * 0.05;
+    // Enhanced horizontal swaying based on time and position
+    particle.x += Math.sin(this.time * swaySpeed + particle.y * 0.01) * swayAmount * delta * 0.08;
     
     // Enhance upward movement for particles at the top
-    if (verticalPosition > 0.7) {
-      particle.speedY -= 0.0002 * verticalPosition * delta;
+    if (verticalPosition > 0.5) {
+      // Stronger upward force for more prominent grass effect
+      const upwardForce = 0.0005 * verticalPosition * delta;
+      particle.speedY -= upwardForce;
+    }
+    
+    // Add slight random movement for a more natural look
+    if (Math.random() < 0.01) {
+      particle.speedX += (Math.random() - 0.5) * 0.001;
     }
   }
 }
