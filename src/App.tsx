@@ -13,8 +13,6 @@ import CharcoalBriquettes from "@/pages/CharcoalBriquettes";
 import QualityPolicy from "@/pages/QualityPolicy";
 import Certificates from "@/pages/Certificates";
 import Contact from "@/pages/Contact";
-import Media from "@/pages/Media";
-import Process from "@/pages/Process";
 import NotFound from "@/pages/NotFound";
 import PageTransition from "@/components/PageTransition";
 
@@ -39,8 +37,7 @@ const App = () => {
                 <Route path="/policy" element={<QualityPolicy />} />
                 <Route path="/certificates" element={<Certificates />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/media" element={<Media />} />
-                <Route path="/process" element={<Process />} />
+                <Route path="/process" element={<BioPellets />} /> {/* Temporary route until proper Process page is created */}
                 <Route path="/impact" element={<About />} /> {/* Temporary route until proper Impact page is created */}
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
