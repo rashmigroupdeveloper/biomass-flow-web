@@ -1,5 +1,4 @@
-
-import { Particle, ParticleSystemOptions } from './types';
+import { Particle, ParticleSystemOptions, Vector2D } from './types';
 import { ParticleRenderer } from './renderer';
 import { ParticleFactory } from './particle-factory';
 import { FlowPatterns } from './flow-patterns';
@@ -10,7 +9,7 @@ export class BiomassParticleSystem {
   private particles: Particle[] = [];
   private renderer: ParticleRenderer;
   private options: ParticleSystemOptions;
-  private mousePosition: { x: number, y: number } | null = null;
+  private mousePosition: Vector2D | null = null;
   private isRunning = false;
   private animationFrame: number | null = null;
   private flowPatterns: FlowPatterns;
@@ -135,8 +134,7 @@ export class BiomassParticleSystem {
   private applyMouseInteraction(particle: Particle, delta: number): void {
     if (!this.mousePosition || !this.options.mouseInteraction) return;
     
-    // Fix: Pass only two arguments instead of three
-    // The FlowPatterns.applyMouseInfluence method should expect (particle, mousePosition) 
+    // Fix: Pass only two arguments as expected by the method signature
     this.flowPatterns.applyMouseInfluence(particle, this.mousePosition);
   }
   
