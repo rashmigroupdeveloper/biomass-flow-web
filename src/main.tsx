@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
@@ -20,7 +19,7 @@ const detectDeviceCapabilities = () => {
     // Or if it has a low number of logical processors
     (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2) ||
     // Or check for memory constraints (not supported in all browsers)
-    //@ts-ignore - deviceMemory is not in all browser types
+    //@ts-expect-error - deviceMemory is not in all browser types
     (navigator.deviceMemory && navigator.deviceMemory < 4);
     
   // Set a global variable that can be used throughout the app
