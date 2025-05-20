@@ -430,11 +430,27 @@ export class EnhancedBiomassParticleSystem {
       const flowDirection = this.options.flowDirection || 'upward';
       const flowIntensity = this.options.flowIntensity || 1;
 
-      // Fix type checking issues by using strict equality with string literal types
+      // Fix type checking issues by using type assertion or separate cases
       if (flowDirection === 'upward') {
         // Slight upward bias
         p.speedY -= 0.01 * flowIntensity * normalizedDelta;
       } 
+      else if (flowDirection === 'downward') {
+        p.speedY += 0.01 * flowIntensity * normalizedDelta;
+      }
+      else if (flowDirection === 'leftward') {
+        p.speedX -= 0.01 * flowIntensity * normalizedDelta;
+      }
+      else if (flowDirection === 'rightward') {
+        p.speedX += 0.01 * flowIntensity * normalizedDelta;
+      }
+      else if (flowDirection === 'radial') {
+        const dx = p.x - this.canvas.width / 2;
+        const dy = p.y - this.canvas.height / 2;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        p.speedX += (dx / distance) * 0.01 * flowIntensity * normalizedDelta;
+        p.speedY += (dy / distance) * 0.01 * flowIntensity * normalizedDelta;
+      }
       else if (flowDirection === 'circular') {
         // Circular flow around center
         p.angle += 0.01 * flowIntensity * normalizedDelta;
@@ -456,10 +472,6 @@ export class EnhancedBiomassParticleSystem {
         // Left to right flow with vertical variation
         p.speedX += 0.01 * flowIntensity * normalizedDelta;
         p.speedY += (Math.random() - 0.5) * 0.01 * flowIntensity * normalizedDelta;
-      }
-      else {
-        // Default behavior for other flow directions
-        // downward, leftward, rightward, radial
       }
 
       // Apply wave motion if enabled
