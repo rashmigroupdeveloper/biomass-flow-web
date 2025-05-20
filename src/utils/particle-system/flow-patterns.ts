@@ -1,4 +1,3 @@
-
 import { Particle, Vector2D, ParticleSystemOptions } from './types';
 
 export class FlowPatterns {
@@ -21,21 +20,20 @@ export class FlowPatterns {
     const speedFactor = this.options.speedFactor || 0.5;
     
     // Base flow patterns
-    switch (flowType) {
-      case 'upward':
-        this.applyUpwardFlow(particle, intensity, speedFactor, delta);
-        break;
-      case 'circular':
-        this.applyCircularFlow(particle, intensity, speedFactor, delta);
-        break;
-      case 'wave':
-        this.applyWaveFlow(particle, intensity, speedFactor, delta);
-        break;
-      case 'custom':
-        this.applyCustomFlow(particle, intensity, speedFactor, delta);
-        break;
-      default:
-        this.applyUpwardFlow(particle, intensity, speedFactor, delta);
+    if (flowType === 'upward') {
+      this.applyUpwardFlow(particle, intensity, speedFactor, delta);
+    }
+    else if (flowType === 'circular') {
+      this.applyCircularFlow(particle, intensity, speedFactor, delta);
+    }
+    else if (flowType === 'wave') {
+      this.applyWaveFlow(particle, intensity, speedFactor, delta);
+    }
+    else if (flowType === 'custom') {
+      this.applyCustomFlow(particle, intensity, speedFactor, delta);
+    }
+    else {
+      this.applyUpwardFlow(particle, intensity, speedFactor, delta);
     }
   }
   
