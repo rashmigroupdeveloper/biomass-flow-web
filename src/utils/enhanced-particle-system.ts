@@ -430,35 +430,36 @@ export class EnhancedBiomassParticleSystem {
       const flowDirection = this.options.flowDirection || 'upward';
       const flowIntensity = this.options.flowIntensity || 1;
 
-      switch (flowDirection) {
-        case 'upward':
-          // Slight upward bias
-          p.speedY -= 0.01 * flowIntensity * normalizedDelta;
-          break;
-        case 'circular':
-          // Circular flow around center
-          p.angle += 0.01 * flowIntensity * normalizedDelta;
-          p.x = this.canvas.width / 2 + Math.cos(p.angle) * p.radius;
-          p.y = this.canvas.height / 2 + Math.sin(p.angle) * p.radius;
-          continue; // Skip regular position update
-        case 'wave':
-          // Wave-like horizontal motion
-          p.x += p.speedX * normalizedDelta;
-          if (p.oscillationPhase !== undefined) {
-            p.y = p.y + Math.sin(p.oscillationPhase) * 2;
-            if (p.oscillationSpeed !== undefined) {
-              p.oscillationPhase += p.oscillationSpeed * normalizedDelta;
-            }
+      // Fix type checking issues by using strict equality with string literal types
+      if (flowDirection === 'upward') {
+        // Slight upward bias
+        p.speedY -= 0.01 * flowIntensity * normalizedDelta;
+      } 
+      else if (flowDirection === 'circular') {
+        // Circular flow around center
+        p.angle += 0.01 * flowIntensity * normalizedDelta;
+        p.x = this.canvas.width / 2 + Math.cos(p.angle) * p.radius;
+        p.y = this.canvas.height / 2 + Math.sin(p.angle) * p.radius;
+        continue; // Skip regular position update
+      }
+      else if (flowDirection === 'wave') {
+        // Wave-like horizontal motion
+        p.x += p.speedX * normalizedDelta;
+        if (p.oscillationPhase !== undefined) {
+          p.y = p.y + Math.sin(p.oscillationPhase) * 2;
+          if (p.oscillationSpeed !== undefined) {
+            p.oscillationPhase += p.oscillationSpeed * normalizedDelta;
           }
-          break;
-        case 'custom':
-          // Left to right flow with vertical variation
-          p.speedX += 0.01 * flowIntensity * normalizedDelta;
-          p.speedY += (Math.random() - 0.5) * 0.01 * flowIntensity * normalizedDelta;
-          break;
-        default:
-          // Default behavior
-          break;
+        }
+      }
+      else if (flowDirection === 'custom') {
+        // Left to right flow with vertical variation
+        p.speedX += 0.01 * flowIntensity * normalizedDelta;
+        p.speedY += (Math.random() - 0.5) * 0.01 * flowIntensity * normalizedDelta;
+      }
+      else {
+        // Default behavior for other flow directions
+        // downward, leftward, rightward, radial
       }
 
       // Apply wave motion if enabled
