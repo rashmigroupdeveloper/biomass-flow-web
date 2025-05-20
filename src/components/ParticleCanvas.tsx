@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, forwardRef, useImperativeHandle, ForwardedRef } from 'react';
 import { BiomassParticleSystem } from '../utils/particle-system';
 import { EnhancedBiomassParticleSystem } from '../utils/enhanced-particle-system';
@@ -43,7 +42,6 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
       responsive: true,
       densityFactor: isLowPerformance ? 0.00005 : 0.00009,
       useHardwareAcceleration: true, // Enable hardware acceleration
-      lowPerformanceMode: isLowPerformance, // Pass the performance mode flag
     };
 
     // Merge with any provided options, but ensure performance settings are applied
@@ -51,7 +49,6 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
       ...defaultOptions,
       ...options,
       // Always override these options based on performance mode
-      lowPerformanceMode: isLowPerformance,
       particleCount: options?.particleCount
         ? (isLowPerformance ? Math.floor(options.particleCount * 0.6) : options.particleCount)
         : defaultOptions.particleCount,
@@ -96,6 +93,8 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
     />
   );
 });
+
+ParticleCanvas.displayName = 'ParticleCanvas';
 
 export default ParticleCanvas;
 
