@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -202,6 +203,8 @@ const Navbar: React.FC = () => {
             
             <NavItem to="/process" label="Process" isActive={location.pathname === '/process'} />
             <NavItem to="/impact" label="Impact" isActive={location.pathname === '/impact'} />
+            <NavItem to="/sustainability" label="Sustainability" isActive={location.pathname === '/sustainability'} />
+            <NavItem to="/csr" label="CSR" isActive={location.pathname === '/csr'} />
             <NavItem to="/certificates" label="Certificates" isActive={location.pathname === '/certificates'} />
             <NavItem to="/contact" label="Contact" isActive={location.pathname === '/contact'} />
           </nav>
@@ -334,6 +337,32 @@ const Navbar: React.FC = () => {
                 }
               >
                 Impact
+              </NavLink>
+              <NavLink
+                to="/sustainability"
+                className={({ isActive }) =>
+                  cn(
+                    "block px-3 py-2 rounded-md text-base font-medium",
+                    isActive
+                      ? "bg-green-50 text-green-700"
+                      : "text-gray-700 hover:bg-gray-50 hover:text-green-600"
+                  )
+                }
+              >
+                Sustainability
+              </NavLink>
+              <NavLink
+                to="/csr"
+                className={({ isActive }) =>
+                  cn(
+                    "block px-3 py-2 rounded-md text-base font-medium",
+                    isActive
+                      ? "bg-green-50 text-green-700"
+                      : "text-gray-700 hover:bg-gray-50 hover:text-green-600"
+                  )
+                }
+              >
+                CSR
               </NavLink>
               <NavLink
                 to="/certificates"

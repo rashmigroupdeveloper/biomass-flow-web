@@ -48,6 +48,16 @@ const menuItems = [
     preview: '/placeholder.svg'
   },
   {
+    name: 'Sustainability',
+    path: '/sustainability',
+    preview: '/placeholder.svg'
+  },
+  {
+    name: 'CSR',
+    path: '/csr',
+    preview: '/placeholder.svg'
+  },
+  {
     name: 'Contact',
     path: '/contact',
     preview: '/placeholder.svg'

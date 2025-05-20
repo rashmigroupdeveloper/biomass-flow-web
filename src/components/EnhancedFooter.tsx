@@ -64,13 +64,13 @@ const EnhancedFooter = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/products/activated-carbon" className="text-gray-300 hover:text-primary-400 transition-colors duration-300 flex items-center">
-                  <span className="mr-2">›</span> Activated Carbon
+                <Link to="/sustainability" className="text-gray-300 hover:text-primary-400 transition-colors duration-300 flex items-center">
+                  <span className="mr-2">›</span> Sustainability
                 </Link>
               </li>
               <li>
-                <Link to="/products/charcoal-briquettes" className="text-gray-300 hover:text-primary-400 transition-colors duration-300 flex items-center">
-                  <span className="mr-2">›</span> Charcoal Briquettes
+                <Link to="/csr" className="text-gray-300 hover:text-primary-400 transition-colors duration-300 flex items-center">
+                  <span className="mr-2">›</span> CSR
                 </Link>
               </li>
               <li>

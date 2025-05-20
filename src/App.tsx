@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -15,6 +16,8 @@ import Contact from "@/pages/Contact";
 import NotFound from "@/pages/NotFound";
 import Process from "@/pages/Process";
 import Impact from "@/pages/Impact";
+import CSR from "@/pages/CSR";
+import Sustainability from "@/pages/Sustainability";
 import PageTransition from "@/components/PageTransition";
 import ExampleFixedImage from "@/pages/ExampleFixedImage";
 import { Helmet, HelmetProvider } from 'react-helmet-async';
@@ -100,6 +103,8 @@ const App: React.FC = () => {
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/process" element={<Process />} />
                   <Route path="/impact" element={<Impact />} />
+                  <Route path="/csr" element={<CSR />} />
+                  <Route path="/sustainability" element={<Sustainability />} />
                   <Route path="/example-fixed-image" element={<ExampleFixedImage />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
