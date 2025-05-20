@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -8,8 +7,12 @@ const Footer = () => {
       <div className="container mx-auto px-6 md:px-12 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
-            <Link to="/" className="font-serif text-2xl font-bold mb-4 inline-block">
-              Rashmi<span className="text-primary-400">6</span>
+            <Link to="/" className="inline-block mb-4">
+              <img 
+                src="/logo.png" 
+                alt="Rashmi6 Logo" 
+                className="h-12 w-auto"
+              />
             </Link>
             <p className="text-gray-400 mb-6">
               Leading the green revolution in energy with sustainable biomass solutions.

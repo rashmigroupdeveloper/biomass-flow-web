@@ -71,3 +71,59 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+## Troubleshooting
+
+### Fixing Image URL Issues
+
+If you encounter the error: `Invalid image URL: Expected a base64-encoded data URL with an image MIME type, but got a value without the 'data:' prefix.`, this indicates a problem with the format of base64-encoded images in your application.
+
+To fix this issue:
+
+1. Use the `ImageFix` component for any image that might be loaded as a data URL:
+
+```jsx
+import ImageFix from '@/components/ImageFix';
+
+// Replace this:
+<img src={imageUrl} alt="Description" />
+
+// With this:
+<ImageFix src={imageUrl} alt="Description" />
+```
+
+2. For programmatic image loading, use the utility functions:
+
+```typescript
+import { validateBase64ImageUrl, urlToBase64 } from '@/utils/image-utils';
+
+// Fix a data URL
+const fixedDataUrl = validateBase64ImageUrl(dataUrl);
+
+// Convert a regular URL to a data URL
+const dataUrl = await urlToBase64(regularUrl);
+```
+
+### Fixing Manifest Icon Issues
+
+If you see errors related to manifest icons like:
+`Error while trying to use the following icon from the Manifest: http://localhost:8080/apple-touch-icon.png (Download error or resource isn't a valid image)`
+
+Make sure all the required icons are available in your public directory:
+
+- favicon.ico (48x48)
+- favicon-16x16.png
+- favicon-32x32.png
+- apple-touch-icon.png (180x180)
+- android-chrome-192x192.png
+- android-chrome-512x512.png
+
+If the icons are not available, you can generate them from your logo using the script in `scripts/generate-icons.js`:
+
+```bash
+# Install sharp if not already installed
+npm install --save-dev sharp
+
+# Run the icon generation script
+node scripts/generate-icons.js
+```

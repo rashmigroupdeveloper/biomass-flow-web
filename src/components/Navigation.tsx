@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -192,8 +191,12 @@ const Navigation = () => {
       <header className="fixed top-0 left-0 w-full z-50 py-6 px-6 md:px-12">
         <div className="flex justify-between items-center">
           <div className="logo z-10">
-            <Link to="/" className="font-serif text-2xl font-bold text-primary-800 hover:text-primary-600 transition-colors">
-              Rashmi<span className="text-primary-500">6</span>
+            <Link to="/" className="flex items-center">
+              <img 
+                src="/logo.png" 
+                alt="Rashmi6 Logo" 
+                className="h-10 md:h-12 w-auto"
+              />
             </Link>
           </div>
           
