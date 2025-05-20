@@ -1,3 +1,4 @@
+
 /**
  * Enhanced Biomass Particle System with trailing effects
  *
@@ -9,6 +10,7 @@
  */
 
 import { EnhancedParticleSystemOptions } from './particle-system/enhanced-types';
+import { FlowDirection } from './particle-system/types';
 
 interface TrailPoint {
   x: number;
@@ -59,8 +61,13 @@ export class EnhancedBiomassParticleSystem {
   private isRunning: boolean = false;
   private animationFrameId: number | null = null;
   private time: number = 0;
+  private isLowPerformanceMode: boolean;
 
   constructor(canvasId: string, options: EnhancedParticleSystemOptions = {}) {
+    // Check for low performance mode
+    this.isLowPerformanceMode = typeof window !== 'undefined' && 
+                                window.BIOMASS_LOW_PERFORMANCE_MODE === true;
+    
     // Canvas setup
     const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
     if (!canvas) {
@@ -76,26 +83,39 @@ export class EnhancedBiomassParticleSystem {
 
     // Configuration options with defaults
     this.options = {
-      particleCount: 150,
+      particleCount: this.isLowPerformanceMode ? 50 : 150, // Reduce particles in low performance mode
       particleMinSize: 1,
-      particleMaxSize: 5,
+      particleMaxSize: this.isLowPerformanceMode ? 3 : 5, // Smaller particles in low performance mode
       baseHue: 120, // Green
       backgroundColor: 'rgba(255, 255, 255, 0.85)',
       flowIntensity: 1.5,
       flowDirection: 'upward',
       speedFactor: 0.5,
-      connectionRadius: 180,
+      connectionRadius: this.isLowPerformanceMode ? 100 : 180, // Reduce connection radius in low performance
       connectionOpacity: 0.25,
-      mouseInteraction: true,
+      mouseInteraction: !this.isLowPerformanceMode, // Disable mouse interaction in low performance
       responsive: true,
-      densityFactor: 0.00012,
-      trailEffect: true,
-      trailLength: 0.92, // Controls how long trails persist (0-1, higher = longer)
-      particleGlow: true,
-      elongateParticles: true,
+      densityFactor: this.isLowPerformanceMode ? 0.00003 : 0.00012, // Reduce density in low performance
+      trailEffect: !this.isLowPerformanceMode, // Disable trails in low performance mode
+      trailLength: this.isLowPerformanceMode ? 0.7 : 0.92, // Shorter trails in low performance
+      particleGlow: !this.isLowPerformanceMode, // Disable glow in low performance
+      elongateParticles: !this.isLowPerformanceMode, // Disable elongation in low performance
       waveMotion: true,
       ...options
     };
+
+    // Override with user options, but still enforce low performance constraints
+    if (this.isLowPerformanceMode) {
+      if (this.options.particleCount && this.options.particleCount > 75) {
+        this.options.particleCount = 75;
+      }
+      if (this.options.densityFactor && this.options.densityFactor > 0.00005) {
+        this.options.densityFactor = 0.00005;
+      }
+      this.options.trailEffect = false;
+      this.options.particleGlow = false;
+      this.options.connectionRadius = Math.min(this.options.connectionRadius || 100, 100);
+    }
 
     // Event bindings
     this._onResize = this._onResize.bind(this);
@@ -229,7 +249,13 @@ export class EnhancedBiomassParticleSystem {
   private _adjustParticleCount(): void {
     if (!this.options.densityFactor) return;
 
-    const targetCount = Math.floor(this.canvas.width * this.canvas.height * this.options.densityFactor);
+    let targetCount = Math.floor(this.canvas.width * this.canvas.height * this.options.densityFactor);
+    
+    // Apply cap for low performance mode
+    if (this.isLowPerformanceMode && targetCount > 75) {
+      targetCount = 75;
+    }
+    
     const currentCount = this.particles.length;
 
     if (targetCount > currentCount) {
@@ -307,7 +333,7 @@ export class EnhancedBiomassParticleSystem {
       radius: Math.random() * Math.min(this.canvas.width, this.canvas.height) * 0.4,
       // For trail effect
       trail: [],
-      trailMaxLength: 10 + Math.floor(Math.random() * 15), // Varies trail length per particle
+      trailMaxLength: this.isLowPerformanceMode ? 5 : (10 + Math.floor(Math.random() * 15)), // Shorter trails in low performance
     };
   }
 
@@ -376,7 +402,12 @@ export class EnhancedBiomassParticleSystem {
 
     // Update and draw particles
     this._updateParticles(deltaTime);
-    this._drawConnections();
+    
+    // Only draw connections if not in low performance mode or if explicitly turned on
+    if (!this.isLowPerformanceMode || (this.options.connectionRadius && this.options.connectionRadius > 0)) {
+      this._drawConnections();
+    }
+    
     this._drawParticles();
 
     // Continue animation loop
@@ -430,7 +461,7 @@ export class EnhancedBiomassParticleSystem {
       const flowDirection = this.options.flowDirection || 'upward';
       const flowIntensity = this.options.flowIntensity || 1;
 
-      // Fix type checking issues by using separate cases for each flow direction
+      // Correctly handle each flow direction case
       if (flowDirection === 'upward') {
         // Slight upward bias
         p.speedY -= 0.01 * flowIntensity * normalizedDelta;
@@ -522,36 +553,73 @@ export class EnhancedBiomassParticleSystem {
   private _drawConnections(): void {
     const maxDistance = this.options.connectionRadius || 180;
     const connectionOpacity = this.options.connectionOpacity || 0.25;
+    
+    // Performance optimization: Skip drawing connections in low performance mode
+    if (this.isLowPerformanceMode) {
+      return;
+    }
 
     this.ctx.lineWidth = 0.5;
-
+    
+    // Spatial grid optimization for connections
+    const gridSize = maxDistance;
+    const grid: Record<string, EnhancedParticle[]> = {};
+    
+    // Place particles in grid cells
+    this.particles.forEach(particle => {
+      const cellX = Math.floor(particle.x / gridSize);
+      const cellY = Math.floor(particle.y / gridSize);
+      const key = `${cellX},${cellY}`;
+      
+      if (!grid[key]) {
+        grid[key] = [];
+      }
+      
+      grid[key].push(particle);
+    });
+    
+    // Process each particle
     for (let i = 0; i < this.particles.length; i++) {
       const p1 = this.particles[i];
-
-      for (let j = i + 1; j < this.particles.length; j++) {
-        const p2 = this.particles[j];
-        const dx = p1.x - p2.x;
-        const dy = p1.y - p2.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-
-        if (distance < maxDistance) {
-          // Opacity based on distance
-          const opacity = (1 - distance / maxDistance) * connectionOpacity;
-
-          // Extract hue from color for consistent connections
-          let hue = 120; // Default green hue
-          if (p1.color.startsWith('hsl')) {
-            const match = p1.color.match(/hsl\(([^,]+),/);
-            if (match && match[1]) {
-              hue = parseFloat(match[1]);
+      const cellX = Math.floor(p1.x / gridSize);
+      const cellY = Math.floor(p1.y / gridSize);
+      
+      // Check only neighboring cells
+      for (let x = cellX - 1; x <= cellX + 1; x++) {
+        for (let y = cellY - 1; y <= cellY + 1; y++) {
+          const key = `${x},${y}`;
+          const cellParticles = grid[key] || [];
+          
+          for (let j = 0; j < cellParticles.length; j++) {
+            const p2 = cellParticles[j];
+            
+            // Skip self and already processed pairs
+            if (p1 === p2 || i >= this.particles.indexOf(p2)) continue;
+            
+            const dx = p1.x - p2.x;
+            const dy = p1.y - p2.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < maxDistance) {
+              // Opacity based on distance
+              const opacity = (1 - distance / maxDistance) * connectionOpacity;
+              
+              // Extract hue from color for consistent connections
+              let hue = 120; // Default green hue
+              if (p1.color.startsWith('hsl')) {
+                const match = p1.color.match(/hsl\(([^,]+),/);
+                if (match && match[1]) {
+                  hue = parseFloat(match[1]);
+                }
+              }
+              
+              this.ctx.beginPath();
+              this.ctx.strokeStyle = `hsla(${hue}, 70%, 60%, ${opacity})`;
+              this.ctx.moveTo(p1.x, p1.y);
+              this.ctx.lineTo(p2.x, p2.y);
+              this.ctx.stroke();
             }
           }
-
-          this.ctx.beginPath();
-          this.ctx.strokeStyle = `hsla(${hue}, 70%, 60%, ${opacity})`;
-          this.ctx.moveTo(p1.x, p1.y);
-          this.ctx.lineTo(p2.x, p2.y);
-          this.ctx.stroke();
         }
       }
     }
@@ -562,43 +630,21 @@ export class EnhancedBiomassParticleSystem {
    * @private
    */
   private _drawParticles(): void {
-    const isLowPerformance = window.BIOMASS_LOW_PERFORMANCE_MODE;
-
-    // In low performance mode, skip some particles and simplify drawing
-    const particlesToDraw = isLowPerformance
-      ? this.particles.filter((_, i) => i % 2 === 0) // Draw only half the particles
-      : this.particles;
-
-    // Determine trail length based on performance mode
-    const maxTrailLength = isLowPerformance ? 2 : 5;
-
-    for (let i = 0; i < particlesToDraw.length; i++) {
-      const p = particlesToDraw[i];
+    for (let i = 0; i < this.particles.length; i++) {
+      const p = this.particles[i];
 
       // Draw trails first if enabled
       if (this.options.trailEffect && p.trail && p.trail.length > 0) {
-        // In low performance mode, draw fewer trail points
-        const trailPointsToDraw = isLowPerformance
-          ? p.trail.filter((_, i) => i % 2 === 0).slice(0, maxTrailLength)
-          : p.trail;
-
-        for (let t = 0; t < trailPointsToDraw.length; t++) {
-          const trailPoint = trailPointsToDraw[t];
-          const trailOpacity = p.opacity * (1 - t / trailPointsToDraw.length); // Fade out based on position in trail
+        for (let t = 0; t < p.trail.length; t++) {
+          const trailPoint = p.trail[t];
+          const trailOpacity = p.opacity * (1 - t / p.trail.length); // Fade out based on position in trail
 
           this.ctx.save();
           this.ctx.translate(trailPoint.x, trailPoint.y);
           this.ctx.rotate(trailPoint.rotation);
 
-          // Draw trail segment with simplified shape in low performance mode
-          if (isLowPerformance) {
-            this.ctx.beginPath();
-            this.ctx.arc(0, 0, trailPoint.size * 0.8, 0, Math.PI * 2);
-            this.ctx.fillStyle = p.color.replace(')', `, ${trailOpacity * 0.4})`).replace('rgb', 'rgba');
-            this.ctx.fill();
-          } else {
-            this._drawParticleShape(p, trailPoint.size * 0.8, trailOpacity * 0.5);
-          }
+          // Draw trail segment
+          this._drawParticleShape(p, trailPoint.size * 0.8, trailOpacity * 0.5);
 
           this.ctx.restore();
         }
@@ -609,8 +655,8 @@ export class EnhancedBiomassParticleSystem {
       this.ctx.translate(p.x, p.y);
       this.ctx.rotate(p.rotation);
 
-      // Draw with glow effect if enabled and not in low performance mode
-      if (this.options.particleGlow && !isLowPerformance) {
+      // Draw with glow effect if enabled
+      if (this.options.particleGlow) {
         // Add subtle glow
         const glowSize = p.size * 2;
         const gradient = this.ctx.createRadialGradient(
@@ -635,15 +681,8 @@ export class EnhancedBiomassParticleSystem {
         this.ctx.fillRect(-glowSize, -glowSize, glowSize * 2, glowSize * 2);
       }
 
-      // Draw the actual particle - simplified in low performance mode
-      if (isLowPerformance) {
-        this.ctx.beginPath();
-        this.ctx.arc(0, 0, p.size, 0, Math.PI * 2);
-        this.ctx.fillStyle = p.color.replace(')', `, ${p.opacity})`).replace('rgb', 'rgba');
-        this.ctx.fill();
-      } else {
-        this._drawParticleShape(p, p.size, p.opacity);
-      }
+      // Draw the actual particle
+      this._drawParticleShape(p, p.size, p.opacity);
 
       this.ctx.restore();
     }
@@ -657,13 +696,26 @@ export class EnhancedBiomassParticleSystem {
    * @private
    */
   private _drawParticleShape(p: EnhancedParticle, size: number, opacity: number): void {
+    // Skip expensive gradient creation in low performance mode
+    if (this.isLowPerformanceMode) {
+      // Simple, fast circle drawing
+      this.ctx.globalAlpha = opacity;
+      this.ctx.beginPath();
+      this.ctx.arc(0, 0, size, 0, Math.PI * 2);
+      this.ctx.fill();
+      this.ctx.globalAlpha = 1;
+      return;
+    }
+    
+    // More complex drawing for higher performance devices
     // Create gradient for more organic look
     const gradient = this.ctx.createRadialGradient(
-      p.x, p.y, 0,  // Start position and radius
-      p.x, p.y, Math.max(0.1, p.size)  // Ensure minimum radius of 0.1
+      0, 0, 0,  // Start position and radius (center of current transform)
+      0, 0, Math.max(0.1, size)  // Ensure minimum radius of 0.1
     );
+    
     const color = p.color;
-
+    
     // Extract hue, saturation, lightness for consistent gradient
     let hue = 120, saturation = 70, lightness = 50;
     if (color.startsWith('hsl')) {
@@ -674,13 +726,13 @@ export class EnhancedBiomassParticleSystem {
         lightness = parseFloat(match[3]);
       }
     }
-
+    
     gradient.addColorStop(0, `hsla(${hue}, ${saturation}%, ${lightness}%, ${opacity})`);
     gradient.addColorStop(1, `hsla(${hue}, ${saturation}%, ${lightness}%, 0)`);
-
+    
     this.ctx.fillStyle = gradient;
-
-    // Draw elongated shape if enabled, otherwise draw circle
+    
+    // Draw elongated shape if enabled and not in low performance mode, otherwise draw circle
     if (this.options.elongateParticles && p.elongation > 1) {
       // Draw elongated shape (like grass blade)
       this.ctx.beginPath();
