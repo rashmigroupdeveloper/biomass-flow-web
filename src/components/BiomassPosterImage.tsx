@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ImgFixSpecific from './ImgFixSpecific';
 
@@ -5,6 +6,7 @@ interface BiomassPosterImageProps {
   className?: string;
   width?: number | string;
   height?: number | string;
+  alt?: string;
 }
 
 /**
@@ -14,15 +16,13 @@ interface BiomassPosterImageProps {
 const BiomassPosterImage: React.FC<BiomassPosterImageProps> = ({ 
   className,
   width,
-  height 
+  height,
+  alt = "Biomass Flow Poster"  // Provide a default value
 }) => {
   return (
-    <ImgFixSpecific
-      alt="Biomass Flow Poster"
-      className={className}
-      width={width}
-      height={height}
-    />
+    <div className={className}>
+      <ImgFixSpecific />
+    </div>
   );
 };
 
