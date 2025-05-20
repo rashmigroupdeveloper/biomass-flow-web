@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -114,4 +115,26 @@
   animation-name: fadeIn;
   animation-duration: 1s;
   animation-fill-mode: both;
+}
+
+/* GPU acceleration hints for common UI elements */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Apply hardware acceleration to animations and transitions */
+.animate-fade-in,
+.transition-all,
+.transition-colors,
+.transition-opacity,
+.transition-transform {
+  will-change: auto;
+  transform: translateZ(0);
+}
+
+/* Fix for the radial gradient error in EnhancedBiomassParticleSystem */
+.particle-canvas {
+  transform: translateZ(0);
 }

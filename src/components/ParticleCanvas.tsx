@@ -38,6 +38,7 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
       mouseInteraction: true,
       responsive: true,
       densityFactor: 0.00009,
+      useHardwareAcceleration: true, // Enable hardware acceleration
     };
 
     const mergedOptions = { ...defaultOptions, ...options };
@@ -73,6 +74,7 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
         width: '100%',
         height: '100%',
         zIndex: 0,
+        transform: 'translateZ(0)', // Force GPU acceleration
       }}
     />
   );

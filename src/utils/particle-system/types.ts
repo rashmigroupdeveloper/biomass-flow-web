@@ -1,4 +1,3 @@
-
 export interface ParticleSystemOptions {
   particleCount?: number;
   particleMinSize?: number;
@@ -6,13 +5,15 @@ export interface ParticleSystemOptions {
   baseHue?: number;
   backgroundColor?: string;
   flowIntensity?: number;
-  flowDirection?: string;
+  flowDirection?: 'upward' | 'downward' | 'leftward' | 'rightward' | 'radial' | 'circular';
   speedFactor?: number;
   connectionRadius?: number;
   connectionOpacity?: number;
   mouseInteraction?: boolean;
   responsive?: boolean;
   densityFactor?: number;
+  useHardwareAcceleration?: boolean; // New option for GPU acceleration
+  lowPerformanceMode?: boolean; // Option for systems with limited resources
 }
 
 export interface Particle {

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import { motion, useInView, useAnimation } from 'framer-motion';
 
@@ -45,10 +46,13 @@ const RevealText: React.FC<RevealTextProps> = ({
     hidden: {
       opacity: 0,
       y: 20,
+      // Add GPU acceleration hints
+      willChange: 'opacity, transform',
     },
     visible: {
       opacity: 1,
       y: 0,
+      willChange: 'opacity, transform',
       transition: {
         type: 'spring',
         damping: 12,
@@ -65,6 +69,7 @@ const RevealText: React.FC<RevealTextProps> = ({
           initial="hidden"
           animate={controls}
           className="inline-flex flex-wrap"
+          style={{ willChange: 'opacity' }}
         >
           {words.map((word, index) => (
             <motion.span
@@ -72,6 +77,11 @@ const RevealText: React.FC<RevealTextProps> = ({
               variants={child}
               className="inline-block mr-1 last:mr-0"
               aria-hidden="true"
+              style={{
+                willChange: 'transform, opacity',
+                // Promote to GPU layer
+                transform: 'translateZ(0)',
+              }}
             >
               {word}
             </motion.span>
@@ -82,4 +92,4 @@ const RevealText: React.FC<RevealTextProps> = ({
   );
 };
 
-export default RevealText; 
+export default RevealText;

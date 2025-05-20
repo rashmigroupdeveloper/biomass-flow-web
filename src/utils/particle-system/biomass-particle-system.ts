@@ -34,6 +34,7 @@ export class BiomassParticleSystem {
       mouseInteraction: true,
       responsive: true,
       densityFactor: 0.00007,
+      useHardwareAcceleration: true,
       ...options
     };
     
@@ -43,7 +44,18 @@ export class BiomassParticleSystem {
       throw new Error(`Canvas with id "${canvasId}" not found`);
     }
     
-    const ctx = this.canvas.getContext('2d');
+    // Use hardware acceleration hints for the canvas
+    if (this.options.useHardwareAcceleration) {
+      this.canvas.style.transform = 'translateZ(0)'; // Force GPU layer
+      this.canvas.style.willChange = 'transform'; // Tell browser to optimize
+    }
+    
+    const ctx = this.canvas.getContext('2d', {
+      alpha: true,
+      desynchronized: true, // Reduce main thread jank
+      willReadFrequently: false, // Optimize for GPU
+    });
+    
     if (!ctx) {
       throw new Error('Could not get 2D context from canvas');
     }
@@ -120,12 +132,23 @@ export class BiomassParticleSystem {
     if (this.options.responsive) {
       const parent = this.canvas.parentElement;
       if (parent) {
-        this.canvas.width = parent.clientWidth;
-        this.canvas.height = parent.clientHeight;
+        const newWidth = parent.clientWidth;
+        const newHeight = parent.clientHeight;
         
-        // Adjust particle count based on canvas size
-        const area = this.canvas.width * this.canvas.height;
-        const targetCount = Math.floor(area * (this.options.densityFactor || 0.00007));
+        this.canvas.width = newWidth;
+        this.canvas.height = newHeight;
+        
+        // Update renderer canvas size
+        this.renderer.updateCanvasSize(newWidth, newHeight);
+        
+        // Adjust particle count based on canvas size and performance mode
+        const area = newWidth * newHeight;
+        let targetCount = Math.floor(area * (this.options.densityFactor || 0.00007));
+        
+        // Reduce particle count in low performance mode
+        if (this.options.lowPerformanceMode) {
+          targetCount = Math.floor(targetCount * 0.6);
+        }
         
         // Only recreate particles if count differs significantly
         if (Math.abs(targetCount - this.particles.length) > 10) {
@@ -169,6 +192,12 @@ export class BiomassParticleSystem {
     const currentTime = performance.now();
     const delta = currentTime - this.lastUpdateTime;
     this.lastUpdateTime = currentTime;
+    
+    // Throttle animation for low performance mode
+    if (this.options.lowPerformanceMode && this.animationFrameId && this.animationFrameId % 2 !== 0) {
+      this.animationFrameId = requestAnimationFrame(this.animate);
+      return;
+    }
     
     // Update time for flow patterns
     this.flowPatterns.updateTime(delta);

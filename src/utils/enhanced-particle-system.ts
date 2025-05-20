@@ -573,7 +573,10 @@ export class EnhancedBiomassParticleSystem {
       if (this.options.particleGlow) {
         // Add subtle glow
         const glowSize = p.size * 2;
-        const gradient = this.ctx.createRadialGradient(0, 0, 0, 0, 0, glowSize);
+        const gradient = this.ctx.createRadialGradient(
+          p.x, p.y, 0,  // Start position and radius
+          p.x, p.y, Math.max(0.1, p.size)  // Ensure minimum radius of 0.1
+        );
         const color = p.color;
 
         // Extract hue for glow
@@ -608,7 +611,10 @@ export class EnhancedBiomassParticleSystem {
    */
   private _drawParticleShape(p: EnhancedParticle, size: number, opacity: number): void {
     // Create gradient for more organic look
-    const gradient = this.ctx.createRadialGradient(0, 0, 0, 0, 0, size);
+    const gradient = this.ctx.createRadialGradient(
+      p.x, p.y, 0,  // Start position and radius
+      p.x, p.y, Math.max(0.1, p.size)  // Ensure minimum radius of 0.1
+    );
     const color = p.color;
 
     // Extract hue, saturation, lightness for consistent gradient
