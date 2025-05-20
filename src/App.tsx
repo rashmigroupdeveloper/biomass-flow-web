@@ -27,6 +27,9 @@ import Navigation from '@/components/Navigation';
 
 // Import styles
 import '@/styles/fonts.css';
+import '@/styles/design-excellence.css';
+import '@/styles/micro-interactions.css';
+import '@/styles/visual-storytelling.css';
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
@@ -46,7 +49,7 @@ const App: React.FC = () => {
           { size: 192, path: '/android-chrome-192x192.png' },
           { size: 512, path: '/android-chrome-512x512.png' },
         ];
-        
+
         iconTypes.forEach(icon => {
           const link = document.createElement('link');
           link.rel = 'preload';
@@ -55,7 +58,7 @@ const App: React.FC = () => {
           link.type = 'image/png';
           document.head.appendChild(link);
         });
-        
+
         // Also preload the favicon.ico
         const faviconLink = document.createElement('link');
         faviconLink.rel = 'preload';
@@ -66,7 +69,7 @@ const App: React.FC = () => {
         console.error('Failed to preload icons:', err);
       }
     };
-    
+
     preloadIcons();
   }, []);
 

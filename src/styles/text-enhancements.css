@@ -1,0 +1,156 @@
+/* 
+ * Text Enhancement Styles
+ * Improves text visibility and readability across the site
+ * especially when text is displayed over animations
+ */
+
+/* Enhanced heading styles */
+h1, h2, h3, h4, h5, h6 {
+  /* Improve contrast with stronger font weight */
+  font-weight: 700 !important;
+  
+  /* Add subtle text shadow for better visibility over animations */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  
+  /* Slightly increase letter spacing for better readability */
+  letter-spacing: -0.01em;
+}
+
+/* Specific enhancement for main headings */
+h1, .text-4xl, .text-5xl, .text-6xl {
+  /* Stronger text shadow for larger text */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Enhanced paragraph text */
+p {
+  /* Improve contrast with slightly darker text */
+  color: rgba(55, 65, 81, 0.95) !important;
+  
+  /* Slightly increase line height for better readability */
+  line-height: 1.7 !important;
+}
+
+/* Enhanced text over animations */
+.text-over-animation {
+  /* Add subtle backdrop for text over animations */
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+}
+
+/* Enhanced text in hero section */
+.hero-text h1 {
+  /* Stronger text shadow for hero heading */
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  
+  /* Add subtle stroke for better visibility */
+  -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.1);
+}
+
+.hero-text p {
+  /* Improve contrast for hero paragraph */
+  color: rgba(31, 41, 55, 0.95) !important;
+  font-weight: 500 !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+/* Enhanced text in about section */
+.about-text h2 {
+  /* Stronger text for about heading */
+  color: rgba(31, 41, 55, 0.95) !important;
+}
+
+.about-text p {
+  /* Improve contrast for about paragraph */
+  color: rgba(55, 65, 81, 0.95) !important;
+}
+
+/* Enhanced text in products section */
+.products-text h2 span.text-primary-500 {
+  /* Add subtle glow to primary colored text */
+  text-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+}
+
+/* Enhanced text in process section */
+.process-text h3 {
+  /* Stronger text for process headings */
+  font-weight: 700 !important;
+  color: rgba(31, 41, 55, 0.95) !important;
+}
+
+/* Enhanced text in impact section */
+.impact-text h2 span.text-primary-500 {
+  /* Add subtle glow to primary colored text */
+  text-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+}
+
+/* Enhanced stats text */
+.stat-value {
+  /* Make stat values more prominent */
+  font-weight: 800 !important;
+  font-size: 110% !important;
+  color: rgba(31, 41, 55, 0.95) !important;
+}
+
+/* Enhanced text backgrounds for better visibility */
+.enhanced-text-bg {
+  position: relative;
+}
+
+.enhanced-text-bg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 0.5rem;
+  z-index: -1;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Enhanced button text */
+button, .button, a.interactive {
+  font-weight: 600 !important;
+  letter-spacing: 0.025em !important;
+}
+
+/* Enhanced text contrast for light text on light backgrounds */
+.text-gray-600 {
+  color: rgba(55, 65, 81, 0.95) !important;
+}
+
+.text-gray-500 {
+  color: rgba(107, 114, 128, 0.95) !important;
+}
+
+/* Enhanced text for section titles */
+.section-title {
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: "";
+  position: absolute;
+  bottom: -0.5rem;
+  left: 25%;
+  width: 50%;
+  height: 3px;
+  background-color: #4caf50;
+  border-radius: 3px;
+}
+
+/* Enhanced text for product specs */
+.product-spec {
+  font-weight: 600 !important;
+}
+
+.product-spec-value {
+  font-weight: 700 !important;
+  color: #2e7d32 !important;
+}

@@ -1,0 +1,255 @@
+/* 
+ * Visual Storytelling Elements
+ * Design elements that enhance the narrative and guide the user through the content
+ */
+
+/* ===== DECORATIVE ELEMENTS ===== */
+
+/* Leaf-inspired decorative element */
+.leaf-decoration {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%234CAF50' fill-opacity='0.15' d='M95,48.7c-0.2-5.1-1.5-10.1-3.3-14.8c-1.8-4.7-4.3-9.1-7.1-13.2c-2.9-4.1-6.1-7.9-9.7-11.3C71.3,5.9,67.3,2.9,63,0.7 c-0.3-0.2-0.7-0.1-0.9,0.2c-0.2,0.3-0.1,0.7,0.2,0.9c4.1,2.1,7.9,5,11.3,8.3c3.4,3.3,6.5,7,9.2,10.9c2.7,3.9,5,8.2,6.7,12.7 c1.7,4.5,2.9,9.3,3.1,14.1c0,0.3,0.3,0.6,0.7,0.6c0,0,0,0,0,0c0.3,0,0.6-0.3,0.6-0.7C95,48.7,95,48.7,95,48.7z M37.7,95 c5.1-0.2,10.1-1.5,14.8-3.3c4.7-1.8,9.1-4.3,13.2-7.1c4.1-2.9,7.9-6.1,11.3-9.7c3.4-3.6,6.4-7.6,8.6-11.9c0.2-0.3,0.1-0.7-0.2-0.9 c-0.3-0.2-0.7-0.1-0.9,0.2c-2.1,4.1-5,7.9-8.3,11.3c-3.3,3.4-7,6.5-10.9,9.2c-3.9,2.7-8.2,5-12.7,6.7c-4.5,1.7-9.3,2.9-14.1,3.1 c-0.3,0-0.6,0.3-0.6,0.7c0,0.3,0.3,0.6,0.7,0.6C37.7,95,37.7,95,37.7,95z M5,51.3c0.2,5.1,1.5,10.1,3.3,14.8 c1.8,4.7,4.3,9.1,7.1,13.2c2.9,4.1,6.1,7.9,9.7,11.3c3.6,3.4,7.6,6.4,11.9,8.6c0.3,0.2,0.7,0.1,0.9-0.2c0.2-0.3,0.1-0.7-0.2-0.9 c-4.1-2.1-7.9-5-11.3-8.3c-3.4-3.3-6.5-7-9.2-10.9c-2.7-3.9-5-8.2-6.7-12.7c-1.7-4.5-2.9-9.3-3.1-14.1c0-0.3-0.3-0.6-0.7-0.6 c-0.3,0-0.6,0.3-0.6,0.7C5,51.3,5,51.3,5,51.3z M62.3,5c-5.1,0.2-10.1,1.5-14.8,3.3c-4.7,1.8-9.1,4.3-13.2,7.1 c-4.1,2.9-7.9,6.1-11.3,9.7c-3.4,3.6-6.4,7.6-8.6,11.9c-0.2,0.3-0.1,0.7,0.2,0.9c0.3,0.2,0.7,0.1,0.9-0.2c2.1-4.1,5-7.9,8.3-11.3 c3.3-3.4,7-6.5,10.9-9.2c3.9-2.7,8.2-5,12.7-6.7c4.5-1.7,9.3-2.9,14.1-3.1c0.3,0,0.6-0.3,0.6-0.7c0-0.3-0.3-0.6-0.7-0.6 C62.3,5,62.3,5,62.3,5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.5;
+  z-index: -1;
+}
+
+/* Circular pattern decoration */
+.circle-pattern {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' stroke='%234CAF50' stroke-width='0.5' fill='none' stroke-opacity='0.2'/%3E%3Ccircle cx='50' cy='50' r='30' stroke='%234CAF50' stroke-width='0.5' fill='none' stroke-opacity='0.15'/%3E%3Ccircle cx='50' cy='50' r='20' stroke='%234CAF50' stroke-width='0.5' fill='none' stroke-opacity='0.1'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.3;
+  z-index: -1;
+}
+
+/* Dotted grid pattern */
+.dotted-grid {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='2' cy='2' r='1' fill='%234CAF50' fill-opacity='0.1'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  opacity: 0.5;
+  z-index: -1;
+}
+
+/* Wave pattern */
+.wave-pattern {
+  position: absolute;
+  width: 100%;
+  height: 100px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z' fill='%234CAF50' fill-opacity='0.05'/%3E%3C/svg%3E");
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: -1;
+}
+
+/* ===== SECTION DIVIDERS ===== */
+
+/* Curved section divider */
+.divider-curve {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.divider-curve svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 70px;
+}
+
+.divider-curve .shape-fill {
+  fill: #FFFFFF;
+}
+
+/* Slanted section divider */
+.divider-slant {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+}
+
+.divider-slant svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 70px;
+}
+
+.divider-slant .shape-fill {
+  fill: #FFFFFF;
+}
+
+/* ===== VISUAL STORYTELLING ELEMENTS ===== */
+
+/* Process step connector */
+.process-connector {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, rgba(76, 175, 80, 0.3), rgba(76, 175, 80, 0.7));
+  transform: translateX(-50%);
+  z-index: -1;
+}
+
+.process-connector::before,
+.process-connector::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #4caf50;
+  transform: translateX(-50%);
+}
+
+.process-connector::before {
+  top: 0;
+}
+
+.process-connector::after {
+  bottom: 0;
+}
+
+/* Timeline dot */
+.timeline-dot {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #4caf50;
+  border: 4px solid white;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.3);
+  z-index: 10;
+}
+
+/* ===== CONTENT FRAMES ===== */
+
+/* Glass morphism effect */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  padding: 2rem;
+}
+
+/* Gradient border card */
+.gradient-border-card {
+  position: relative;
+  border-radius: 1rem;
+  background: white;
+  padding: 2rem;
+  z-index: 1;
+}
+
+.gradient-border-card::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #1b5e20, #4caf50, #81c784);
+  border-radius: calc(1rem + 2px);
+  z-index: -1;
+}
+
+/* Accent corner card */
+.accent-corner-card {
+  position: relative;
+  border-radius: 1rem;
+  background: white;
+  padding: 2rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.accent-corner-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 3rem 3rem 0;
+  border-color: transparent #4caf50 transparent transparent;
+}
+
+/* ===== ICONS & VISUAL CUES ===== */
+
+/* Animated arrow */
+.animated-arrow {
+  display: inline-block;
+  position: relative;
+  padding-right: 1.5rem;
+}
+
+.animated-arrow::after {
+  content: '→';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: transform 0.3s ease;
+}
+
+.animated-arrow:hover::after {
+  transform: translate(5px, -50%);
+}
+
+/* Pulsing dot */
+.pulsing-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background-color: #4caf50;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  position: relative;
+}
+
+.pulsing-dot::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: #4caf50;
+  border-radius: 50%;
+  animation: pulse-dot 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+}
+
+@keyframes pulse-dot {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}

@@ -30,12 +30,12 @@ const ProductsSection = () => {
 
     const drawCylinder = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
+
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
       const width = 100;
       const height = 200;
-      
+
       // Draw top ellipse
       ctx.beginPath();
       ctx.ellipse(
@@ -49,7 +49,7 @@ const ProductsSection = () => {
       );
       ctx.fillStyle = '#66bb6a';
       ctx.fill();
-      
+
       // Draw bottom ellipse
       ctx.beginPath();
       ctx.ellipse(
@@ -63,7 +63,7 @@ const ProductsSection = () => {
       );
       ctx.fillStyle = '#43a047';
       ctx.fill();
-      
+
       // Draw sides
       ctx.beginPath();
       ctx.moveTo(centerX - width * Math.abs(Math.cos(rotation)), centerY - height/2);
@@ -73,13 +73,13 @@ const ProductsSection = () => {
       ctx.closePath();
       ctx.fillStyle = '#2e7d32';
       ctx.fill();
-      
+
       rotation += 0.01;
       animationId = requestAnimationFrame(drawCylinder);
     };
 
     drawCylinder();
-    
+
     return () => {
       cancelAnimationFrame(animationId);
     };
@@ -107,31 +107,37 @@ const ProductsSection = () => {
   ];
 
   return (
-    <section 
-      ref={ref} 
+    <section
+      ref={ref}
       className="py-20 md:py-32 bg-gray-50"
     >
       <div className="container mx-auto px-6 md:px-12">
-        <div className="text-center mb-16">
-          <motion.h2 
-            className="text-3xl md:text-5xl font-serif font-bold text-gray-900 mb-4"
+        <div className="text-center mb-16 products-text">
+          <motion.div
+            className="mb-4"
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.8 }}
           >
-            Our <span className="text-primary-500">Products</span>
-          </motion.h2>
-          <motion.p 
-            className="max-w-2xl mx-auto text-gray-600"
+            <h2 className="section-heading">
+              Our <span className="section-heading-accent">Products</span>
+            </h2>
+            <div className="decorative-line mx-auto"></div>
+          </motion.div>
+
+          <motion.div
+            className="glass-card max-w-2xl mx-auto"
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Discover our range of sustainable biomass solutions designed to meet your energy needs while reducing environmental impact.
-          </motion.p>
+            <p className="enhanced-paragraph">
+              Discover our range of sustainable biomass solutions designed to meet your energy needs while reducing environmental impact.
+            </p>
+          </motion.div>
         </div>
-        
-        <motion.div 
+
+        <motion.div
           className="grid grid-cols-1 lg:grid-cols-2 gap-12"
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : { opacity: 0 }}
@@ -141,7 +147,7 @@ const ProductsSection = () => {
             <div className="p-8">
               <h3 className="text-2xl font-serif font-bold text-gray-900 mb-6">3D Product Visualization</h3>
               <div className="bg-gray-50 rounded-lg h-80 flex items-center justify-center">
-                <canvas 
+                <canvas
                   ref={canvasRef}
                   className="w-full h-full"
                 ></canvas>
@@ -151,10 +157,10 @@ const ProductsSection = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="space-y-8">
             {products.map((product, index) => (
-              <motion.div 
+              <motion.div
                 key={product.name}
                 className="bg-white rounded-xl shadow-lg overflow-hidden"
                 initial={{ opacity: 0, x: 20 }}
@@ -164,18 +170,18 @@ const ProductsSection = () => {
                 <div className="p-8">
                   <h3 className="text-2xl font-serif font-bold text-primary-700 mb-3">{product.name}</h3>
                   <p className="text-gray-600 mb-6">{product.description}</p>
-                  
+
                   <div className="grid grid-cols-3 gap-4 mb-6">
                     {product.specs.map(spec => (
-                      <div key={spec.name} className="bg-primary-50 rounded-lg p-3 text-center">
-                        <span className="block text-xs text-gray-500">{spec.name}</span>
-                        <span className="block font-bold text-primary-700">{spec.value}</span>
+                      <div key={spec.name} className="product-spec-card hover-lift">
+                        <span className="block product-spec-name">{spec.name}</span>
+                        <span className="block product-spec-value">{spec.value}</span>
                       </div>
                     ))}
                   </div>
-                  
-                  <Link 
-                    to="/contact" 
+
+                  <Link
+                    to="/contact"
                     className="inline-block w-full text-center py-3 bg-primary-500 text-white rounded hover:bg-primary-600 transition-colors"
                   >
                     Request Details

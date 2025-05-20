@@ -68,7 +68,7 @@ const Hero = () => {
       {/* Content */}
       <div className="container mx-auto px-6 md:px-12 z-20 flex flex-col items-center justify-center text-center">
         <motion.div
-          className="w-full flex flex-col items-center"
+          className="w-full flex flex-col items-center hero-text"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -85,21 +85,25 @@ const Hero = () => {
             />
           </motion.div>
 
-          {/* Main heading */}
-          <motion.h1
-            className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-primary-800 mb-4"
+          {/* Main heading with enhanced visibility */}
+          <motion.div
+            className="enhanced-text-bg mb-4"
             variants={itemVariants}
           >
-            Turning Waste Into Energy
-          </motion.h1>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-primary-800">
+              Turning Waste Into Energy
+            </h1>
+          </motion.div>
 
-          {/* Subheading */}
-          <motion.p
-            className="text-lg md:text-xl text-gray-700 mb-10 max-w-2xl"
+          {/* Subheading with enhanced visibility */}
+          <motion.div
+            className="enhanced-text-bg mb-10"
             variants={itemVariants}
           >
-            Sustainable biomass solutions for a greener tomorrow...
-          </motion.p>
+            <p className="text-lg md:text-xl text-gray-700 max-w-2xl">
+              Sustainable biomass solutions for a greener tomorrow...
+            </p>
+          </motion.div>
 
           {/* Buttons */}
           <motion.div

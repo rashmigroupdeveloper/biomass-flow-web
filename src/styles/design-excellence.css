@@ -1,0 +1,301 @@
+/* 
+ * Design Excellence Stylesheet
+ * A comprehensive approach to elevate the visual design of the Rashmi 6 Paradigm website
+ */
+
+/* ===== TYPOGRAPHY ENHANCEMENT ===== */
+
+/* Base typography refinements */
+body {
+  --text-primary: #1a2b34;
+  --text-secondary: #2e4756;
+  --text-tertiary: #546e7a;
+  --text-light: #ffffff;
+  --text-accent: #2e7d32;
+  --text-accent-light: #4caf50;
+  
+  /* Improved font rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Heading typography */
+h1, h2, h3, h4, h5, h6 {
+  /* Refined letter spacing for headings */
+  letter-spacing: -0.02em;
+  
+  /* Enhanced text shadows for depth */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  
+  /* Improved line height */
+  line-height: 1.2;
+}
+
+/* Hero heading special treatment */
+.hero-heading {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, #1b5e20 0%, #4caf50 50%, #81c784 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.hero-heading::after {
+  content: "";
+  position: absolute;
+  bottom: -0.5rem;
+  left: 25%;
+  width: 50%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, #4caf50, transparent);
+  border-radius: 2px;
+}
+
+/* Section headings with accent */
+.section-heading {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.5rem;
+}
+
+.section-heading-accent {
+  color: var(--text-accent);
+  position: relative;
+}
+
+.section-heading-accent::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: var(--text-accent-light);
+  border-radius: 3px;
+}
+
+/* Enhanced paragraph text */
+.enhanced-paragraph {
+  font-size: 1.125rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  max-width: 65ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ===== VISUAL HIERARCHY & COMPOSITION ===== */
+
+/* Content frames with depth */
+.content-frame {
+  position: relative;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.05),
+    0 4px 6px -2px rgba(0, 0, 0, 0.025),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+  padding: 2rem;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.content-frame:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+/* Content frame with accent border */
+.content-frame-accent {
+  border-left: 4px solid var(--text-accent-light);
+}
+
+/* Content frame with top accent */
+.content-frame-accent-top {
+  border-top: 4px solid var(--text-accent-light);
+}
+
+/* Decorative elements */
+.decorative-line {
+  height: 3px;
+  width: 60px;
+  background: linear-gradient(90deg, var(--text-accent), var(--text-accent-light));
+  border-radius: 3px;
+  margin: 1.5rem 0;
+}
+
+/* ===== DEPTH & DIMENSIONALITY ===== */
+
+/* Card with depth */
+.depth-card {
+  border-radius: 1rem;
+  background: white;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -1px rgba(0, 0, 0, 0.03),
+    0 -2px 0 0 rgba(0, 0, 0, 0.01) inset,
+    0 2px 0 0 rgba(255, 255, 255, 0.7) inset;
+  transition: all 0.3s ease;
+  transform: perspective(1000px) rotateX(0) rotateY(0);
+  overflow: hidden;
+}
+
+.depth-card:hover {
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 -2px 0 0 rgba(0, 0, 0, 0.01) inset,
+    0 2px 0 0 rgba(255, 255, 255, 0.7) inset;
+}
+
+/* Subtle hover effect for cards */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* ===== STATS & METRICS STYLING ===== */
+
+/* Enhanced stat value */
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  position: relative;
+  display: inline-block;
+}
+
+.stat-value::after {
+  content: "";
+  position: absolute;
+  bottom: -0.25rem;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--text-accent-light), transparent);
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ===== PRODUCT SPECS STYLING ===== */
+
+.product-spec-card {
+  background: linear-gradient(135deg, rgba(232, 245, 233, 0.8) 0%, rgba(200, 230, 201, 0.8) 100%);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-spec-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+  z-index: 1;
+}
+
+.product-spec-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.product-spec-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.product-spec-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-accent);
+}
+
+/* ===== PROCESS STEPS STYLING ===== */
+
+.process-step {
+  position: relative;
+  padding: 2rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.05),
+    0 4px 6px -2px rgba(0, 0, 0, 0.025);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.process-step::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, var(--text-accent), var(--text-accent-light));
+}
+
+.process-step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%);
+  color: white;
+  font-weight: 700;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.process-step-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.process-step-description {
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
