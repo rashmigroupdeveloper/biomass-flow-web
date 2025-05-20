@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -49,7 +50,7 @@ const Hero = () => {
           baseHue: 120, // Green hue
           backgroundColor: 'rgba(255, 255, 255, 1)', // White background with green particles
           flowIntensity: 1.5,
-          flowDirection: 'upward',
+          flowDirection: 'upward' as const,
           speedFactor: 0.5, // Slower movement for more graceful trails
           connectionRadius: 180, // Increased connection radius
           connectionOpacity: 0.25, // More visible connections

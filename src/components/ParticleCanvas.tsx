@@ -3,6 +3,7 @@ import React, { useEffect, useRef, forwardRef, useImperativeHandle, ForwardedRef
 import { BiomassParticleSystem } from '../utils/particle-system';
 import { EnhancedBiomassParticleSystem } from '../utils/enhanced-particle-system';
 import { EnhancedParticleSystemOptions } from '../utils/particle-system/enhanced-types';
+import { ParticleSystemOptions } from '../utils/particle-system/types';
 
 export interface ParticleCanvasProps {
   id: string;
@@ -24,14 +25,14 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
 
   useEffect(() => {
     // Initialize particle system when component mounts
-    const defaultOptions = {
+    const defaultOptions: ParticleSystemOptions = {
       particleCount: 150,
       particleMinSize: 1,
       particleMaxSize: 4,
       baseHue: 120, // Green hue
       backgroundColor: 'rgba(46, 125, 50, 0.05)', // Very subtle green background
       flowIntensity: 1.2,
-      flowDirection: 'upward',
+      flowDirection: 'upward' as const,
       speedFactor: 0.6,
       connectionRadius: 120,
       connectionOpacity: 0.12,
