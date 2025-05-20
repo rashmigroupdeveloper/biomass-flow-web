@@ -5,6 +5,13 @@ import { HelmetProvider } from 'react-helmet-async';
 import App from './App.tsx';
 import './index.css';
 
+// Add TypeScript declaration for our global variable
+declare global {
+  interface Window {
+    BIOMASS_LOW_PERFORMANCE_MODE: boolean;
+  }
+}
+
 // Detect device performance capabilities
 const detectDeviceCapabilities = () => {
   const lowPerformanceMode = 

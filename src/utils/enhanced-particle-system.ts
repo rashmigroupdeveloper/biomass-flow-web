@@ -451,6 +451,11 @@ export class EnhancedBiomassParticleSystem {
             }
           }
           break;
+        case 'custom':
+          // Left to right flow with vertical variation
+          p.speedX += 0.01 * flowIntensity * normalizedDelta;
+          p.speedY += (Math.random() - 0.5) * 0.01 * flowIntensity * normalizedDelta;
+          break;
         default:
           // Default behavior
           break;

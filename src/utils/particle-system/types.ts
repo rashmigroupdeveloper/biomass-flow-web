@@ -1,3 +1,4 @@
+
 export interface ParticleSystemOptions {
   particleCount?: number;
   particleMinSize?: number;
@@ -5,7 +6,7 @@ export interface ParticleSystemOptions {
   baseHue?: number;
   backgroundColor?: string;
   flowIntensity?: number;
-  flowDirection?: 'upward' | 'downward' | 'leftward' | 'rightward' | 'radial' | 'circular';
+  flowDirection?: 'upward' | 'downward' | 'leftward' | 'rightward' | 'radial' | 'circular' | 'wave' | 'custom';
   speedFactor?: number;
   connectionRadius?: number;
   connectionOpacity?: number;
@@ -29,3 +30,4 @@ export type Vector2D = {
   x: number;
   y: number;
 };
+
