@@ -1,7 +1,7 @@
 
-import { ParticleSystemOptions as BaseParticleSystemOptions } from './types';
+import { ParticleSystemOptions, FlowDirection } from './types';
 
-export interface EnhancedParticleSystemOptions extends BaseParticleSystemOptions {
+export interface EnhancedParticleSystemOptions extends ParticleSystemOptions {
   trailEffect?: boolean;
   trailLength?: number;
   particleGlow?: boolean;

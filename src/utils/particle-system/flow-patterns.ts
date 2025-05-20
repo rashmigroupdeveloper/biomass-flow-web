@@ -1,13 +1,17 @@
-import { Particle, Vector2D, ParticleSystemOptions } from './types';
+
+import { Particle, Vector2D, ParticleSystemOptions, FlowDirection } from './types';
 
 export class FlowPatterns {
   private options: ParticleSystemOptions;
   private canvas: HTMLCanvasElement;
   private time: number = 0;
+  private isLowPerformanceMode: boolean;
   
   constructor(canvas: HTMLCanvasElement, options: ParticleSystemOptions) {
     this.canvas = canvas;
     this.options = options;
+    this.isLowPerformanceMode = typeof window !== 'undefined' && 
+                               window.BIOMASS_LOW_PERFORMANCE_MODE === true;
   }
   
   updateTime(delta: number): void {
@@ -16,10 +20,15 @@ export class FlowPatterns {
   
   applyFlow(particle: Particle, delta: number): void {
     const flowType = this.options.flowDirection || 'upward';
-    const intensity = this.options.flowIntensity || 1;
-    const speedFactor = this.options.speedFactor || 0.5;
+    // Reduce intensity in low performance mode
+    const intensity = this.isLowPerformanceMode ? 
+                     (this.options.flowIntensity || 1) * 0.7 :
+                     (this.options.flowIntensity || 1);
+    const speedFactor = this.isLowPerformanceMode ?
+                       (this.options.speedFactor || 0.5) * 0.8 : 
+                       (this.options.speedFactor || 0.5);
     
-    // Base flow patterns
+    // Handle each flow direction separately for proper typing
     if (flowType === 'upward') {
       this.applyUpwardFlow(particle, intensity, speedFactor, delta);
     }
@@ -32,7 +41,20 @@ export class FlowPatterns {
     else if (flowType === 'custom') {
       this.applyCustomFlow(particle, intensity, speedFactor, delta);
     }
+    else if (flowType === 'downward') {
+      this.applyDownwardFlow(particle, intensity, speedFactor, delta);
+    }
+    else if (flowType === 'leftward') {
+      this.applyLeftwardFlow(particle, intensity, speedFactor, delta);
+    }
+    else if (flowType === 'rightward') {
+      this.applyRightwardFlow(particle, intensity, speedFactor, delta);
+    }
+    else if (flowType === 'radial') {
+      this.applyRadialFlow(particle, intensity, speedFactor, delta);
+    }
     else {
+      // Default to upward flow if no match
       this.applyUpwardFlow(particle, intensity, speedFactor, delta);
     }
   }
@@ -43,6 +65,72 @@ export class FlowPatterns {
     
     // Add some horizontal drift
     particle.speedX += (Math.random() - 0.5) * 0.002 * intensity * delta;
+    
+    // Apply speed limits
+    this.limitSpeed(particle, speedFactor);
+    
+    // Update position
+    particle.x += particle.speedX * speedFactor * delta;
+    particle.y += particle.speedY * speedFactor * delta;
+  }
+  
+  private applyDownwardFlow(particle: Particle, intensity: number, speedFactor: number, delta: number): void {
+    // Gentle falling motion
+    particle.speedY += 0.002 * intensity * delta;
+    
+    // Add some horizontal drift
+    particle.speedX += (Math.random() - 0.5) * 0.002 * intensity * delta;
+    
+    // Apply speed limits
+    this.limitSpeed(particle, speedFactor);
+    
+    // Update position
+    particle.x += particle.speedX * speedFactor * delta;
+    particle.y += particle.speedY * speedFactor * delta;
+  }
+  
+  private applyLeftwardFlow(particle: Particle, intensity: number, speedFactor: number, delta: number): void {
+    // Gentle leftward motion
+    particle.speedX -= 0.002 * intensity * delta;
+    
+    // Add some vertical drift
+    particle.speedY += (Math.random() - 0.5) * 0.002 * intensity * delta;
+    
+    // Apply speed limits
+    this.limitSpeed(particle, speedFactor);
+    
+    // Update position
+    particle.x += particle.speedX * speedFactor * delta;
+    particle.y += particle.speedY * speedFactor * delta;
+  }
+  
+  private applyRightwardFlow(particle: Particle, intensity: number, speedFactor: number, delta: number): void {
+    // Gentle rightward motion
+    particle.speedX += 0.002 * intensity * delta;
+    
+    // Add some vertical drift
+    particle.speedY += (Math.random() - 0.5) * 0.002 * intensity * delta;
+    
+    // Apply speed limits
+    this.limitSpeed(particle, speedFactor);
+    
+    // Update position
+    particle.x += particle.speedX * speedFactor * delta;
+    particle.y += particle.speedY * speedFactor * delta;
+  }
+  
+  private applyRadialFlow(particle: Particle, intensity: number, speedFactor: number, delta: number): void {
+    // Radial motion away from center
+    const centerX = this.canvas.width / 2;
+    const centerY = this.canvas.height / 2;
+    const dx = particle.x - centerX;
+    const dy = particle.y - centerY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    
+    if (distance > 0) {
+      particle.speedX += (dx / distance) * 0.002 * intensity * delta;
+      particle.speedY += (dy / distance) * 0.002 * intensity * delta;
+    }
     
     // Apply speed limits
     this.limitSpeed(particle, speedFactor);
@@ -138,6 +226,8 @@ export class FlowPatterns {
   }
   
   applyMouseInfluence(particle: Particle, mousePos: Vector2D | null, delta: number): void {
+    // Skip mouse influence in low performance mode
+    if (this.isLowPerformanceMode) return;
     if (!mousePos) return;
     
     const dx = mousePos.x - particle.x;
