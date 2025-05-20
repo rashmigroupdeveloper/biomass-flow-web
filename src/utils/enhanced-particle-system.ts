@@ -430,7 +430,7 @@ export class EnhancedBiomassParticleSystem {
       const flowDirection = this.options.flowDirection || 'upward';
       const flowIntensity = this.options.flowIntensity || 1;
 
-      // Fix type checking issues by using type assertion or separate cases
+      // Fix type checking issues by using separate cases for each flow direction
       if (flowDirection === 'upward') {
         // Slight upward bias
         p.speedY -= 0.01 * flowIntensity * normalizedDelta;
