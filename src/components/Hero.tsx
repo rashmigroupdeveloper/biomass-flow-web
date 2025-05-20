@@ -1,21 +1,18 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import ParticleCanvas from './ParticleCanvas';
 
 const Hero = () => {
-  // Check for low performance mode
-  const isLowPerformanceMode = typeof window !== 'undefined' && window.BIOMASS_LOW_PERFORMANCE_MODE === true;
-  
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: isLowPerformanceMode ? 0.1 : 0.15,
-        delayChildren: isLowPerformanceMode ? 0.3 : 0.5
+        staggerChildren: 0.15,
+        delayChildren: 0.5
       }
     }
   };
@@ -26,7 +23,7 @@ const Hero = () => {
       opacity: 1,
       y: 0,
       transition: {
-        duration: isLowPerformanceMode ? 0.5 : 0.8,
+        duration: 0.8,
         ease: [0.645, 0.045, 0.355, 1.000] // Custom cubic-bezier for smoother animation
       }
     }
@@ -47,24 +44,24 @@ const Hero = () => {
       <ParticleCanvas
         id="biomassCanvas"
         options={{
-          particleCount: isLowPerformanceMode ? 75 : 220,
-          particleMinSize: isLowPerformanceMode ? 2 : 1.5,
-          particleMaxSize: isLowPerformanceMode ? 4 : 5,
+          particleCount: 220,
+          particleMinSize: 1.5,
+          particleMaxSize: 5,
           baseHue: 120, // Green hue
           backgroundColor: 'rgba(255, 255, 255, 1)', // White background with green particles
-          flowIntensity: isLowPerformanceMode ? 1.2 : 1.5,
+          flowIntensity: 1.5,
           flowDirection: 'upward' as const,
-          speedFactor: isLowPerformanceMode ? 0.3 : 0.5, // Slower movement for more graceful trails
-          connectionRadius: isLowPerformanceMode ? 100 : 180, // Increased connection radius
-          connectionOpacity: isLowPerformanceMode ? 0.15 : 0.25, // More visible connections
-          mouseInteraction: !isLowPerformanceMode,
+          speedFactor: 0.5, // Slower movement for more graceful trails
+          connectionRadius: 180, // Increased connection radius
+          connectionOpacity: 0.25, // More visible connections
+          mouseInteraction: true,
           responsive: true,
-          densityFactor: isLowPerformanceMode ? 0.000075 : 0.00012,
-          trailEffect: !isLowPerformanceMode, // Disable trailing effect on low performance devices
+          densityFactor: 0.00012,
+          trailEffect: true, // Enable trailing effect
           trailLength: 0.92, // Controls how long trails persist (higher = longer)
-          particleGlow: !isLowPerformanceMode, // Disable glow on low performance devices
-          elongateParticles: !isLowPerformanceMode, // Disable elongation on low performance devices
-          waveMotion: true, // Keep gentle wave-like motion
+          particleGlow: true, // Add subtle glow to particles
+          elongateParticles: true, // Make particles more elongated like grass
+          waveMotion: true, // Add gentle wave-like motion
         }}
       />
 
@@ -145,11 +142,11 @@ const Hero = () => {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
-          delay: isLowPerformanceMode ? 1.0 : 1.5,
-          duration: isLowPerformanceMode ? 0.5 : 0.8,
+          delay: 1.5,
+          duration: 0.8,
           repeat: Infinity,
           repeatType: "reverse",
-          repeatDelay: isLowPerformanceMode ? 1.0 : 0.5
+          repeatDelay: 0.5
         }}
       >
         <div className="flex flex-col items-center">
