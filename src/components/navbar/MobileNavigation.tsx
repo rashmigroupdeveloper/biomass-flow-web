@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -156,6 +155,19 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({ isOpen }) => {
           }
         >
           Certificates
+        </NavLink>
+        <NavLink
+          to="/media"
+          className={({ isActive }) =>
+            cn(
+              "block px-3 py-2 rounded-md text-base font-medium",
+              isActive
+                ? "bg-green-50 text-green-700"
+                : "text-gray-700 hover:bg-gray-50 hover:text-green-600"
+            )
+          }
+        >
+          Media
         </NavLink>
         <NavLink
           to="/contact"

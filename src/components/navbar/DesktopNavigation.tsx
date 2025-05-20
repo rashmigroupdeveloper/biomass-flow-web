@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -67,6 +66,7 @@ const DesktopNavigation: React.FC<DesktopNavigationProps> = ({ currentPath }) =>
       <NavItem to="/sustainability" label="Sustainability" isActive={currentPath === '/sustainability'} />
       <NavItem to="/csr" label="CSR" isActive={currentPath === '/csr'} />
       <NavItem to="/certificates" label="Certificates" isActive={currentPath === '/certificates'} />
+      <NavItem to="/media" label="Media" isActive={currentPath === '/media'} />
       <NavItem to="/contact" label="Contact" isActive={currentPath === '/contact'} />
     </nav>
   );

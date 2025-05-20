@@ -20,6 +20,7 @@ import CSR from "@/pages/CSR";
 import Sustainability from "@/pages/Sustainability";
 import PageTransition from "@/components/PageTransition";
 import ExampleFixedImage from "@/pages/ExampleFixedImage";
+import Media from "@/pages/Media";
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import FixImages from '@/components/FixImages';
 import Navigation from '@/components/Navigation';
@@ -105,6 +106,7 @@ const App: React.FC = () => {
                   <Route path="/impact" element={<Impact />} />
                   <Route path="/csr" element={<CSR />} />
                   <Route path="/sustainability" element={<Sustainability />} />
+                  <Route path="/media" element={<Media />} />
                   <Route path="/example-fixed-image" element={<ExampleFixedImage />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />

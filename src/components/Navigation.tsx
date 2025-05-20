@@ -58,6 +58,11 @@ const menuItems = [
     preview: '/placeholder.svg'
   },
   {
+    name: 'Media',
+    path: '/media',
+    preview: '/placeholder.svg'
+  },
+  {
     name: 'Contact',
     path: '/contact',
     preview: '/placeholder.svg'

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Linkedin, Twitter } from 'lucide-react';
@@ -71,6 +70,11 @@ const EnhancedFooter = () => {
               <li>
                 <Link to="/csr" className="text-gray-300 hover:text-primary-400 transition-colors duration-300 flex items-center">
                   <span className="mr-2">›</span> CSR
+                </Link>
+              </li>
+              <li>
+                <Link to="/media" className="text-gray-300 hover:text-primary-400 transition-colors duration-300 flex items-center">
+                  <span className="mr-2">›</span> Media
                 </Link>
               </li>
               <li>
