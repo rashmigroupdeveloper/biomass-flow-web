@@ -24,25 +24,41 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
   }));
 
   useEffect(() => {
-    // Initialize particle system when component mounts
+    // Import performance optimizer functions
+    const isLowPerformance = window.BIOMASS_LOW_PERFORMANCE_MODE;
+
+    // Initialize particle system when component mounts with performance optimizations
     const defaultOptions: ParticleSystemOptions = {
-      particleCount: 150,
+      particleCount: isLowPerformance ? 80 : 150,
       particleMinSize: 1,
-      particleMaxSize: 4,
+      particleMaxSize: isLowPerformance ? 3 : 4,
       baseHue: 120, // Green hue
       backgroundColor: 'rgba(46, 125, 50, 0.05)', // Very subtle green background
-      flowIntensity: 1.2,
+      flowIntensity: isLowPerformance ? 1.0 : 1.2,
       flowDirection: 'upward' as const,
-      speedFactor: 0.6,
-      connectionRadius: 120,
+      speedFactor: isLowPerformance ? 0.5 : 0.6,
+      connectionRadius: isLowPerformance ? 80 : 120,
       connectionOpacity: 0.12,
       mouseInteraction: true,
       responsive: true,
-      densityFactor: 0.00009,
+      densityFactor: isLowPerformance ? 0.00005 : 0.00009,
       useHardwareAcceleration: true, // Enable hardware acceleration
+      lowPerformanceMode: isLowPerformance, // Pass the performance mode flag
     };
 
-    const mergedOptions = { ...defaultOptions, ...options };
+    // Merge with any provided options, but ensure performance settings are applied
+    const mergedOptions = {
+      ...defaultOptions,
+      ...options,
+      // Always override these options based on performance mode
+      lowPerformanceMode: isLowPerformance,
+      particleCount: options?.particleCount
+        ? (isLowPerformance ? Math.floor(options.particleCount * 0.6) : options.particleCount)
+        : defaultOptions.particleCount,
+      connectionRadius: options?.connectionRadius
+        ? (isLowPerformance ? Math.floor(options.connectionRadius * 0.7) : options.connectionRadius)
+        : defaultOptions.connectionRadius,
+    };
 
     // Check if we should use the enhanced particle system with trails
     if (mergedOptions.trailEffect) {
@@ -82,3 +98,5 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
 });
 
 export default ParticleCanvas;
+
+

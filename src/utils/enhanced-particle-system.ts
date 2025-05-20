@@ -434,7 +434,7 @@ export class EnhancedBiomassParticleSystem {
       if (flowDirection === 'upward') {
         // Slight upward bias
         p.speedY -= 0.01 * flowIntensity * normalizedDelta;
-      } 
+      }
       else if (flowDirection === 'downward') {
         p.speedY += 0.01 * flowIntensity * normalizedDelta;
       }
@@ -562,21 +562,43 @@ export class EnhancedBiomassParticleSystem {
    * @private
    */
   private _drawParticles(): void {
-    for (let i = 0; i < this.particles.length; i++) {
-      const p = this.particles[i];
+    const isLowPerformance = window.BIOMASS_LOW_PERFORMANCE_MODE;
+
+    // In low performance mode, skip some particles and simplify drawing
+    const particlesToDraw = isLowPerformance
+      ? this.particles.filter((_, i) => i % 2 === 0) // Draw only half the particles
+      : this.particles;
+
+    // Determine trail length based on performance mode
+    const maxTrailLength = isLowPerformance ? 2 : 5;
+
+    for (let i = 0; i < particlesToDraw.length; i++) {
+      const p = particlesToDraw[i];
 
       // Draw trails first if enabled
       if (this.options.trailEffect && p.trail && p.trail.length > 0) {
-        for (let t = 0; t < p.trail.length; t++) {
-          const trailPoint = p.trail[t];
-          const trailOpacity = p.opacity * (1 - t / p.trail.length); // Fade out based on position in trail
+        // In low performance mode, draw fewer trail points
+        const trailPointsToDraw = isLowPerformance
+          ? p.trail.filter((_, i) => i % 2 === 0).slice(0, maxTrailLength)
+          : p.trail;
+
+        for (let t = 0; t < trailPointsToDraw.length; t++) {
+          const trailPoint = trailPointsToDraw[t];
+          const trailOpacity = p.opacity * (1 - t / trailPointsToDraw.length); // Fade out based on position in trail
 
           this.ctx.save();
           this.ctx.translate(trailPoint.x, trailPoint.y);
           this.ctx.rotate(trailPoint.rotation);
 
-          // Draw trail segment
-          this._drawParticleShape(p, trailPoint.size * 0.8, trailOpacity * 0.5);
+          // Draw trail segment with simplified shape in low performance mode
+          if (isLowPerformance) {
+            this.ctx.beginPath();
+            this.ctx.arc(0, 0, trailPoint.size * 0.8, 0, Math.PI * 2);
+            this.ctx.fillStyle = p.color.replace(')', `, ${trailOpacity * 0.4})`).replace('rgb', 'rgba');
+            this.ctx.fill();
+          } else {
+            this._drawParticleShape(p, trailPoint.size * 0.8, trailOpacity * 0.5);
+          }
 
           this.ctx.restore();
         }
@@ -587,8 +609,8 @@ export class EnhancedBiomassParticleSystem {
       this.ctx.translate(p.x, p.y);
       this.ctx.rotate(p.rotation);
 
-      // Draw with glow effect if enabled
-      if (this.options.particleGlow) {
+      // Draw with glow effect if enabled and not in low performance mode
+      if (this.options.particleGlow && !isLowPerformance) {
         // Add subtle glow
         const glowSize = p.size * 2;
         const gradient = this.ctx.createRadialGradient(
@@ -613,8 +635,15 @@ export class EnhancedBiomassParticleSystem {
         this.ctx.fillRect(-glowSize, -glowSize, glowSize * 2, glowSize * 2);
       }
 
-      // Draw the actual particle
-      this._drawParticleShape(p, p.size, p.opacity);
+      // Draw the actual particle - simplified in low performance mode
+      if (isLowPerformance) {
+        this.ctx.beginPath();
+        this.ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+        this.ctx.fillStyle = p.color.replace(')', `, ${p.opacity})`).replace('rgb', 'rgba');
+        this.ctx.fill();
+      } else {
+        this._drawParticleShape(p, p.size, p.opacity);
+      }
 
       this.ctx.restore();
     }
