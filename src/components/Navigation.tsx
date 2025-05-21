@@ -259,13 +259,13 @@ const Navigation = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
               <div className="flex items-center justify-center relative">
                 <motion.nav 
-                  className="text-center lg:text-left w-full px-6 md:px-12 max-h-[90vh] overflow-y-auto"
+                  className="text-center lg:text-left w-full px-6 md:px-12 max-h-[90vh] overflow-y-auto py-10 md:py-16"
                   variants={menuListVariants}
                   initial="closed"
                   animate="open"
                   exit="closed"
                 >
-                  <ul className="space-y-6 md:space-y-8">
+                  <ul className="space-y-7 md:space-y-9">
                     {menuItems.map((item, index) => (
                       <motion.li 
                         key={item.name}
@@ -284,6 +284,7 @@ const Navigation = () => {
                               <ChevronDown 
                                 className={`ml-2 transition-transform duration-300 ${expandedSubmenus.includes(index) ? 'rotate-180' : ''}`}
                                 size={expandedSubmenus.includes(index) ? 28 : 24}
+                                aria-hidden="true"
                               />
                               <span className="absolute bottom-0 left-0 w-0 h-1 bg-primary-500 transition-all duration-500 ease-in-out group-hover:w-full"></span>
                             </button>
@@ -292,7 +293,7 @@ const Navigation = () => {
                               variants={submenuItemVariants}
                               initial="closed"
                               animate={expandedSubmenus.includes(index) ? "open" : "closed"}
-                              className="overflow-hidden pl-6 md:pl-10"
+                              className="overflow-hidden pl-6 md:pl-10 mt-3 md:mt-4"
                             >
                               {item.submenu.map((subItem) => (
                                 <motion.li 
@@ -348,16 +349,22 @@ const Navigation = () => {
                           alt={menuItems[activeItem].name} 
                           className="w-full h-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-primary-500 bg-opacity-20 backdrop-blur-sm"></div>
-                        <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-primary-500 bg-opacity-20 backdrop-blur-sm flex flex-col items-center justify-center">
                           <motion.h2 
-                            className="text-5xl text-white font-serif font-bold drop-shadow-lg"
+                            className="text-5xl text-white font-serif font-bold drop-shadow-lg mb-4"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2, duration: 0.5 }}
                           >
                             {menuItems[activeItem].name}
                           </motion.h2>
+                          
+                          <motion.div
+                            className="w-20 h-1 bg-white rounded-full"
+                            initial={{ width: 0, opacity: 0 }}
+                            animate={{ width: 80, opacity: 1 }}
+                            transition={{ delay: 0.4, duration: 0.6 }}
+                          />
                         </div>
                       </motion.div>
                     )}
