@@ -31,4 +31,5 @@ export interface ParticleSystemOptions {
   responsive?: boolean;
   densityFactor?: number;
   useHardwareAcceleration?: boolean;
+  lowPerformanceMode?: boolean;
 }

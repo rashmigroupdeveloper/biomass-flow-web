@@ -25,7 +25,8 @@ export class ParticleFactory {
         size: Math.random() * (maxSize - minSize) + minSize,
         speedX: (Math.random() - 0.5) * 0.5,
         speedY: (Math.random() - 0.5) * 0.5,
-        hue: baseHue + Math.random() * 20 - 10
+        hue: baseHue + Math.random() * 20 - 10,
+        opacity: Math.random() * 0.5 + 0.5 // Add opacity property with a default value
       });
     }
     
@@ -54,6 +55,8 @@ export class ParticleFactory {
     if (Math.random() < 0.01) {
       particle.size = Math.random() * (maxSize - minSize) + minSize;
       particle.hue = baseHue + Math.random() * 20 - 10;
+      // Occasionally refresh opacity as well
+      particle.opacity = Math.random() * 0.5 + 0.5;
     }
     
     return particle;
