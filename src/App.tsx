@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -21,7 +20,7 @@ import Sustainability from "@/pages/Sustainability";
 import PageTransition from "@/components/PageTransition";
 import ExampleFixedImage from "@/pages/ExampleFixedImage";
 import Media from "@/pages/Media";
-import { Helmet, HelmetProvider } from 'react-helmet-async';
+import { Helmet } from 'react-helmet-async';
 import FixImages from '@/components/FixImages';
 import Navigation from '@/components/Navigation';
 
@@ -33,6 +32,17 @@ import '@/styles/visual-storytelling.css';
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
+
+// Separate SEO component to avoid linting issues
+const SEO = () => (
+  <Helmet>
+    <title>Rashmi 6 Paradigm</title>
+    <meta name="theme-color" content="#4CAF50" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </Helmet>
+);
 
 const App: React.FC = () => {
   // Add preload effect for the manifest icons
@@ -65,6 +75,36 @@ const App: React.FC = () => {
         faviconLink.href = '/favicon.ico';
         faviconLink.as = 'image';
         document.head.appendChild(faviconLink);
+        
+        // Add actual link elements for the icons
+        const appleIcon = document.createElement('link');
+        appleIcon.rel = 'apple-touch-icon';
+        appleIcon.href = '/apple-touch-icon.png';
+        document.head.appendChild(appleIcon);
+        
+        const favicon32 = document.createElement('link');
+        favicon32.rel = 'icon';
+        favicon32.type = 'image/png';
+        favicon32.setAttribute('sizes', '32x32');
+        favicon32.href = '/favicon-32x32.png';
+        document.head.appendChild(favicon32);
+        
+        const favicon16 = document.createElement('link');
+        favicon16.rel = 'icon';
+        favicon16.type = 'image/png';
+        favicon16.setAttribute('sizes', '16x16');
+        favicon16.href = '/favicon-16x16.png';
+        document.head.appendChild(favicon16);
+        
+        const favicon = document.createElement('link');
+        favicon.rel = 'icon';
+        favicon.href = '/favicon.ico';
+        document.head.appendChild(favicon);
+        
+        const manifest = document.createElement('link');
+        manifest.rel = 'manifest';
+        manifest.href = '/site.webmanifest';
+        document.head.appendChild(manifest);
       } catch (err) {
         console.error('Failed to preload icons:', err);
       }
@@ -75,50 +115,37 @@ const App: React.FC = () => {
 
   return (
     <React.StrictMode>
-      <HelmetProvider>
-        <QueryClientProvider client={queryClient}>
-          <Helmet>
-            <title>Rashmi 6 Paradigm</title>
-            <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-            <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-            <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-            <link rel="icon" href="/favicon.ico" />
-            <link rel="manifest" href="/site.webmanifest" />
-            <meta name="theme-color" content="#4CAF50" />
-            <meta name="apple-mobile-web-app-capable" content="yes" />
-            <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          </Helmet>
-          <FixImages />
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Navigation />
-              <PageTransition>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/products/bio-pellets" element={<BioPellets />} />
-                  <Route path="/products/activated-carbon" element={<ActivatedCarbon />} />
-                  <Route path="/products/charcoal-briquettes" element={<CharcoalBriquettes />} />
-                  <Route path="/policy" element={<QualityPolicy />} />
-                  <Route path="/certificates" element={<Certificates />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/process" element={<Process />} />
-                  <Route path="/impact" element={<Impact />} />
-                  <Route path="/csr" element={<CSR />} />
-                  <Route path="/sustainability" element={<Sustainability />} />
-                  <Route path="/media" element={<Media />} />
-                  <Route path="/example-fixed-image" element={<ExampleFixedImage />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </PageTransition>
-            </BrowserRouter>
-          </TooltipProvider>
-        </QueryClientProvider>
-      </HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <SEO />
+        <FixImages />
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Navigation />
+            <PageTransition>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/products/bio-pellets" element={<BioPellets />} />
+                <Route path="/products/activated-carbon" element={<ActivatedCarbon />} />
+                <Route path="/products/charcoal-briquettes" element={<CharcoalBriquettes />} />
+                <Route path="/policy" element={<QualityPolicy />} />
+                <Route path="/certificates" element={<Certificates />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/process" element={<Process />} />
+                <Route path="/impact" element={<Impact />} />
+                <Route path="/csr" element={<CSR />} />
+                <Route path="/sustainability" element={<Sustainability />} />
+                <Route path="/media" element={<Media />} />
+                <Route path="/example-fixed-image" element={<ExampleFixedImage />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </PageTransition>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
     </React.StrictMode>
   );
 };

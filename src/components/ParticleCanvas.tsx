@@ -3,6 +3,7 @@ import { BiomassParticleSystem } from '../utils/particle-system';
 import { EnhancedBiomassParticleSystem } from '../utils/enhanced-particle-system';
 import { EnhancedParticleSystemOptions } from '../utils/particle-system/enhanced-types';
 import { ParticleSystemOptions } from '../utils/particle-system/types';
+import './ParticleCanvas.css';
 
 export interface ParticleCanvasProps {
   id: string;
@@ -81,15 +82,6 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
     <canvas
       id={id}
       className={`particle-canvas ${className || ''}`}
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: 0,
-        transform: 'translateZ(0)', // Force GPU acceleration
-      }}
     />
   );
 });
