@@ -40,8 +40,8 @@ const detectDeviceCapabilities = () => {
   const hasLowCPU = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2;
 
   // Check memory (not supported in all browsers)
-  // @ts-expect-error - deviceMemory is not in all browser types
-  const hasLowMemory = navigator.deviceMemory && navigator.deviceMemory < 4;
+  const deviceMemory = navigator.deviceMemory as number | undefined;
+  const hasLowMemory = deviceMemory && deviceMemory < 4;
 
   // Check for GPU performance (indirect method)
   let hasLowGPU = false;
@@ -53,10 +53,8 @@ const detectDeviceCapabilities = () => {
     const gl = canvas.getContext('webgl') as WebGLRenderingContext | null;
 
     if (gl) {
-      // @ts-expect-error - WEBGL_debug_renderer_info may not be in all TypeScript definitions
       const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
       if (debugInfo) {
-        // @ts-expect-error - UNMASKED_RENDERER_WEBGL may not be in all TypeScript definitions
         const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
         // Check for known low-performance GPU indicators
         hasLowGPU = /Intel|HD Graphics|GMA|Radeon HD 2|GeForce 8|Mali-4|Adreno 3|PowerVR/i.test(renderer);
@@ -81,8 +79,7 @@ const detectDeviceCapabilities = () => {
   console.info(`Performance mode: ${lowPerformanceMode ? 'Low' : 'High'}`);
   console.info(`- Mobile device: ${isMobileDevice}`);
   console.info(`- CPU cores: ${navigator.hardwareConcurrency || 'unknown'}`);
-  // @ts-expect-error - deviceMemory is not in all browser types
-  console.info(`- Device memory: ${navigator.deviceMemory || 'unknown'} GB`);
+  console.info(`- Device memory: ${deviceMemory || 'unknown'} GB`);
   console.info(`- Low GPU detected: ${hasLowGPU}`);
 };
 

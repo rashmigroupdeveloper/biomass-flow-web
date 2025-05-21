@@ -1,3 +1,4 @@
+
 /**
  * Enhanced Biomass Particle System with trailing effects
  *
@@ -9,6 +10,7 @@
  */
 
 import { EnhancedParticleSystemOptions } from './particle-system/enhanced-types';
+import { FlowDirection } from './particle-system/types';
 
 interface TrailPoint {
   x: number;
@@ -427,7 +429,7 @@ export class EnhancedBiomassParticleSystem {
       }
 
       // Apply flow direction modifiers
-      const flowDirection = this.options.flowDirection || 'upward';
+      const flowDirection: FlowDirection = this.options.flowDirection || 'upward';
       const flowIntensity = this.options.flowIntensity || 1;
 
       // Handle each flow direction separately
