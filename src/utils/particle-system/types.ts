@@ -37,3 +37,9 @@ export interface ParticleSystemOptions {
   backgroundColor?: string;
   useHardwareAcceleration?: boolean;
 }
+
+// Add Vector2D interface which is referenced in imports
+export interface Vector2D {
+  x: number;
+  y: number;
+}

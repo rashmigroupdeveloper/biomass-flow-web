@@ -1,7 +1,6 @@
-
 import { Particle, ParticleSystemOptions, FlowDirection } from './particle-system/types';
 import { ParticleFactory } from './particle-system/particle-factory';
-import { Renderer } from './particle-system/renderer';
+import { ParticleRenderer } from './particle-system/renderer';
 
 export class EnhancedBiomassParticleSystem {
   private canvas: HTMLCanvasElement | null = null;
@@ -10,7 +9,7 @@ export class EnhancedBiomassParticleSystem {
   private width: number = 0;
   private height: number = 0;
   private factory: ParticleFactory | null = null;
-  private renderer: Renderer | null = null;
+  private renderer: ParticleRenderer | null = null;
   private running: boolean = false;
   private animationFrameId: number = 0;
   private lastFrameTime: number = 0;
@@ -65,7 +64,7 @@ export class EnhancedBiomassParticleSystem {
       this.height
     );
 
-    this.renderer = new Renderer(this.ctx, this.width, this.height);
+    this.renderer = new ParticleRenderer(this.ctx, this.width, this.height);
 
     // Initialize particles
     // Adjust particle count for low performance mode
@@ -157,7 +156,7 @@ export class EnhancedBiomassParticleSystem {
         this.height
       );
 
-      this.renderer = new Renderer(this.ctx!, this.width, this.height);
+      this.renderer = new ParticleRenderer(this.ctx!, this.width, this.height);
 
       // Re-initialize particles within new dimensions
       this.particles.forEach(p => {

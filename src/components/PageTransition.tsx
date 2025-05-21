@@ -47,7 +47,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
                   speedFactor: 1.2,
                   connectionRadius: 100,
                   connectionOpacity: 0.2,
-                  mouseInteraction: false,
+                  interactive: false, // Changed from mouseInteraction
                   responsive: false,
                 }}
               />

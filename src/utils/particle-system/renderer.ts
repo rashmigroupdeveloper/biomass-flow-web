@@ -1,4 +1,3 @@
-
 import { Particle, ParticleSystemOptions } from './types';
 
 export class ParticleRenderer {
@@ -58,7 +57,15 @@ export class ParticleRenderer {
   // Cache for pre-rendered particle images
   private particleImageCache: Map<string, HTMLCanvasElement> = new Map();
 
-  drawParticles(particles: Particle[]): void {
+  renderParticles(particles: Particle[]): void {
+    this.drawParticles(particles);
+  }
+
+  renderConnections(particles: Particle[], connectionRadius: number, connectionOpacity: number): void {
+    this.drawConnections(particles);
+  }
+
+  private drawParticles(particles: Particle[]): void {
     const targetCtx = this.offscreenCtx || this.ctx;
     const isLowPerformance = this.options.lowPerformanceMode;
 
@@ -131,7 +138,7 @@ export class ParticleRenderer {
     }
   }
 
-  drawConnections(particles: Particle[]): void {
+  private drawConnections(particles: Particle[]): void {
     const targetCtx = this.offscreenCtx || this.ctx;
     const connectionRadius = this.options.connectionRadius || 100;
     const connectionOpacity = this.options.connectionOpacity || 0.1;
