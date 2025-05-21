@@ -54,7 +54,7 @@ const Hero = () => {
           speedFactor: 0.5, // Slower movement for more graceful trails
           connectionRadius: 180, // Increased connection radius
           connectionOpacity: 0.25, // More visible connections
-          interactive: true, // Changed from mouseInteraction
+          mouseInteraction: true,
           responsive: true,
           densityFactor: 0.00012,
           trailEffect: true, // Enable trailing effect

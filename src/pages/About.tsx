@@ -8,8 +8,6 @@ import AboutParallaxHero from '@/components/AboutParallaxHero';
 import AboutAnimatedStats from '@/components/AboutAnimatedStats';
 import EnhancedButton from '@/components/EnhancedButton';
 import EnhancedFooter from '@/components/EnhancedFooter';
-import AboutCEOSection from '@/components/AboutCEOSection';
-import CoreStrengthsSection from '@/components/CoreStrengthsSection';
 
 const About = () => {
   const [ref1, inView1] = useInView({
@@ -79,12 +77,6 @@ const About = () => {
       
       {/* Stats Section */}
       <AboutAnimatedStats />
-      
-      {/* CEO Section - New */}
-      <AboutCEOSection />
-      
-      {/* Core Strengths Section - New */}
-      <CoreStrengthsSection />
       
       {/* Vision & Mission */}
       <section ref={ref1} className="bg-gray-50 py-16 md:py-24">

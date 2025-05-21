@@ -1,15 +1,5 @@
-import { FlowDirection } from './types';
 
-// Create an interface for Vector2D here instead of importing it
-interface Vector2D {
-  x: number;
-  y: number;
-}
-
-export interface FlowPattern {
-  direction: FlowDirection;
-  getFlow: (x: number, y: number, width: number, height: number, time?: number) => Vector2D;
-}
+import { Particle, Vector2D, ParticleSystemOptions, FlowDirection } from './types';
 
 export class FlowPatterns {
   private options: ParticleSystemOptions;

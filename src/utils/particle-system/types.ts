@@ -1,45 +1,35 @@
 
+export interface Vector2D {
+  x: number;
+  y: number;
+}
+
 export interface Particle {
   x: number;
   y: number;
   size: number;
-  speedX: number;
-  speedY: number;
   hue: number;
   opacity: number;
+  speedX: number;
+  speedY: number;
 }
 
-export type FlowDirection = 'upward' | 'downward' | 'leftward' | 'rightward' | 'radial' | 'wave' | 'custom' | 'circular';
-
-export interface FlowFieldOptions {
-  direction: FlowDirection;
-  intensity: number;
-  scale: number;
-  seed: number;
-  animate?: boolean;
-}
+export type FlowDirection = 'upward' | 'downward' | 'leftward' | 'rightward' | 'radial' | 'circular' | 'wave' | 'custom';
 
 export interface ParticleSystemOptions {
-  canvasId: string;
   particleCount?: number;
   particleMinSize?: number;
   particleMaxSize?: number;
   baseHue?: number;
-  hueVariation?: number;
-  flowDirection?: FlowDirection;
+  backgroundColor?: string;
   flowIntensity?: number;
+  flowDirection?: FlowDirection;
   speedFactor?: number;
   connectionRadius?: number;
   connectionOpacity?: number;
-  interactive?: boolean;
-  flowOptions?: FlowFieldOptions;
-  lowPerformanceMode?: boolean;
-  backgroundColor?: string;
+  mouseInteraction?: boolean;
+  responsive?: boolean;
+  densityFactor?: number;
   useHardwareAcceleration?: boolean;
-}
-
-// Add Vector2D interface which is referenced in imports
-export interface Vector2D {
-  x: number;
-  y: number;
+  lowPerformanceMode?: boolean;
 }
