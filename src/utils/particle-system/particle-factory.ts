@@ -1,64 +1,52 @@
 
-import { Particle, ParticleSystemOptions } from './types';
+import { Particle } from './types';
 
 export class ParticleFactory {
-  private canvas: HTMLCanvasElement;
-  private options: ParticleSystemOptions;
+  private readonly minSize: number;
+  private readonly maxSize: number;
+  private readonly baseHue: number;
+  private readonly hueVariation: number;
+  private readonly canvasWidth: number;
+  private readonly canvasHeight: number;
   
-  constructor(canvas: HTMLCanvasElement, options: ParticleSystemOptions) {
-    this.canvas = canvas;
-    this.options = options;
+  constructor(
+    minSize: number,
+    maxSize: number,
+    baseHue: number,
+    hueVariation: number,
+    canvasWidth: number,
+    canvasHeight: number
+  ) {
+    this.minSize = minSize;
+    this.maxSize = maxSize;
+    this.baseHue = baseHue;
+    this.hueVariation = hueVariation;
+    this.canvasWidth = canvasWidth;
+    this.canvasHeight = canvasHeight;
   }
-  
-  createParticles(count: number): Particle[] {
-    const particles: Particle[] = [];
-    const canvasWidth = this.canvas.width;
-    const canvasHeight = this.canvas.height;
-    const minSize = this.options.particleMinSize || 1;
-    const maxSize = this.options.particleMaxSize || 3;
-    const baseHue = this.options.baseHue || 120;
+
+  createParticle(): Particle {
+    const size = Math.random() * (this.maxSize - this.minSize) + this.minSize;
+    const speedFactor = 0.5; // Base speed factor
+    const speedX = (Math.random() - 0.5) * speedFactor;
+    const speedY = (Math.random() - 0.5) * speedFactor;
+    const hue = this.baseHue + (Math.random() * this.hueVariation * 2 - this.hueVariation);
     
-    for (let i = 0; i < count; i++) {
-      particles.push({
-        x: Math.random() * canvasWidth,
-        y: Math.random() * canvasHeight,
-        size: Math.random() * (maxSize - minSize) + minSize,
-        speedX: (Math.random() - 0.5) * 0.5,
-        speedY: (Math.random() - 0.5) * 0.5,
-        hue: baseHue + Math.random() * 20 - 10,
-        opacity: Math.random() * 0.5 + 0.5 // Add opacity property with a default value
-      });
-    }
-    
-    return particles;
+    return {
+      x: Math.random() * this.canvasWidth,
+      y: Math.random() * this.canvasHeight,
+      size,
+      speedX,
+      speedY,
+      hue,
+      opacity: Math.random() * 0.5 + 0.5 // Add opacity property
+    };
   }
-  
-  resetParticle(particle: Particle): Particle {
-    const minSize = this.options.particleMinSize || 1;
-    const maxSize = this.options.particleMaxSize || 3;
-    const baseHue = this.options.baseHue || 120;
-    
-    // Reset position based on edges
-    if (particle.x < 0) {
-      particle.x = this.canvas.width;
-    } else if (particle.x > this.canvas.width) {
-      particle.x = 0;
-    }
-    
-    if (particle.y < 0) {
-      particle.y = this.canvas.height;
-    } else if (particle.y > this.canvas.height) {
-      particle.y = 0;
-    }
-    
-    // Occasionally reset particle properties for variety
-    if (Math.random() < 0.01) {
-      particle.size = Math.random() * (maxSize - minSize) + minSize;
-      particle.hue = baseHue + Math.random() * 20 - 10;
-      // Occasionally refresh opacity as well
-      particle.opacity = Math.random() * 0.5 + 0.5;
-    }
-    
+
+  createParticleAt(x: number, y: number): Particle {
+    const particle = this.createParticle();
+    particle.x = x;
+    particle.y = y;
     return particle;
   }
 }
