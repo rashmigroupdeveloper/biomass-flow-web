@@ -34,4 +34,6 @@ export interface ParticleSystemOptions {
   interactive?: boolean;
   flowOptions?: FlowFieldOptions;
   lowPerformanceMode?: boolean;
+  backgroundColor?: string;
+  useHardwareAcceleration?: boolean;
 }

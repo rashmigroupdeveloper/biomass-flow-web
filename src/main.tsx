@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
@@ -55,8 +54,8 @@ const detectDeviceCapabilities = () => {
   // Create a test canvas and run a simple WebGL test
   try {
     const canvas = document.createElement('canvas');
-    // Type assertion to WebGLRenderingContext to fix TypeScript errors
-    const gl = canvas.getContext('webgl') as WebGLRenderingContext | null;
+    // Get WebGL context
+    const gl = canvas.getContext('webgl');
 
     if (gl) {
       const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');

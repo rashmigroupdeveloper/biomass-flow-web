@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, forwardRef, useImperativeHandle, ForwardedRef } from 'react';
 import { BiomassParticleSystem } from '../utils/particle-system';
 import { EnhancedBiomassParticleSystem } from '../utils/enhanced-particle-system';
@@ -7,7 +8,7 @@ import { ParticleSystemOptions } from '../utils/particle-system/types';
 export interface ParticleCanvasProps {
   id: string;
   className?: string;
-  options?: EnhancedParticleSystemOptions;
+  options?: Partial<EnhancedParticleSystemOptions>;
 }
 
 export interface ParticleCanvasRef {
@@ -28,26 +29,26 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
 
     // Initialize particle system when component mounts with performance optimizations
     const defaultOptions: ParticleSystemOptions = {
+      canvasId: id,
       particleCount: isLowPerformance ? 80 : 150,
       particleMinSize: 1,
       particleMaxSize: isLowPerformance ? 3 : 4,
       baseHue: 120, // Green hue
-      backgroundColor: 'rgba(46, 125, 50, 0.05)', // Very subtle green background
+      hueVariation: 20,
       flowIntensity: isLowPerformance ? 1.0 : 1.2,
-      flowDirection: 'upward' as const,
+      flowDirection: 'upward',
       speedFactor: isLowPerformance ? 0.5 : 0.6,
       connectionRadius: isLowPerformance ? 80 : 120,
       connectionOpacity: 0.12,
-      mouseInteraction: true,
-      responsive: true,
-      densityFactor: isLowPerformance ? 0.00005 : 0.00009,
-      useHardwareAcceleration: true, // Enable hardware acceleration
+      interactive: true,
+      lowPerformanceMode: isLowPerformance
     };
 
     // Merge with any provided options, but ensure performance settings are applied
     const mergedOptions = {
       ...defaultOptions,
       ...options,
+      canvasId: id, // Always use the id prop for canvasId
       // Always override these options based on performance mode
       particleCount: options?.particleCount
         ? (isLowPerformance ? Math.floor(options.particleCount * 0.6) : options.particleCount)
@@ -61,12 +62,12 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
     if (mergedOptions.trailEffect) {
       // Create and start the enhanced particle system with trailing effects
       systemRef.current = new EnhancedBiomassParticleSystem(id, mergedOptions);
+      systemRef.current.initialize();
     } else {
       // Create and start the standard particle system
-      systemRef.current = new BiomassParticleSystem(id, mergedOptions);
+      systemRef.current = new BiomassParticleSystem(mergedOptions);
+      systemRef.current.start();
     }
-
-    systemRef.current.start();
 
     // Cleanup function to destroy the particle system when component unmounts
     return () => {
@@ -97,5 +98,3 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
 ParticleCanvas.displayName = 'ParticleCanvas';
 
 export default ParticleCanvas;
-
-

@@ -31,6 +31,7 @@ export class ParticleFactory {
     const speedX = (Math.random() - 0.5) * speedFactor;
     const speedY = (Math.random() - 0.5) * speedFactor;
     const hue = this.baseHue + (Math.random() * this.hueVariation * 2 - this.hueVariation);
+    const opacity = Math.random() * 0.5 + 0.5; // Add opacity between 0.5 and 1.0
     
     return {
       x: Math.random() * this.canvasWidth,
@@ -39,7 +40,7 @@ export class ParticleFactory {
       speedX,
       speedY,
       hue,
-      opacity: Math.random() * 0.5 + 0.5 // Add opacity property
+      opacity
     };
   }
 

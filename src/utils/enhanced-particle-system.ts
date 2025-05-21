@@ -1,6 +1,7 @@
-import { Particle, ParticleSystemOptions } from './types';
-import { ParticleFactory } from './particle-factory';
-import { Renderer } from './renderer';
+
+import { Particle, ParticleSystemOptions, FlowDirection } from './particle-system/types';
+import { ParticleFactory } from './particle-system/particle-factory';
+import { Renderer } from './particle-system/renderer';
 
 export class EnhancedBiomassParticleSystem {
   private canvas: HTMLCanvasElement | null = null;
@@ -18,10 +19,10 @@ export class EnhancedBiomassParticleSystem {
   private mouseInteracting: boolean = false;
   private readonly options: ParticleSystemOptions;
 
-  constructor(options: ParticleSystemOptions) {
+  constructor(canvasId: string, options: ParticleSystemOptions) {
     // Default options with reasonable fallbacks
     this.options = {
-      canvasId: options.canvasId,
+      canvasId,
       particleCount: options.particleCount || 150,
       particleMinSize: options.particleMinSize || 1,
       particleMaxSize: options.particleMaxSize || 3,
@@ -203,48 +204,50 @@ export class EnhancedBiomassParticleSystem {
     });
   }
 
-  private _updateParticlePosition(particle: any, time: number) {
+  private _updateParticlePosition(particle: Particle, time: number) {
     // Apply flow direction
     let flowX = 0;
     let flowY = 0;
 
     // Calculate base flow based on flowDirection
-    if (this.options.flowDirection === 'leftward') {
-      flowX = -this.options.flowIntensity || -1;
-    } else if (this.options.flowDirection === 'rightward') {
-      flowX = this.options.flowIntensity || 1;
-    } else if (this.options.flowDirection === 'upward') {
-      flowY = -this.options.flowIntensity || -1;
-    } else if (this.options.flowDirection === 'downward') {
-      flowY = this.options.flowIntensity || 1;
-    } else if (this.options.flowDirection === 'radial') {
+    const flowDirection = this.options.flowDirection as FlowDirection;
+    
+    if (flowDirection === 'leftward') {
+      flowX = -this.options.flowIntensity! || -1;
+    } else if (flowDirection === 'rightward') {
+      flowX = this.options.flowIntensity! || 1;
+    } else if (flowDirection === 'upward') {
+      flowY = -this.options.flowIntensity! || -1;
+    } else if (flowDirection === 'downward') {
+      flowY = this.options.flowIntensity! || 1;
+    } else if (flowDirection === 'radial') {
       const dx = particle.x - this.width / 2;
       const dy = particle.y - this.height / 2;
       const distance = Math.sqrt(dx * dx + dy * dy);
       if (distance > 0) {
-        flowX = (dx / distance) * (this.options.flowIntensity || 1);
-        flowY = (dy / distance) * (this.options.flowIntensity || 1);
+        flowX = (dx / distance) * (this.options.flowIntensity! || 1);
+        flowY = (dy / distance) * (this.options.flowIntensity! || 1);
       }
-    } else if (this.options.flowDirection === 'circular') {
+    } else if (flowDirection === 'circular') {
       const dx = particle.x - this.width / 2;
       const dy = particle.y - this.height / 2;
       const distance = Math.sqrt(dx * dx + dy * dy);
       if (distance > 0) {
-        flowX = (-dy / distance) * (this.options.flowIntensity || 1);
-        flowY = (dx / distance) * (this.options.flowIntensity || 1);
+        flowX = (-dy / distance) * (this.options.flowIntensity! || 1);
+        flowY = (dx / distance) * (this.options.flowIntensity! || 1);
       }
-    } else if (this.options.flowDirection === 'wave') {
+    } else if (flowDirection === 'wave') {
       const waveAmplitude = 2;
       const waveFrequency = 0.02;
       const waveSpeed = 0.01;
       flowY = Math.sin(particle.x * waveFrequency + time * waveSpeed) * waveAmplitude;
-    } else if (this.options.flowDirection === 'custom' && this.options.flowOptions) {
+    } else if (flowDirection === 'custom' && this.options.flowOptions) {
       // Custom flow implementation using Perlin noise or other advanced patterns
       // would be implemented here...
     }
 
-    particle.x += flowX * (this.options.speedFactor || 1);
-    particle.y += flowY * (this.options.speedFactor || 1);
+    particle.x += flowX * (this.options.speedFactor! || 1);
+    particle.y += flowY * (this.options.speedFactor! || 1);
   }
 
   private drawParticles(): void {
