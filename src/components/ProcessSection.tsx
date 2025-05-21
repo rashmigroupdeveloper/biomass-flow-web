@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
@@ -76,7 +75,7 @@ const ProcessSection = () => {
             transition={{ duration: 0.8 }}
           >
             <h2 className="section-heading">
-              Our <span className="section-heading-accent">Process</span>
+              Our <span className="section-heading-accent text-white">Process</span>
             </h2>
             <div className="decorative-line mx-auto"></div>
           </motion.div>

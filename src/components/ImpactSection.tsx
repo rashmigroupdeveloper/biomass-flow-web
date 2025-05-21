@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
@@ -93,7 +92,7 @@ const ImpactSection = () => {
             transition={{ duration: 0.8 }}
           >
             <h2 className="section-heading">
-              Environmental <span className="section-heading-accent">Impact</span>
+              Environmental <span className="section-heading-accent text-white">Impact</span>
             </h2>
             <div className="decorative-line mx-auto"></div>
           </motion.div>
