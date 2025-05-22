@@ -32,4 +32,5 @@ export interface ParticleSystemOptions {
   densityFactor?: number;
   useHardwareAcceleration?: boolean;
   lowPerformanceMode?: boolean;
+  hueVariation?: number;
 }

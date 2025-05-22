@@ -1,6 +1,7 @@
+
 import React, { useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
-import { ParticleSystem } from '@/utils/particle-system/particle-system';
 import { ParticleSystemOptions } from '@/utils/particle-system/types';
+import { BiomassParticleSystem } from '@/utils/particle-system';
 import '@/components/ParticleCanvas.css';
 
 export interface ParticleCanvasRef {
@@ -16,7 +17,7 @@ interface ParticleCanvasProps {
 
 const ParticleCanvas = forwardRef<ParticleCanvasRef, ParticleCanvasProps>(({ id, options }, ref) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const particleSystemRef = useRef<ParticleSystem | null>(null);
+  const particleSystemRef = useRef<BiomassParticleSystem | null>(null);
 
   useImperativeHandle(ref, () => ({
     start: () => {
@@ -46,7 +47,7 @@ const ParticleCanvas = forwardRef<ParticleCanvasRef, ParticleCanvasProps>(({ id,
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
 
-    const particleSystem = new ParticleSystem(canvas, options);
+    const particleSystem = new BiomassParticleSystem(canvas, options);
     particleSystemRef.current = particleSystem;
     particleSystem.start();
 

@@ -1,132 +1,85 @@
-import { Particle, ParticleSystemOptions, Vector2D } from './types';
+import { Particle, FlowDirection, Vector2D } from './types';
 
 export class FlowPatterns {
-  // Calculate flow for an individual particle based on its position and flow direction
-  static calculateFlow(
-    particle: Particle,
-    canvasWidth: number,
-    canvasHeight: number,
-    options: ParticleSystemOptions,
-    time: number = 0
-  ): Vector2D {
-    const { flowDirection, flowIntensity = 1 } = options;
+  private width: number;
+  private height: number;
+  private flowIntensity: number;
+  private flowDirection: FlowDirection;
+  private time: number = 0;
+
+  constructor(width: number, height: number, flowDirection: FlowDirection, flowIntensity: number) {
+    this.width = width;
+    this.height = height;
+    this.flowDirection = flowDirection;
+    this.flowIntensity = flowIntensity;
+  }
+
+  updateTime(deltaTime: number): void {
+    this.time += deltaTime * 0.001;
+  }
+
+  applyFlow(particle: Particle, deltaTime: number): void {
+    const timeScale = deltaTime / 16.667; // Normalize for 60 FPS
     let flowX = 0;
     let flowY = 0;
     
-    switch (flowDirection) {
-      case 'leftward':
-        return this.leftwardFlow(flowIntensity);
-      case 'rightward':
-        return this.rightwardFlow(flowIntensity);
+    switch(this.flowDirection) {
       case 'upward':
-        return this.upwardFlow(flowIntensity);
+        flowY = -this.flowIntensity;
+        break;
       case 'downward':
-        return this.downwardFlow(flowIntensity);
+        flowY = this.flowIntensity;
+        break;
+      case 'leftward':
+        flowX = -this.flowIntensity;
+        break;
+      case 'rightward':
+        flowX = this.flowIntensity;
+        break;
       case 'radial':
-        return this.radialFlow(particle, canvasWidth, canvasHeight, flowIntensity);
+        const dx = particle.x - this.width / 2;
+        const dy = particle.y - this.height / 2;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance > 0) {
+          flowX = dx / distance * this.flowIntensity;
+          flowY = dy / distance * this.flowIntensity;
+        }
+        break;
       case 'circular':
-        return this.circularFlow(particle, canvasWidth, canvasHeight, flowIntensity);
+        const cdx = particle.x - this.width / 2;
+        const cdy = particle.y - this.height / 2;
+        const cdistance = Math.sqrt(cdx * cdx + cdy * cdy);
+        if (cdistance > 0) {
+          flowX = -cdy / cdistance * this.flowIntensity;
+          flowY = cdx / cdistance * this.flowIntensity;
+        }
+        break;
       case 'wave':
-        return this.waveFlow(particle, time, flowIntensity);
+        const waveAmplitude = 2;
+        const waveFrequency = 0.02;
+        const waveSpeed = 0.01;
+        flowY = Math.sin(particle.x * waveFrequency + this.time * waveSpeed) * waveAmplitude;
+        break;
       case 'custom':
-        return this.customFlow(particle, canvasWidth, canvasHeight, time, flowIntensity);
-      default:
-        return { x: 0, y: 0 };
+        // Custom flow pattern could be implemented here
+        break;
     }
+
+    particle.x += flowX * timeScale;
+    particle.y += flowY * timeScale;
   }
-  
-  static leftwardFlow(intensity: number): Vector2D {
-    return {
-      x: -intensity,
-      y: 0
-    };
-  }
-  
-  static rightwardFlow(intensity: number): Vector2D {
-    return {
-      x: intensity,
-      y: 0
-    };
-  }
-  
-  static upwardFlow(intensity: number): Vector2D {
-    return {
-      x: 0,
-      y: -intensity
-    };
-  }
-  
-  static downwardFlow(intensity: number): Vector2D {
-    return {
-      x: 0,
-      y: intensity
-    };
-  }
-  
-  static radialFlow(particle: Particle, canvasWidth: number, canvasHeight: number, intensity: number): Vector2D {
-    const centerX = canvasWidth / 2;
-    const centerY = canvasHeight / 2;
-    const dx = particle.x - centerX;
-    const dy = particle.y - centerY;
+
+  applyMouseInfluence(particle: Particle, mousePos: Vector2D, radius: number = 100, strength: number = 1): void {
+    if (!mousePos.x || !mousePos.y) return;
+    
+    const dx = particle.x - mousePos.x;
+    const dy = particle.y - mousePos.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
     
-    if (distance === 0) return { x: 0, y: 0 };
-    
-    return {
-      x: (dx / distance) * intensity,
-      y: (dy / distance) * intensity
-    };
-  }
-  
-  static circularFlow(particle: Particle, canvasWidth: number, canvasHeight: number, intensity: number): Vector2D {
-    const centerX = canvasWidth / 2;
-    const centerY = canvasHeight / 2;
-    const dx = particle.x - centerX;
-    const dy = particle.y - centerY;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    
-    if (distance === 0) return { x: 0, y: 0 };
-    
-    return {
-      x: (-dy / distance) * intensity,
-      y: (dx / distance) * intensity
-    };
-  }
-  
-  static waveFlow(particle: Particle, time: number, intensity: number): Vector2D {
-    const waveAmplitude = 2;
-    const waveFrequency = 0.02;
-    const waveSpeed = 0.001;
-    
-    return {
-      x: 0,
-      y: Math.sin(particle.x * waveFrequency + time * waveSpeed) * waveAmplitude * intensity
-    };
-  }
-  
-  static customFlow(particle: Particle, canvasWidth: number, canvasHeight: number, time: number, intensity: number): Vector2D {
-    // This is a placeholder for custom flow patterns
-    // You can implement your own logic here
-    
-    // Example: combine circular and wave patterns
-    const circular = this.circularFlow(particle, canvasWidth, canvasHeight, intensity * 0.5);
-    const wave = this.waveFlow(particle, time, intensity * 0.5);
-    
-    return {
-      x: circular.x + wave.x,
-      y: circular.y + wave.y
-    };
-  }
-  
-  static perlinNoiseFlow(particle: Particle, time: number, intensity: number): Vector2D {
-    // This is a simplified version of Perlin noise
-    // In a real implementation, you would use a proper Perlin noise library
-    const x = Math.sin(particle.x * 0.01 + time * 0.001) * Math.cos(particle.y * 0.01);
-    const y = Math.cos(particle.x * 0.01) * Math.sin(particle.y * 0.01 + time * 0.001);
-    
-    return {
-      x: x * intensity,
-      y: y * intensity
-    };
+    if (distance < radius && distance > 0) {
+      const force = (radius - distance) / radius * strength;
+      particle.x += dx / distance * force;
+      particle.y += dy / distance * force;
+    }
   }
 }
