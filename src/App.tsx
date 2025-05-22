@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -6,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "@/pages/Index";
 import About from "@/pages/About";
+import AboutUs from "@/pages/AboutUs";
 import BioPellets from "@/pages/BioPellets";
 import ActivatedCarbon from "@/pages/ActivatedCarbon";
 import CharcoalBriquettes from "@/pages/CharcoalBriquettes";
@@ -127,6 +129,7 @@ const App: React.FC = () => {
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/about-us" element={<AboutUs />} />
                 <Route path="/products/bio-pellets" element={<BioPellets />} />
                 <Route path="/products/activated-carbon" element={<ActivatedCarbon />} />
                 <Route path="/products/charcoal-briquettes" element={<CharcoalBriquettes />} />
