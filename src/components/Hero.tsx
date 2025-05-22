@@ -50,18 +50,13 @@ const Hero = () => {
           baseHue: 120, // Green hue
           backgroundColor: 'rgba(255, 255, 255, 1)', // White background with green particles
           flowIntensity: 1.5,
-          flowDirection: 'upward' as const,
+          flowDirection: 'upward',
           speedFactor: 0.5, // Slower movement for more graceful trails
           connectionRadius: 180, // Increased connection radius
           connectionOpacity: 0.25, // More visible connections
-          mouseInteraction: true,
+          interactive: true,
           responsive: true,
           densityFactor: 0.00012,
-          trailEffect: true, // Enable trailing effect
-          trailLength: 0.92, // Controls how long trails persist (higher = longer)
-          particleGlow: true, // Add subtle glow to particles
-          elongateParticles: true, // Make particles more elongated like grass
-          waveMotion: true, // Add gentle wave-like motion
         }}
       />
 

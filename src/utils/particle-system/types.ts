@@ -27,7 +27,7 @@ export interface ParticleSystemOptions {
   speedFactor?: number;
   connectionRadius?: number;
   connectionOpacity?: number;
-  mouseInteraction?: boolean;
+  interactive?: boolean;
   responsive?: boolean;
   densityFactor?: number;
   useHardwareAcceleration?: boolean;
