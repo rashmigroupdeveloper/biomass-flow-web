@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
@@ -73,7 +72,7 @@ const ImpactSection = () => {
             speedFactor: 0.5,
             connectionRadius: 150,
             connectionOpacity: 0.2,
-            interactive: true,
+            mouseInteraction: true,
             responsive: true,
             densityFactor: 0.00007,
           }}

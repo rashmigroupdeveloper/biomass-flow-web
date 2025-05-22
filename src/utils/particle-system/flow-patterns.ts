@@ -1,85 +1,244 @@
-import { Particle, FlowDirection, Vector2D } from './types';
+
+import { Particle, Vector2D, ParticleSystemOptions, FlowDirection } from './types';
 
 export class FlowPatterns {
-  private width: number;
-  private height: number;
-  private flowIntensity: number;
-  private flowDirection: FlowDirection;
+  private options: ParticleSystemOptions;
+  private canvas: HTMLCanvasElement;
   private time: number = 0;
-
-  constructor(width: number, height: number, flowDirection: FlowDirection, flowIntensity: number) {
-    this.width = width;
-    this.height = height;
-    this.flowDirection = flowDirection;
-    this.flowIntensity = flowIntensity;
+  private isLowPerformanceMode: boolean;
+  
+  constructor(canvas: HTMLCanvasElement, options: ParticleSystemOptions) {
+    this.canvas = canvas;
+    this.options = options;
+    this.isLowPerformanceMode = typeof window !== 'undefined' && 
+                               window.BIOMASS_LOW_PERFORMANCE_MODE === true;
   }
-
-  updateTime(deltaTime: number): void {
-    this.time += deltaTime * 0.001;
+  
+  updateTime(delta: number): void {
+    this.time += delta * 0.001;
   }
-
-  applyFlow(particle: Particle, deltaTime: number): void {
-    const timeScale = deltaTime / 16.667; // Normalize for 60 FPS
-    let flowX = 0;
-    let flowY = 0;
+  
+  applyFlow(particle: Particle, delta: number): void {
+    const flowType = this.options.flowDirection || 'upward';
+    // Reduce intensity in low performance mode
+    const intensity = this.isLowPerformanceMode ? 
+                     (this.options.flowIntensity || 1) * 0.7 :
+                     (this.options.flowIntensity || 1);
+    const speedFactor = this.isLowPerformanceMode ?
+                       (this.options.speedFactor || 0.5) * 0.8 : 
+                       (this.options.speedFactor || 0.5);
     
-    switch(this.flowDirection) {
-      case 'upward':
-        flowY = -this.flowIntensity;
-        break;
-      case 'downward':
-        flowY = this.flowIntensity;
-        break;
-      case 'leftward':
-        flowX = -this.flowIntensity;
-        break;
-      case 'rightward':
-        flowX = this.flowIntensity;
-        break;
-      case 'radial':
-        const dx = particle.x - this.width / 2;
-        const dy = particle.y - this.height / 2;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance > 0) {
-          flowX = dx / distance * this.flowIntensity;
-          flowY = dy / distance * this.flowIntensity;
-        }
-        break;
-      case 'circular':
-        const cdx = particle.x - this.width / 2;
-        const cdy = particle.y - this.height / 2;
-        const cdistance = Math.sqrt(cdx * cdx + cdy * cdy);
-        if (cdistance > 0) {
-          flowX = -cdy / cdistance * this.flowIntensity;
-          flowY = cdx / cdistance * this.flowIntensity;
-        }
-        break;
-      case 'wave':
-        const waveAmplitude = 2;
-        const waveFrequency = 0.02;
-        const waveSpeed = 0.01;
-        flowY = Math.sin(particle.x * waveFrequency + this.time * waveSpeed) * waveAmplitude;
-        break;
-      case 'custom':
-        // Custom flow pattern could be implemented here
-        break;
+    // Handle each flow direction separately for proper typing
+    if (flowType === 'upward') {
+      this.applyUpwardFlow(particle, intensity, speedFactor, delta);
     }
-
-    particle.x += flowX * timeScale;
-    particle.y += flowY * timeScale;
+    else if (flowType === 'circular') {
+      this.applyCircularFlow(particle, intensity, speedFactor, delta);
+    }
+    else if (flowType === 'wave') {
+      this.applyWaveFlow(particle, intensity, speedFactor, delta);
+    }
+    else if (flowType === 'custom') {
+      this.applyCustomFlow(particle, intensity, speedFactor, delta);
+    }
+    else if (flowType === 'downward') {
+      this.applyDownwardFlow(particle, intensity, speedFactor, delta);
+    }
+    else if (flowType === 'leftward') {
+      this.applyLeftwardFlow(particle, intensity, speedFactor, delta);
+    }
+    else if (flowType === 'rightward') {
+      this.applyRightwardFlow(particle, intensity, speedFactor, delta);
+    }
+    else if (flowType === 'radial') {
+      this.applyRadialFlow(particle, intensity, speedFactor, delta);
+    }
+    else {
+      // Default to upward flow if no match
+      this.applyUpwardFlow(particle, intensity, speedFactor, delta);
+    }
   }
-
-  applyMouseInfluence(particle: Particle, mousePos: Vector2D, radius: number = 100, strength: number = 1): void {
-    if (!mousePos.x || !mousePos.y) return;
+  
+  private applyUpwardFlow(particle: Particle, intensity: number, speedFactor: number, delta: number): void {
+    // Gentle rising motion
+    particle.speedY -= 0.002 * intensity * delta;
     
-    const dx = particle.x - mousePos.x;
-    const dy = particle.y - mousePos.y;
+    // Add some horizontal drift
+    particle.speedX += (Math.random() - 0.5) * 0.002 * intensity * delta;
+    
+    // Apply speed limits
+    this.limitSpeed(particle, speedFactor);
+    
+    // Update position
+    particle.x += particle.speedX * speedFactor * delta;
+    particle.y += particle.speedY * speedFactor * delta;
+  }
+  
+  private applyDownwardFlow(particle: Particle, intensity: number, speedFactor: number, delta: number): void {
+    // Gentle falling motion
+    particle.speedY += 0.002 * intensity * delta;
+    
+    // Add some horizontal drift
+    particle.speedX += (Math.random() - 0.5) * 0.002 * intensity * delta;
+    
+    // Apply speed limits
+    this.limitSpeed(particle, speedFactor);
+    
+    // Update position
+    particle.x += particle.speedX * speedFactor * delta;
+    particle.y += particle.speedY * speedFactor * delta;
+  }
+  
+  private applyLeftwardFlow(particle: Particle, intensity: number, speedFactor: number, delta: number): void {
+    // Gentle leftward motion
+    particle.speedX -= 0.002 * intensity * delta;
+    
+    // Add some vertical drift
+    particle.speedY += (Math.random() - 0.5) * 0.002 * intensity * delta;
+    
+    // Apply speed limits
+    this.limitSpeed(particle, speedFactor);
+    
+    // Update position
+    particle.x += particle.speedX * speedFactor * delta;
+    particle.y += particle.speedY * speedFactor * delta;
+  }
+  
+  private applyRightwardFlow(particle: Particle, intensity: number, speedFactor: number, delta: number): void {
+    // Gentle rightward motion
+    particle.speedX += 0.002 * intensity * delta;
+    
+    // Add some vertical drift
+    particle.speedY += (Math.random() - 0.5) * 0.002 * intensity * delta;
+    
+    // Apply speed limits
+    this.limitSpeed(particle, speedFactor);
+    
+    // Update position
+    particle.x += particle.speedX * speedFactor * delta;
+    particle.y += particle.speedY * speedFactor * delta;
+  }
+  
+  private applyRadialFlow(particle: Particle, intensity: number, speedFactor: number, delta: number): void {
+    // Radial motion away from center
+    const centerX = this.canvas.width / 2;
+    const centerY = this.canvas.height / 2;
+    const dx = particle.x - centerX;
+    const dy = particle.y - centerY;
     const distance = Math.sqrt(dx * dx + dy * dy);
     
-    if (distance < radius && distance > 0) {
-      const force = (radius - distance) / radius * strength;
-      particle.x += dx / distance * force;
-      particle.y += dy / distance * force;
+    if (distance > 0) {
+      particle.speedX += (dx / distance) * 0.002 * intensity * delta;
+      particle.speedY += (dy / distance) * 0.002 * intensity * delta;
+    }
+    
+    // Apply speed limits
+    this.limitSpeed(particle, speedFactor);
+    
+    // Update position
+    particle.x += particle.speedX * speedFactor * delta;
+    particle.y += particle.speedY * speedFactor * delta;
+  }
+  
+  private applyCircularFlow(particle: Particle, intensity: number, speedFactor: number, delta: number): void {
+    // Get vector to center
+    const centerX = this.canvas.width / 2;
+    const centerY = this.canvas.height / 2;
+    const dx = particle.x - centerX;
+    const dy = particle.y - centerY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    
+    // Apply circular motion
+    const angle = Math.atan2(dy, dx);
+    const newAngle = angle + 0.0005 * intensity * delta;
+    
+    particle.speedX = -Math.sin(newAngle) * 0.5 * intensity;
+    particle.speedY = Math.cos(newAngle) * 0.5 * intensity;
+    
+    // Add some inward/outward drift based on sine wave
+    const optimalDistance = Math.min(this.canvas.width, this.canvas.height) * 0.3;
+    const distanceFactor = (distance - optimalDistance) * 0.0001 * intensity;
+    
+    particle.speedX -= dx * distanceFactor * delta;
+    particle.speedY -= dy * distanceFactor * delta;
+    
+    // Apply speed limits
+    this.limitSpeed(particle, speedFactor);
+    
+    // Update position
+    particle.x += particle.speedX * speedFactor * delta;
+    particle.y += particle.speedY * speedFactor * delta;
+  }
+  
+  private applyWaveFlow(particle: Particle, intensity: number, speedFactor: number, delta: number): void {
+    // Horizontal flow with wave pattern
+    const yPosition = particle.y / this.canvas.height;
+    
+    // Wave effect based on x position and time
+    const waveStrength = Math.sin(particle.x * 0.01 + this.time) * 0.1 * intensity;
+    
+    particle.speedX = 0.5 * intensity * delta * 0.01;
+    particle.speedY = waveStrength * delta * 0.01;
+    
+    // Apply speed limits
+    this.limitSpeed(particle, speedFactor);
+    
+    // Update position
+    particle.x += particle.speedX * speedFactor * delta;
+    particle.y += particle.speedY * speedFactor * delta;
+  }
+  
+  private applyCustomFlow(particle: Particle, intensity: number, speedFactor: number, delta: number): void {
+    // Left to right flow for process section
+    particle.speedX += 0.001 * intensity * delta;
+    
+    // Slight vertical drift
+    particle.speedY += (Math.random() - 0.5) * 0.001 * intensity * delta;
+    
+    // Apply speed limits
+    this.limitSpeed(particle, speedFactor);
+    
+    // Update position
+    particle.x += particle.speedX * speedFactor * delta;
+    particle.y += particle.speedY * speedFactor * delta;
+  }
+  
+  private limitSpeed(particle: Particle, speedFactor: number): void {
+    const maxSpeed = 0.5 * speedFactor;
+    
+    // Limit horizontal speed
+    if (particle.speedX > maxSpeed) {
+      particle.speedX = maxSpeed;
+    } else if (particle.speedX < -maxSpeed) {
+      particle.speedX = -maxSpeed;
+    }
+    
+    // Limit vertical speed
+    if (particle.speedY > maxSpeed) {
+      particle.speedY = maxSpeed;
+    } else if (particle.speedY < -maxSpeed) {
+      particle.speedY = -maxSpeed;
+    }
+    
+    // Apply some damping
+    particle.speedX *= 0.99;
+    particle.speedY *= 0.99;
+  }
+  
+  applyMouseInfluence(particle: Particle, mousePos: Vector2D | null, delta: number): void {
+    // Skip mouse influence in low performance mode
+    if (this.isLowPerformanceMode) return;
+    if (!mousePos) return;
+    
+    const dx = mousePos.x - particle.x;
+    const dy = mousePos.y - particle.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const influence = 100; // Mouse influence radius
+    
+    if (distance < influence) {
+      const force = (influence - distance) / influence;
+      particle.speedX += (dx / distance) * force * 0.02 * delta;
+      particle.speedY += (dy / distance) * force * 0.02 * delta;
     }
   }
 }

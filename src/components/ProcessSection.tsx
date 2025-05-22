@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
@@ -55,11 +54,11 @@ const ProcessSection = () => {
             baseHue: 100, // More yellowish green
             backgroundColor: 'rgba(76, 175, 80, 0.03)',
             flowIntensity: 1.5,
-            flowDirection: 'custom', // Custom flow pattern is now included in the types
+            flowDirection: 'custom' as const, // Custom flow pattern is now included in the types
             speedFactor: 0.7,
             connectionRadius: 100,
             connectionOpacity: 0.1,
-            interactive: true,
+            mouseInteraction: true,
             responsive: true,
             densityFactor: 0.00007,
           }}

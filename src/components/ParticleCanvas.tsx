@@ -1,76 +1,87 @@
+import React, { useEffect, useRef, forwardRef, useImperativeHandle, ForwardedRef } from 'react';
+import { BiomassParticleSystem } from '../utils/particle-system';
+import { EnhancedBiomassParticleSystem } from '../utils/enhanced-particle-system';
+import { EnhancedParticleSystemOptions } from '../utils/particle-system/enhanced-types';
+import { ParticleSystemOptions } from '../utils/particle-system/types';
+import './ParticleCanvas.css';
 
-import React, { useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
-import { ParticleSystemOptions } from '@/utils/particle-system/types';
-import { BiomassParticleSystem } from '@/utils/particle-system';
-import '@/components/ParticleCanvas.css';
+export interface ParticleCanvasProps {
+  id: string;
+  className?: string;
+  options?: EnhancedParticleSystemOptions;
+}
 
 export interface ParticleCanvasRef {
-  start: () => void;
-  stop: () => void;
-  updateOptions: (newOptions: Partial<ParticleSystemOptions>) => void;
+  getSystem: () => BiomassParticleSystem | EnhancedBiomassParticleSystem | null;
 }
 
-interface ParticleCanvasProps {
-  id: string;
-  options: ParticleSystemOptions;
-}
+const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanvasProps, ref: ForwardedRef<ParticleCanvasRef>) => {
+  const systemRef = useRef<BiomassParticleSystem | EnhancedBiomassParticleSystem | null>(null);
 
-const ParticleCanvas = forwardRef<ParticleCanvasRef, ParticleCanvasProps>(({ id, options }, ref) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const particleSystemRef = useRef<BiomassParticleSystem | null>(null);
-
+  // Expose the system instance via ref
   useImperativeHandle(ref, () => ({
-    start: () => {
-      if (particleSystemRef.current) {
-        particleSystemRef.current.start();
-      }
-    },
-    stop: () => {
-      if (particleSystemRef.current) {
-        particleSystemRef.current.stop();
-      }
-    },
-    updateOptions: (newOptions: Partial<ParticleSystemOptions>) => {
-      if (particleSystemRef.current) {
-        particleSystemRef.current.updateOptions(newOptions);
-      }
-    },
+    getSystem: () => systemRef.current
   }));
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    // Import performance optimizer functions
+    const isLowPerformance = window.BIOMASS_LOW_PERFORMANCE_MODE;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
-
-    const particleSystem = new BiomassParticleSystem(canvas, options);
-    particleSystemRef.current = particleSystem;
-    particleSystem.start();
-
-    const resizeObserver = new ResizeObserver(() => {
-      if (!canvas) return;
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-      particleSystem.handleResize();
-    });
-
-    resizeObserver.observe(canvas);
-
-    return () => {
-      particleSystem.stop();
-      resizeObserver.disconnect();
+    // Initialize particle system when component mounts with performance optimizations
+    const defaultOptions: ParticleSystemOptions = {
+      particleCount: isLowPerformance ? 80 : 150,
+      particleMinSize: 1,
+      particleMaxSize: isLowPerformance ? 3 : 4,
+      baseHue: 120, // Green hue
+      backgroundColor: 'rgba(46, 125, 50, 0.05)', // Very subtle green background
+      flowIntensity: isLowPerformance ? 1.0 : 1.2,
+      flowDirection: 'upward' as const,
+      speedFactor: isLowPerformance ? 0.5 : 0.6,
+      connectionRadius: isLowPerformance ? 80 : 120,
+      connectionOpacity: 0.12,
+      mouseInteraction: true,
+      responsive: true,
+      densityFactor: isLowPerformance ? 0.00005 : 0.00009,
+      useHardwareAcceleration: true, // Enable hardware acceleration
     };
-  }, [options]);
+
+    // Merge with any provided options, but ensure performance settings are applied
+    const mergedOptions = {
+      ...defaultOptions,
+      ...options,
+      // Always override these options based on performance mode
+      particleCount: options?.particleCount
+        ? (isLowPerformance ? Math.floor(options.particleCount * 0.6) : options.particleCount)
+        : defaultOptions.particleCount,
+      connectionRadius: options?.connectionRadius
+        ? (isLowPerformance ? Math.floor(options.connectionRadius * 0.7) : options.connectionRadius)
+        : defaultOptions.connectionRadius,
+    };
+
+    // Check if we should use the enhanced particle system with trails
+    if (mergedOptions.trailEffect) {
+      // Create and start the enhanced particle system with trailing effects
+      systemRef.current = new EnhancedBiomassParticleSystem(id, mergedOptions);
+    } else {
+      // Create and start the standard particle system
+      systemRef.current = new BiomassParticleSystem(id, mergedOptions);
+    }
+
+    systemRef.current.start();
+
+    // Cleanup function to destroy the particle system when component unmounts
+    return () => {
+      if (systemRef.current) {
+        systemRef.current.destroy();
+        systemRef.current = null;
+      }
+    };
+  }, [id, options]);
 
   return (
     <canvas
       id={id}
-      ref={canvasRef}
-      className="particle-canvas"
+      className={`particle-canvas ${className || ''}`}
     />
   );
 });
@@ -78,3 +89,5 @@ const ParticleCanvas = forwardRef<ParticleCanvasRef, ParticleCanvasProps>(({ id,
 ParticleCanvas.displayName = 'ParticleCanvas';
 
 export default ParticleCanvas;
+
+

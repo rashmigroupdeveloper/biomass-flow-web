@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import ParticleCanvas from './ParticleCanvas';
 
@@ -9,102 +9,54 @@ interface PageTransitionProps {
 }
 
 const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
-  const [showTransition, setShowTransition] = useState(true);
-  const [showBlur, setShowBlur] = useState(false);
-  const [pageLoaded, setPageLoaded] = useState(false);
   const location = useLocation();
-
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  
   useEffect(() => {
-    // Initial page transition effect
-    let timer1: NodeJS.Timeout;
-    
-    // Wait for assets to load
-    if (document.readyState === 'complete') {
-      // Set a slight delay to ensure animations run smoothly
-      timer1 = setTimeout(() => {
-        setShowTransition(false);
-        // Add blur effect after page transition
-        setTimeout(() => {
-          setShowBlur(true);
-          setPageLoaded(true);
-        }, 300);
-      }, 800);
-    } else {
-      window.addEventListener('load', () => {
-        timer1 = setTimeout(() => {
-          setShowTransition(false);
-          setTimeout(() => {
-            setShowBlur(true);
-            setPageLoaded(true);
-          }, 300);
-        }, 800);
-      });
-    }
-    
-    return () => {
-      clearTimeout(timer1);
-    };
-  }, []);
-
-  // Reset transition when route changes
-  useEffect(() => {
-    setShowTransition(true);
-    setShowBlur(false);
-    
-    // Delay to match transition duration
+    setIsTransitioning(true);
     const timer = setTimeout(() => {
-      setShowTransition(false);
-      
-      // Add blur effect after page transition
-      setTimeout(() => {
-        setShowBlur(true);
-      }, 300);
+      setIsTransitioning(false);
     }, 800);
     
     return () => clearTimeout(timer);
-  }, [location]);
-
+  }, [location.pathname]);
+  
   return (
-    <>
-      {/* Full page transition overlay */}
+    <AnimatePresence mode="wait">
       <motion.div
-        className="fixed inset-0 z-[100] pointer-events-none"
-        initial={{ scaleY: 1 }}
-        animate={{ scaleY: showTransition ? 1 : 0 }}
-        transition={{ duration: 0.8, ease: [0.87, 0, 0.13, 1] }}
-        style={{
-          transformOrigin: 'top',
-          backgroundColor: 'var(--color-primary-500, #4CAF50)',
-        }}
-      >
-        <ParticleCanvas
-          id="transitionCanvas"
-          options={{
-            particleCount: 100,
-            particleMinSize: 2,
-            particleMaxSize: 6,
-            baseHue: 120,
-            flowIntensity: 1,
-            flowDirection: 'circular',
-            speedFactor: 0.8,
-            connectionRadius: 150,
-            connectionOpacity: 0.3,
-            interactive: true,
-            responsive: true,
-            densityFactor: 0.00012,
-          }}
-        />
-      </motion.div>
-
-      {/* Page content */}
-      <motion.div
+        key={location.pathname}
         initial={{ opacity: 0 }}
-        animate={{ opacity: pageLoaded ? 1 : 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full"
       >
+        {isTransitioning && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary-900/50 backdrop-blur-sm">
+            <div className="relative w-60 h-60">
+              <ParticleCanvas
+                id="transitionCanvas"
+                options={{
+                  particleCount: 100,
+                  particleMinSize: 2,
+                  particleMaxSize: 6,
+                  baseHue: 120,
+                  backgroundColor: 'transparent',
+                  flowIntensity: 2,
+                  flowDirection: 'circular',
+                  speedFactor: 1.2,
+                  connectionRadius: 100,
+                  connectionOpacity: 0.2,
+                  mouseInteraction: false,
+                  responsive: false,
+                }}
+              />
+            </div>
+          </div>
+        )}
         {children}
       </motion.div>
-    </>
+    </AnimatePresence>
   );
 };
 

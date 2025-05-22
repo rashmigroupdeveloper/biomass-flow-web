@@ -1,78 +1,98 @@
-
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { createRoot } from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
-
+import App from './App.tsx';
 import './index.css';
 
-// Pages
-import Index from './pages/Index';
-import About from './pages/About';
-import BioPellets from './pages/BioPellets';
-import ActivatedCarbon from './pages/ActivatedCarbon';
-import CharcoalBriquettes from './pages/CharcoalBriquettes';
-import Process from './pages/Process';
-import Impact from './pages/Impact';
-import Sustainability from './pages/Sustainability';
-import CSR from './pages/CSR';
-import QualityPolicy from './pages/QualityPolicy';
-import Certificates from './pages/Certificates';
-import Media from './pages/Media';
-import Contact from './pages/Contact';
-import ExampleFixedImage from './pages/ExampleFixedImage';
-import NotFound from './pages/NotFound';
-
-// Performance optimizer
-import './utils/performance-optimizer';
-
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
-
-// Custom global type for window
+// Add TypeScript declaration for our global variable
 declare global {
   interface Window {
     BIOMASS_LOW_PERFORMANCE_MODE: boolean;
   }
 }
 
-// Detect low-end devices or older browsers
-// Use feature detection instead of UA sniffing
-window.BIOMASS_LOW_PERFORMANCE_MODE = false;
+// Enhanced device performance capabilities detection
+const detectDeviceCapabilities = () => {
+  // Check for URL parameter to force low performance mode (for testing)
+  const urlParams = new URLSearchParams(window.location.search);
+  const forceLowPerformance = urlParams.get('lowPerformance') === 'true';
+  const forceHighPerformance = urlParams.get('highPerformance') === 'true';
 
-// Check if device is low-end
-if (
-  !('IntersectionObserver' in window) ||
-  navigator.hardwareConcurrency < 4 ||
-  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-) {
-  window.BIOMASS_LOW_PERFORMANCE_MODE = true;
-  console.log('Low performance mode enabled');
-}
+  // If forced via URL, use that setting
+  if (forceLowPerformance) {
+    window.BIOMASS_LOW_PERFORMANCE_MODE = true;
+    document.body.classList.add('low-performance-device');
+    console.info('Low performance mode forced via URL parameter');
+    return;
+  }
 
-root.render(
+  if (forceHighPerformance) {
+    window.BIOMASS_LOW_PERFORMANCE_MODE = false;
+    document.body.classList.remove('low-performance-device');
+    console.info('High performance mode forced via URL parameter');
+    return;
+  }
+
+  // Otherwise, detect based on device capabilities
+  const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+  // Check CPU cores
+  const hasLowCPU = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2;
+
+  // Check memory (not supported in all browsers)
+  // @ts-expect-error - deviceMemory is not in all browser types
+  const hasLowMemory = navigator.deviceMemory && navigator.deviceMemory < 4;
+
+  // Check for GPU performance (indirect method)
+  let hasLowGPU = false;
+
+  // Create a test canvas and run a simple WebGL test
+  try {
+    const canvas = document.createElement('canvas');
+    // Type assertion to WebGLRenderingContext to fix TypeScript errors
+    const gl = canvas.getContext('webgl') as WebGLRenderingContext | null;
+
+    if (gl) {
+      // @ts-expect-error - WEBGL_debug_renderer_info may not be in all TypeScript definitions
+      const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+      if (debugInfo) {
+        // @ts-expect-error - UNMASKED_RENDERER_WEBGL may not be in all TypeScript definitions
+        const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+        // Check for known low-performance GPU indicators
+        hasLowGPU = /Intel|HD Graphics|GMA|Radeon HD 2|GeForce 8|Mali-4|Adreno 3|PowerVR/i.test(renderer);
+      }
+    }
+  } catch (e) {
+    console.warn('WebGL detection failed', e);
+    // If we can't detect, assume it might be low performance
+    hasLowGPU = true;
+  }
+
+  // Determine overall performance mode
+  const lowPerformanceMode = isMobileDevice || hasLowCPU || hasLowMemory || hasLowGPU;
+
+  // Set a global variable that can be used throughout the app
+  window.BIOMASS_LOW_PERFORMANCE_MODE = lowPerformanceMode;
+
+  // Add helpful class to body element
+  document.body.classList.toggle('low-performance-device', lowPerformanceMode);
+
+  // Log the detection results
+  console.info(`Performance mode: ${lowPerformanceMode ? 'Low' : 'High'}`);
+  console.info(`- Mobile device: ${isMobileDevice}`);
+  console.info(`- CPU cores: ${navigator.hardwareConcurrency || 'unknown'}`);
+  // @ts-expect-error - deviceMemory is not in all browser types
+  console.info(`- Device memory: ${navigator.deviceMemory || 'unknown'} GB`);
+  console.info(`- Low GPU detected: ${hasLowGPU}`);
+};
+
+// Run the detection
+detectDeviceCapabilities();
+
+createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <HelmetProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/products/bio-pellets" element={<BioPellets />} />
-          <Route path="/products/activated-carbon" element={<ActivatedCarbon />} />
-          <Route path="/products/charcoal-briquettes" element={<CharcoalBriquettes />} />
-          <Route path="/process" element={<Process />} />
-          <Route path="/impact" element={<Impact />} />
-          <Route path="/sustainability" element={<Sustainability />} />
-          <Route path="/csr" element={<CSR />} />
-          <Route path="/quality-policy" element={<QualityPolicy />} />
-          <Route path="/certificates" element={<Certificates />} />
-          <Route path="/media" element={<Media />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/example-fixed-image" element={<ExampleFixedImage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
+      <App />
     </HelmetProvider>
   </React.StrictMode>
 );
