@@ -50,6 +50,7 @@ export interface EnhancedParticleSystemOptions {
   enableWaveDistortion?: boolean;
   waveAmplitude?: number;
   waveFrequency?: number;
+  trailEffect?: boolean;
 }
 
 export class EnhancedParticleSystem {
@@ -108,7 +109,8 @@ export class EnhancedParticleSystem {
       magneticStrength: options.magneticStrength ?? 1,
       enableWaveDistortion: options.enableWaveDistortion ?? false,
       waveAmplitude: options.waveAmplitude ?? 10,
-      waveFrequency: options.waveFrequency ?? 0.01
+      waveFrequency: options.waveFrequency ?? 0.01,
+      trailEffect: options.trailEffect ?? false
     };
 
     this.detectPerformanceMode();
@@ -306,33 +308,24 @@ export class EnhancedParticleSystem {
     const waveFrequency = this.options.waveFrequency;
 
     for (const particle of this.particles) {
-      // Apply flow direction
       this.updateParticleFlow(particle);
       
-      // Apply random movement (noise)
       particle.vx += (Math.random() - 0.5) * noiseIntensity * 0.1;
       particle.vy += (Math.random() - 0.5) * noiseIntensity * 0.1;
       
-      // Apply physics if enabled
       if (enablePhysics) {
-        // Apply gravity
         particle.vy += gravity * 0.01;
-        
-        // Apply friction
         particle.vx *= friction;
         particle.vy *= friction;
       }
       
-      // Apply wave distortion if enabled
       if (enableWaveDistortion) {
         particle.y += Math.sin(time * waveFrequency + particle.x * 0.01) * waveAmplitude * 0.1;
       }
       
-      // Update position
       particle.x += particle.vx;
       particle.y += particle.vy;
       
-      // Store trail positions if enabled
       if (enableTrails) {
         particle.trail.push({ x: particle.x, y: particle.y });
         if (particle.trail.length > trailLength) {
@@ -340,7 +333,6 @@ export class EnhancedParticleSystem {
         }
       }
       
-      // Handle collisions with other particles if enabled
       if (enableCollisions) {
         for (const other of this.particles) {
           if (particle === other) continue;
@@ -365,7 +357,6 @@ export class EnhancedParticleSystem {
         }
       }
       
-      // Handle boundary conditions (wrap around)
       if (particle.x < 0) particle.x = width;
       if (particle.x > width) particle.x = 0;
       if (particle.y < 0) particle.y = height;
@@ -386,7 +377,6 @@ export class EnhancedParticleSystem {
     const enableTrails = this.options.enableTrails;
     const time = Date.now() * 0.001;
     
-    // Clear canvas
     ctx.globalCompositeOperation = 'source-over';
     if (this.options.backgroundColor === 'transparent') {
       ctx.clearRect(0, 0, width, height);
@@ -395,7 +385,6 @@ export class EnhancedParticleSystem {
       ctx.fillRect(0, 0, width, height);
     }
     
-    // Draw connections between particles
     ctx.globalCompositeOperation = 'lighter';
     ctx.lineWidth = connectionLineWidth;
     
@@ -419,13 +408,11 @@ export class EnhancedParticleSystem {
           ctx.strokeStyle = `hsla(${hue}, 80%, 60%, ${opacity})`;
           
           if (enableTrails && particle.trail.length > 1 && other.trail.length > 1) {
-            // Draw connection between trails
             const trailPoint1 = particle.trail[particle.trail.length - 1];
             const trailPoint2 = other.trail[other.trail.length - 1];
             ctx.moveTo(trailPoint1.x, trailPoint1.y);
             ctx.lineTo(trailPoint2.x, trailPoint2.y);
           } else {
-            // Draw direct connection
             ctx.moveTo(particle.x, particle.y);
             ctx.lineTo(other.x, other.y);
           }
@@ -436,18 +423,15 @@ export class EnhancedParticleSystem {
       }
     }
     
-    // Draw particles
     for (const particle of this.particles) {
       let opacity = particle.opacity;
       let size = particle.size;
       
-      // Apply pulse effect if enabled
       if (pulseEffect) {
         opacity *= 0.7 + Math.sin(time * 2 + particle.phase) * 0.3;
         size *= 0.8 + Math.sin(time * 3 + particle.phase) * 0.2;
       }
       
-      // Draw trails if enabled
       if (enableTrails && particle.trail.length > 1) {
         ctx.beginPath();
         ctx.strokeStyle = `hsla(${particle.hue}, 80%, 60%, ${opacity * 0.5})`;
@@ -462,7 +446,6 @@ export class EnhancedParticleSystem {
         ctx.stroke();
       }
       
-      // Apply glow effect if enabled
       if (glowEffect) {
         ctx.shadowBlur = size * 2;
         ctx.shadowColor = `hsla(${particle.hue}, 80%, 60%, 0.5)`;
@@ -470,14 +453,12 @@ export class EnhancedParticleSystem {
         ctx.shadowBlur = 0;
       }
       
-      // Draw particle
       ctx.beginPath();
       ctx.fillStyle = `hsla(${particle.hue}, 80%, 60%, ${opacity})`;
       ctx.arc(particle.x, particle.y, size, 0, Math.PI * 2);
       ctx.fill();
     }
     
-    // Reset shadow
     ctx.shadowBlur = 0;
     ctx.globalCompositeOperation = 'source-over';
   }
@@ -511,27 +492,21 @@ export class EnhancedParticleSystem {
           this.options.maxConnections = Math.min(this.options.maxConnections, 3);
         } else if (avgFps > 58 && this.performanceMode !== 'high') {
           this.performanceMode = 'high';
-          this.options.glowEffect = this.options.glowEffect;
-          this.options.enableTrails = this.options.enableTrails;
-          this.options.maxConnections = this.options.maxConnections;
         }
       }
     }
     
     this.frameCount++;
     
-    // Update and draw
     this.updateParticles();
     this.drawParticles();
     
-    // Request next frame
     this.animationId = requestAnimationFrame(this.animate.bind(this));
   }
 
   public updateOptions(newOptions: Partial<EnhancedParticleSystemOptions>): void {
     this.options = { ...this.options, ...newOptions };
     
-    // Re-initialize particles if count changed
     if (newOptions.particleCount !== undefined) {
       this.initializeParticles();
     }
@@ -551,7 +526,6 @@ export class EnhancedParticleSystem {
   }
 
   public handleResize(): void {
-    // Update canvas size and redistribute particles
     this.initializeParticles();
   }
 }

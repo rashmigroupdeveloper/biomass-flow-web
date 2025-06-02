@@ -1,6 +1,7 @@
+
 import React, { useEffect, useRef, forwardRef, useImperativeHandle, ForwardedRef } from 'react';
 import { BiomassParticleSystem } from '../utils/particle-system';
-import { EnhancedBiomassParticleSystem } from '../utils/enhanced-particle-system';
+import { EnhancedParticleSystem } from '../utils/enhanced-particle-system';
 import { EnhancedParticleSystemOptions } from '../utils/particle-system/enhanced-types';
 import { ParticleSystemOptions } from '../utils/particle-system/types';
 import './ParticleCanvas.css';
@@ -12,11 +13,11 @@ export interface ParticleCanvasProps {
 }
 
 export interface ParticleCanvasRef {
-  getSystem: () => BiomassParticleSystem | EnhancedBiomassParticleSystem | null;
+  getSystem: () => BiomassParticleSystem | EnhancedParticleSystem | null;
 }
 
 const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanvasProps, ref: ForwardedRef<ParticleCanvasRef>) => {
-  const systemRef = useRef<BiomassParticleSystem | EnhancedBiomassParticleSystem | null>(null);
+  const systemRef = useRef<BiomassParticleSystem | EnhancedParticleSystem | null>(null);
 
   // Expose the system instance via ref
   useImperativeHandle(ref, () => ({
@@ -24,6 +25,9 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
   }));
 
   useEffect(() => {
+    const canvas = document.getElementById(id) as HTMLCanvasElement;
+    if (!canvas) return;
+
     // Import performance optimizer functions
     const isLowPerformance = window.BIOMASS_LOW_PERFORMANCE_MODE;
 
@@ -61,7 +65,7 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
     // Check if we should use the enhanced particle system with trails
     if (mergedOptions.trailEffect) {
       // Create and start the enhanced particle system with trailing effects
-      systemRef.current = new EnhancedBiomassParticleSystem(id, mergedOptions);
+      systemRef.current = new EnhancedParticleSystem(canvas, mergedOptions);
     } else {
       // Create and start the standard particle system
       systemRef.current = new BiomassParticleSystem(id, mergedOptions);
@@ -72,7 +76,11 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
     // Cleanup function to destroy the particle system when component unmounts
     return () => {
       if (systemRef.current) {
-        systemRef.current.destroy();
+        if ('destroy' in systemRef.current) {
+          systemRef.current.destroy();
+        } else {
+          systemRef.current.stop();
+        }
         systemRef.current = null;
       }
     };
@@ -89,5 +97,3 @@ const ParticleCanvas = forwardRef(({ id, className, options = {} }: ParticleCanv
 ParticleCanvas.displayName = 'ParticleCanvas';
 
 export default ParticleCanvas;
-
-
