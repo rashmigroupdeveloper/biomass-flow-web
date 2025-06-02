@@ -1,3 +1,4 @@
+
 export interface Vector2D {
   x: number;
   y: number;
@@ -525,7 +526,14 @@ export class EnhancedParticleSystem {
     }
   }
 
-  public handleResize(): void {
-    this.initializeParticles();
+  public destroy(): void {
+    this.stop();
+    if (this.options.responsive) {
+      window.removeEventListener('resize', this.handleResize.bind(this));
+    }
+    if (this.options.mouseInteraction) {
+      this.canvas.removeEventListener('mousemove', this.handleMouseMove.bind(this));
+      this.canvas.removeEventListener('touchmove', this.handleTouchMove.bind(this));
+    }
   }
 }
