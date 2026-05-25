@@ -1,386 +1,299 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { X, Menu, ChevronDown } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { X, ChevronDown } from 'lucide-react';
 
-// Updated menu structure with subcategories
-const menuItems = [
-  {
-    name: 'Home',
-    path: '/',
-    preview: '/placeholder.svg'
-  },
-  {
-    name: 'About',
-    path: '/about',
-    preview: '/placeholder.svg'
-  },
-  {
-    name: 'Products',
-    path: '/products',
-    preview: '/placeholder.svg',
-    submenu: [
-      {
-        name: 'Bio Pellets',
-        path: '/products/bio-pellets',
-        preview: '/placeholder.svg'
-      },
-      {
-        name: 'Activated Carbon',
-        path: '/products/activated-carbon',
-        preview: '/placeholder.svg'
-      },
-      {
-        name: 'Charcoal Briquettes',
-        path: '/products/charcoal-briquettes',
-        preview: '/placeholder.svg'
-      }
-    ]
-  },
-  {
-    name: 'Process',
-    path: '/process',
-    preview: '/placeholder.svg'
-  },
-  {
-    name: 'Impact',
-    path: '/impact',
-    preview: '/placeholder.svg'
-  },
-  {
-    name: 'Sustainability',
-    path: '/sustainability',
-    preview: '/placeholder.svg'
-  },
-  {
-    name: 'CSR',
-    path: '/csr',
-    preview: '/placeholder.svg'
-  },
-  {
-    name: 'Media',
-    path: '/media',
-    preview: '/placeholder.svg'
-  },
-  {
-    name: 'Contact',
-    path: '/contact',
-    preview: '/placeholder.svg'
-  }
+const products = [
+  { name: 'Bio Pellets', path: '/products/bio-pellets', desc: 'Compressed agricultural biomass fuel' },
+  { name: 'Activated Carbon', path: '/products/activated-carbon', desc: 'High-performance filtration & purification' },
+  { name: 'Charcoal Briquettes', path: '/products/charcoal-briquettes', desc: 'Sustainable cooking & industrial fuel' },
+];
+
+const navLinks = [
+  { name: 'About', path: '/about' },
+  { name: 'Products', path: '#', hasDropdown: true },
+  { name: 'Impact', path: '/impact' },
+  { name: 'Certificates', path: '/certificates' },
+];
+
+const overlayLinks = [
+  { name: 'Home', path: '/' },
+  { name: 'About Us', path: '/about' },
+  { name: 'Bio Pellets', path: '/products/bio-pellets' },
+  { name: 'Activated Carbon', path: '/products/activated-carbon' },
+  { name: 'Charcoal Briquettes', path: '/products/charcoal-briquettes' },
+  { name: 'Process', path: '/process' },
+  { name: 'Impact', path: '/impact' },
+  { name: 'Sustainability', path: '/sustainability' },
+  { name: 'Certificates', path: '/certificates' },
+  { name: 'Contact', path: '/contact' },
 ];
 
 const Navigation = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [activeItem, setActiveItem] = useState<number | null>(null);
-  const [expandedSubmenus, setExpandedSubmenus] = useState<number[]>([]);
-  
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [productsOpen, setProductsOpen] = useState(false);
+  const location = useLocation();
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const isHeroPage = location.pathname === '/';
+
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-    
-    return () => {
-      document.body.style.overflow = 'auto';
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    setMenuOpen(false);
+    setProductsOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setProductsOpen(false);
+      }
     };
-  }, [isOpen]);
-  
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-    setExpandedSubmenus([]); // Reset expanded submenus when toggling main menu
-  };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
-  const toggleSubmenu = (index: number) => {
-    setExpandedSubmenus(prev => 
-      prev.includes(index) 
-        ? prev.filter(i => i !== index) 
-        : [...prev, index]
-    );
-  };
-
-  // Menu button variants for animation
-  const menuButtonVariants = {
-    open: { 
-      rotate: 90, 
-      scale: 1.2,
-      transition: { duration: 0.4, type: "spring", stiffness: 300, damping: 20 }
-    },
-    closed: { 
-      rotate: 0, 
-      scale: 1,
-      transition: { duration: 0.4, type: "spring", stiffness: 300, damping: 20 }
-    }
-  };
-  
-  // Menu icon variants for animation
-  const menuIconVariants = {
-    open: { opacity: 0, y: -10 },
-    closed: { opacity: 1, y: 0 },
-  };
-  
-  const closeIconVariants = {
-    open: { opacity: 1, y: 0 },
-    closed: { opacity: 0, y: 10 },
-  };
-  
-  // Menu overlay variants
-  const menuOverlayVariants = {
-    initial: { opacity: 0 },
-    animate: { 
-      opacity: 1,
-      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
-    },
-    exit: { 
-      opacity: 0,
-      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
-    }
-  };
-
-  // Menu item staggered animation
-  const menuListVariants = {
-    open: {
-      transition: { 
-        staggerChildren: 0.07,
-        delayChildren: 0.2,
-        staggerDirection: 1
-      }
-    },
-    closed: {
-      transition: { 
-        staggerChildren: 0.05,
-        staggerDirection: -1
-      }
-    }
-  };
-  
-  const menuItemVariants = {
-    open: {
-      y: 0,
-      opacity: 1,
-      transition: { type: "spring", stiffness: 300, damping: 24 }
-    },
-    closed: {
-      y: 50,
-      opacity: 0,
-      transition: { duration: 0.2 }
-    }
-  };
-
-  const submenuItemVariants = {
-    open: {
-      height: "auto",
-      opacity: 1,
-      transition: { 
-        height: { duration: 0.3, ease: "easeOut" },
-        opacity: { duration: 0.3, ease: "easeOut" }
-      }
-    },
-    closed: {
-      height: 0,
-      opacity: 0,
-      transition: { 
-        height: { duration: 0.3, ease: "easeOut" },
-        opacity: { duration: 0.2, ease: "easeOut" }
-      }
-    }
-  };
-
-  // Preview image animation
-  const previewVariants = {
-    initial: { opacity: 0, scale: 0.9 },
-    animate: { 
-      opacity: 1, 
-      scale: 1,
-      transition: { duration: 0.5 }
-    },
-    exit: { 
-      opacity: 0, 
-      scale: 0.9,
-      transition: { duration: 0.3 }
-    }
-  };
+  // On hero: transparent until scroll. On inner pages: always frosted.
+  const frosted = scrolled || !isHeroPage;
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-50 py-6 px-6 md:px-12">
-        <div className="flex justify-between items-center">
-          <div className="logo z-10">
-            <Link to="/" className="flex items-center">
-              <img 
-                src="/logo.png" 
-                alt="Rashmi6 Logo" 
-                className="h-10 md:h-12 w-auto"
-              />
+      {/* ── Floating nav bar ── */}
+      <header
+        className="fixed z-50 transition-all duration-500"
+        style={{
+          top: 12,
+          left: 16,
+          right: 16,
+          borderRadius: 14,
+          padding: frosted ? '10px 20px' : '14px 20px',
+          background: frosted ? 'rgba(8,26,9,0.82)' : 'rgba(8,26,9,0)',
+          backdropFilter: frosted ? 'blur(22px)' : 'blur(0px)',
+          WebkitBackdropFilter: frosted ? 'blur(22px)' : 'blur(0px)',
+          border: frosted ? '1px solid rgba(255,255,255,0.07)' : '1px solid rgba(255,255,255,0)',
+          boxShadow: frosted ? '0 4px 32px rgba(0,0,0,0.28)' : 'none',
+        }}
+      >
+        <div className="flex items-center justify-between gap-4">
+
+          {/* Logo */}
+          <Link to="/" className="flex-shrink-0 z-10">
+            <img
+              src="/logo.png"
+              alt="Rashmi 6 Paradigm"
+              className="h-8 md:h-9 w-auto"
+              style={{ filter: 'brightness(0) invert(1)' }}
+            />
+          </Link>
+
+          {/* Desktop nav */}
+          <nav className="hidden lg:flex items-center gap-1">
+            {navLinks.map((item) => {
+              if (item.hasDropdown) {
+                return (
+                  <div key={item.name} ref={dropdownRef} className="relative">
+                    <button
+                      onClick={() => setProductsOpen((v) => !v)}
+                      className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium text-white/80 hover:text-white transition-colors duration-200 rounded-lg hover:bg-white/8"
+                    >
+                      {item.name}
+                      <ChevronDown
+                        size={12}
+                        className={`transition-transform duration-200 opacity-60 ${productsOpen ? 'rotate-180' : ''}`}
+                      />
+                    </button>
+
+                    <AnimatePresence>
+                      {productsOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                          transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                          className="absolute top-full left-0 mt-3 w-72"
+                          style={{
+                            background: 'rgba(8,26,9,0.95)',
+                            backdropFilter: 'blur(24px)',
+                            WebkitBackdropFilter: 'blur(24px)',
+                            border: '1px solid rgba(255,255,255,0.08)',
+                            borderRadius: 12,
+                            overflow: 'hidden',
+                          }}
+                        >
+                          <div className="p-2">
+                            {products.map((p) => (
+                              <Link
+                                key={p.path}
+                                to={p.path}
+                                className="flex flex-col gap-0.5 px-4 py-3 rounded-lg hover:bg-white/6 transition-colors group"
+                              >
+                                <span className="text-[13px] font-medium text-white/90 group-hover:text-white">
+                                  {p.name}
+                                </span>
+                                <span className="text-[11px] text-white/35 group-hover:text-white/50">
+                                  {p.desc}
+                                </span>
+                              </Link>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              }
+
+              const active = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className="relative px-4 py-2 text-[13px] font-medium transition-colors duration-200 rounded-lg hover:bg-white/8"
+                  style={{ color: active ? 'rgba(255,255,255,1)' : 'rgba(255,255,255,0.7)' }}
+                >
+                  {item.name}
+                  {active && (
+                    <motion.span
+                      layoutId="nav-dot"
+                      className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary-400"
+                    />
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Right: CTA + mobile trigger */}
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <Link
+              to="/contact"
+              className="hidden lg:inline-flex items-center px-5 py-2 text-[13px] font-semibold rounded-full transition-all duration-300"
+              style={{
+                background: 'rgba(76,175,80,0.9)',
+                color: 'white',
+                border: '1px solid rgba(76,175,80,0.3)',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(76,175,80,1)')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(76,175,80,0.9)')}
+            >
+              Get a Quote
             </Link>
+
+            {/* Mobile: "MENU" text trigger */}
+            <button
+              onClick={() => setMenuOpen(true)}
+              className="lg:hidden text-white/80 hover:text-white transition-colors"
+              aria-label="Open navigation"
+            >
+              <span className="text-[10px] font-semibold uppercase tracking-[0.3em]">Menu</span>
+            </button>
           </div>
-          
-          <motion.button 
-            className="nav-toggle z-10 w-12 h-12 flex items-center justify-center bg-white bg-opacity-20 backdrop-blur-md rounded-full hover:bg-opacity-40 transition-all shadow-md"
-            onClick={toggleMenu}
-            aria-label="Toggle Menu"
-            variants={menuButtonVariants}
-            animate={isOpen ? "open" : "closed"}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <motion.div 
-              className="absolute"
-              variants={menuIconVariants}
-              animate={isOpen ? "open" : "closed"}
-              initial="closed"
-              transition={{ duration: 0.2 }}
-            >
-              <Menu className="w-6 h-6 text-primary-800" />
-            </motion.div>
-            
-            <motion.div 
-              className="absolute"
-              variants={closeIconVariants}
-              animate={isOpen ? "open" : "closed"}
-              initial="closed"
-              transition={{ duration: 0.2 }}
-            >
-              <X className="w-6 h-6 text-primary-800" />
-            </motion.div>
-          </motion.button>
         </div>
       </header>
-      
+
+      {/* ── Full-screen mobile overlay ── */}
       <AnimatePresence>
-        {isOpen && (
-          <motion.div 
-            className="fixed inset-0 bg-white z-40 overflow-hidden"
-            variants={menuOverlayVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
-              <div className="flex items-center justify-center relative">
-                <motion.nav 
-                  className="text-center lg:text-left w-full px-6 md:px-12 max-h-[90vh] overflow-y-auto py-10 md:py-16"
-                  variants={menuListVariants}
-                  initial="closed"
-                  animate="open"
-                  exit="closed"
+        {menuOpen && (
+          <>
+            {/* Backdrop tap to close */}
+            <motion.div
+              className="fixed inset-0 z-[60] lg:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMenuOpen(false)}
+            />
+
+            {/* Overlay panel */}
+            <motion.div
+              className="fixed inset-0 z-[61] lg:hidden flex flex-col"
+              style={{ background: '#071a09' }}
+              initial={{ clipPath: 'inset(0 0 100% 0)' }}
+              animate={{ clipPath: 'inset(0 0 0% 0)' }}
+              exit={{ clipPath: 'inset(0 0 100% 0)' }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {/* Overlay header */}
+              <div className="flex items-center justify-between px-6 py-5">
+                <Link to="/" onClick={() => setMenuOpen(false)}>
+                  <img
+                    src="/logo.png"
+                    alt="Rashmi 6 Paradigm"
+                    className="h-8 w-auto"
+                    style={{ filter: 'brightness(0) invert(1)' }}
+                  />
+                </Link>
+                <button
+                  onClick={() => setMenuOpen(false)}
+                  className="w-9 h-9 flex items-center justify-center rounded-full transition-colors"
+                  style={{ background: 'rgba(255,255,255,0.08)' }}
+                  aria-label="Close navigation"
                 >
-                  <ul className="space-y-7 md:space-y-9">
-                    {menuItems.map((item, index) => (
-                      <motion.li 
-                        key={item.name}
-                        variants={menuItemVariants}
-                        className="relative"
-                        onMouseEnter={() => setActiveItem(index)}
-                        onMouseLeave={() => setActiveItem(null)}
-                      >
-                        {item.submenu ? (
-                          <>
-                            <button 
-                              onClick={() => toggleSubmenu(index)}
-                              className="text-3xl md:text-5xl font-serif text-primary-800 hover:text-primary-600 transition-colors relative flex items-center justify-center lg:justify-start group w-full"
-                            >
-                              <span className="relative z-10">{item.name}</span>
-                              <ChevronDown 
-                                className={`ml-2 transition-transform duration-300 ${expandedSubmenus.includes(index) ? 'rotate-180' : ''}`}
-                                size={expandedSubmenus.includes(index) ? 28 : 24}
-                                aria-hidden="true"
-                              />
-                              <span className="absolute bottom-0 left-0 w-0 h-1 bg-primary-500 transition-all duration-500 ease-in-out group-hover:w-full"></span>
-                            </button>
-                            
-                            <motion.ul 
-                              variants={submenuItemVariants}
-                              initial="closed"
-                              animate={expandedSubmenus.includes(index) ? "open" : "closed"}
-                              className="overflow-hidden pl-6 md:pl-10 mt-3 md:mt-4"
-                            >
-                              {item.submenu.map((subItem) => (
-                                <motion.li 
-                                  key={subItem.name}
-                                  variants={{
-                                    open: { opacity: 1, y: 0 },
-                                    closed: { opacity: 0, y: 20 }
-                                  }}
-                                  className="my-3 md:my-4"
-                                >
-                                  <Link 
-                                    to={subItem.path} 
-                                    className="text-xl md:text-2xl font-serif text-primary-700 hover:text-primary-500 transition-colors relative inline-block group"
-                                    onClick={() => setIsOpen(false)}
-                                  >
-                                    <span className="relative z-10">{subItem.name}</span>
-                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-400 transition-all duration-500 ease-in-out group-hover:w-full"></span>
-                                  </Link>
-                                </motion.li>
-                              ))}
-                            </motion.ul>
-                          </>
-                        ) : (
-                          <Link 
-                            to={item.path} 
-                            className="text-3xl md:text-5xl font-serif text-primary-800 hover:text-primary-600 transition-colors relative block group"
-                            onClick={() => setIsOpen(false)}
-                          >
-                            <span className="relative z-10">{item.name}</span>
-                            <span className="absolute bottom-0 left-0 w-0 h-1 bg-primary-500 transition-all duration-500 ease-in-out group-hover:w-full"></span>
-                          </Link>
-                        )}
-                      </motion.li>
-                    ))}
-                  </ul>
-                </motion.nav>
+                  <X size={18} className="text-white/70" />
+                </button>
               </div>
-              
-              <div className="hidden lg:block">
-                <div className="h-full w-full relative overflow-hidden bg-gray-50">
-                  <AnimatePresence>
-                    {activeItem !== null && (
-                      <motion.div
-                        key={activeItem}
-                        className="absolute inset-0"
-                        variants={previewVariants}
-                        initial="initial"
-                        animate="animate"
-                        exit="exit"
-                      >
-                        <img 
-                          src={menuItems[activeItem].preview} 
-                          alt={menuItems[activeItem].name} 
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-primary-500 bg-opacity-20 backdrop-blur-sm flex flex-col items-center justify-center">
-                          <motion.h2 
-                            className="text-5xl text-white font-serif font-bold drop-shadow-lg mb-4"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2, duration: 0.5 }}
-                          >
-                            {menuItems[activeItem].name}
-                          </motion.h2>
-                          
-                          <motion.div
-                            className="w-20 h-1 bg-white rounded-full"
-                            initial={{ width: 0, opacity: 0 }}
-                            animate={{ width: 80, opacity: 1 }}
-                            transition={{ delay: 0.4, duration: 0.6 }}
-                          />
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                  
-                  {activeItem === null && (
-                    <div className="flex items-center justify-center h-full bg-primary-50">
-                      <p className="text-primary-800 text-opacity-30 text-2xl font-serif">
-                        Hover for preview
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </motion.div>
+
+              {/* Large stacked nav links */}
+              <nav className="flex-1 flex flex-col justify-center px-8 pb-4">
+                {overlayLinks.map((item, i) => (
+                  <motion.div
+                    key={item.path}
+                    initial={{ opacity: 0, x: -24 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.04 + 0.15, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <Link
+                      to={item.path}
+                      onClick={() => setMenuOpen(false)}
+                      className="block py-3 border-b transition-colors"
+                      style={{
+                        fontSize: 'clamp(1.25rem, 4vw, 1.6rem)',
+                        fontFamily: 'Playfair Display, serif',
+                        fontWeight: 700,
+                        color: location.pathname === item.path ? 'rgba(76,175,80,0.9)' : 'rgba(255,255,255,0.75)',
+                        borderColor: 'rgba(255,255,255,0.05)',
+                        letterSpacing: '-0.01em',
+                      }}
+                    >
+                      {item.name}
+                    </Link>
+                  </motion.div>
+                ))}
+              </nav>
+
+              {/* Bottom contact strip */}
+              <motion.div
+                className="px-8 pb-10 pt-6"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5, duration: 0.4 }}
+              >
+                <Link
+                  to="/contact"
+                  onClick={() => setMenuOpen(false)}
+                  className="block w-full text-center py-4 rounded-xl font-semibold text-sm transition-colors"
+                  style={{ background: '#4caf50', color: 'white' }}
+                >
+                  Get a Quote
+                </Link>
+                <p className="text-center text-[11px] text-white/25 mt-3 font-mono">
+                  bioenergy.tender@rashmigroup.com
+                </p>
+              </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>

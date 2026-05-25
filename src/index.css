@@ -117,24 +117,49 @@
   animation-fill-mode: both;
 }
 
-/* GPU acceleration hints for common UI elements */
-.gpu-accelerated {
-  transform: translateZ(0);
-  will-change: transform, opacity;
-  backface-visibility: hidden;
-}
-
-/* Apply hardware acceleration to animations and transitions */
-.animate-fade-in,
-.transition-all,
-.transition-colors,
-.transition-opacity,
-.transition-transform {
-  will-change: auto;
-  transform: translateZ(0);
-}
-
-/* Fix for the radial gradient error in EnhancedBiomassParticleSystem */
+/* GPU acceleration for canvas */
 .particle-canvas {
   transform: translateZ(0);
+}
+
+/* ===== GLOBAL GRAIN TEXTURE (replaces per-page inline base64 copies) ===== */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200%25' height='200%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+}
+
+/* ===== SMOOTH SCROLL ===== */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ===== SELECTION COLOUR ===== */
+::selection {
+  background: #c8e6c9;
+  color: #1b5e20;
+}
+
+/* ===== ENHANCED TEXT RENDERING ===== */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ===== PAGE TRANSITION ===== */
+.page-enter {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }

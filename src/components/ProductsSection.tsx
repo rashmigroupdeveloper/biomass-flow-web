@@ -1,195 +1,181 @@
-
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom';
+import { ArrowRight, Flame, Droplets, Wind } from 'lucide-react';
+
+const products = [
+  {
+    icon: <Flame className="w-6 h-6" />,
+    name: 'Bio Pellets',
+    tagline: 'Premium compressed biomass fuel',
+    description:
+      'Made from selected paddy straws, plant stalks and agro residues. High energy density with low moisture, designed for industrial thermal applications.',
+    specs: [
+      { label: 'Moisture', value: '<9%' },
+      { label: 'Calorific Value', value: '4000±200 kcal/kg' },
+      { label: 'Ash Content', value: '<5%' },
+    ],
+    path: '/products/bio-pellets',
+    accent: 'bg-green-50 border-green-200',
+    iconBg: 'bg-green-100 text-green-700',
+  },
+  {
+    icon: <Droplets className="w-6 h-6" />,
+    name: 'Activated Carbon',
+    tagline: 'High-performance filtration media',
+    description:
+      'Produced from coconut shells and biomass, our activated carbon delivers superior adsorption for water treatment, air purification and industrial processes.',
+    specs: [
+      { label: 'Iodine Value', value: '≥900 mg/g' },
+      { label: 'Moisture', value: '<5%' },
+      { label: 'Ash Content', value: '<4%' },
+    ],
+    path: '/products/activated-carbon',
+    accent: 'bg-blue-50 border-blue-200',
+    iconBg: 'bg-blue-100 text-blue-700',
+  },
+  {
+    icon: <Wind className="w-6 h-6" />,
+    name: 'Charcoal Briquettes',
+    tagline: 'Sustainable charcoal solutions',
+    description:
+      'Uniform-density briquettes from compressed biomass char — a clean, consistent alternative to wood charcoal for cooking, hospitality and industrial use.',
+    specs: [
+      { label: 'Fixed Carbon', value: '>75%' },
+      { label: 'Calorific Value', value: '6500+ kcal/kg' },
+      { label: 'Ash Content', value: '<8%' },
+    ],
+    path: '/products/charcoal-briquettes',
+    accent: 'bg-amber-50 border-amber-200',
+    iconBg: 'bg-amber-100 text-amber-700',
+  },
+];
 
 const ProductsSection = () => {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1
-  });
-
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  // Simple 3D visualization (placeholder for Three.js implementation)
-  useEffect(() => {
-    if (!canvasRef.current || !inView) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Set canvas dimensions
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
-
-    // Draw a simple rotating cylinder as a placeholder for 3D pellet
-    let rotation = 0;
-    let animationId: number;
-
-    const drawCylinder = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
-      const width = 100;
-      const height = 200;
-
-      // Draw top ellipse
-      ctx.beginPath();
-      ctx.ellipse(
-        centerX,
-        centerY - height/2,
-        width * Math.abs(Math.cos(rotation)),
-        width * 0.3,
-        0,
-        0,
-        Math.PI * 2
-      );
-      ctx.fillStyle = '#66bb6a';
-      ctx.fill();
-
-      // Draw bottom ellipse
-      ctx.beginPath();
-      ctx.ellipse(
-        centerX,
-        centerY + height/2,
-        width * Math.abs(Math.cos(rotation)),
-        width * 0.3,
-        0,
-        0,
-        Math.PI * 2
-      );
-      ctx.fillStyle = '#43a047';
-      ctx.fill();
-
-      // Draw sides
-      ctx.beginPath();
-      ctx.moveTo(centerX - width * Math.abs(Math.cos(rotation)), centerY - height/2);
-      ctx.lineTo(centerX - width * Math.abs(Math.cos(rotation)), centerY + height/2);
-      ctx.lineTo(centerX + width * Math.abs(Math.cos(rotation)), centerY + height/2);
-      ctx.lineTo(centerX + width * Math.abs(Math.cos(rotation)), centerY - height/2);
-      ctx.closePath();
-      ctx.fillStyle = '#2e7d32';
-      ctx.fill();
-
-      rotation += 0.01;
-      animationId = requestAnimationFrame(drawCylinder);
-    };
-
-    drawCylinder();
-
-    return () => {
-      cancelAnimationFrame(animationId);
-    };
-  }, [inView]);
-
-  const products = [
-    {
-      name: "Bio Pellets",
-      description: "Premium quality biomass pellets from selected Paddy straws, Plant Stalks, and Agro residues for clean thermal applications.",
-      specs: [
-        { name: "Moisture", value: "<9%" },
-        { name: "Calorific Value", value: "4000±200 kcal/kg" },
-        { name: "Ash Content", value: "<5%" }
-      ]
-    },
-    {
-      name: "Wood Pellets",
-      description: "Sustainable wood pellets produced from responsibly sourced wood residues, providing high energy output with minimal emissions.",
-      specs: [
-        { name: "Moisture", value: "<10%" },
-        { name: "Calorific Value", value: "4500±200 kcal/kg" },
-        { name: "Ash Content", value: "<1%" }
-      ]
-    }
-  ];
+  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
 
   return (
-    <section
-      ref={ref}
-      className="py-20 md:py-32 bg-gray-50"
-    >
+    <section ref={ref} className="py-20 md:py-32 bg-gray-50">
       <div className="container mx-auto px-6 md:px-12">
-        <div className="text-center mb-16 products-text">
-          <motion.div
-            className="mb-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.8 }}
-          >
-            <h2 className="section-heading">
-              Our <span className="section-heading-accent">Products</span>
-            </h2>
-            <div className="decorative-line mx-auto"></div>
-          </motion.div>
 
-          <motion.div
-            className="glass-card max-w-2xl mx-auto"
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+        {/* Section header */}
+        <div className="max-w-2xl mb-16">
+          <motion.p
+            className="text-xs font-semibold uppercase tracking-widest text-primary-600 mb-3"
+            initial={{ opacity: 0, y: 12 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
           >
-            <p className="enhanced-paragraph">
-              Discover our range of sustainable biomass solutions designed to meet your energy needs while reducing environmental impact.
-            </p>
-          </motion.div>
+            What We Make
+          </motion.p>
+          <motion.h2
+            className="text-3xl md:text-5xl font-serif font-bold text-gray-900 leading-tight mb-4"
+            initial={{ opacity: 0, y: 16 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.1 }}
+          >
+            Our <span className="text-primary-600">Products</span>
+          </motion.h2>
+          <motion.div
+            className="h-1 w-14 bg-primary-500 rounded-full"
+            initial={{ scaleX: 0, originX: 0 }}
+            animate={inView ? { scaleX: 1 } : {}}
+            transition={{ duration: 0.6, delay: 0.25 }}
+          />
+          <motion.p
+            className="mt-5 text-gray-500 text-base leading-relaxed"
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.7, delay: 0.3 }}
+          >
+            Sustainable biomass products designed to meet your energy and filtration
+            needs — manufactured to international quality standards.
+          </motion.p>
         </div>
 
-        <motion.div
-          className="grid grid-cols-1 lg:grid-cols-2 gap-12"
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-        >
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div className="p-8">
-              <h3 className="text-2xl font-serif font-bold text-gray-900 mb-6">3D Product Visualization</h3>
-              <div className="bg-gray-50 rounded-lg h-80 flex items-center justify-center">
-                <canvas
-                  ref={canvasRef}
-                  className="w-full h-full"
-                ></canvas>
-              </div>
-              <div className="mt-6 text-center text-sm text-gray-500">
-                Drag to rotate and explore our biomass pellets in 3D
-              </div>
-            </div>
-          </div>
+        {/* Product cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {products.map((product, i) => (
+            <motion.div
+              key={product.name}
+              className={`group bg-white rounded-2xl border ${product.accent} shadow-sm hover:shadow-xl transition-all duration-400 overflow-hidden`}
+              initial={{ opacity: 0, y: 32 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.65, delay: i * 0.15 }}
+              whileHover={{ y: -4 }}
+            >
+              {/* Card top accent bar */}
+              <div className={`h-1 w-full bg-gradient-to-r ${
+                i === 0 ? 'from-green-400 to-green-600' :
+                i === 1 ? 'from-blue-400 to-blue-600' :
+                'from-amber-400 to-amber-600'
+              }`} />
 
-          <div className="space-y-8">
-            {products.map((product, index) => (
-              <motion.div
-                key={product.name}
-                className="bg-white rounded-xl shadow-lg overflow-hidden"
-                initial={{ opacity: 0, x: 20 }}
-                animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
-                transition={{ duration: 0.6, delay: 0.2 + index * 0.2 }}
-              >
-                <div className="p-8">
-                  <h3 className="text-2xl font-serif font-bold text-primary-700 mb-3">{product.name}</h3>
-                  <p className="text-gray-600 mb-6">{product.description}</p>
-
-                  <div className="grid grid-cols-3 gap-4 mb-6">
-                    {product.specs.map(spec => (
-                      <div key={spec.name} className="product-spec-card hover-lift">
-                        <span className="block product-spec-name">{spec.name}</span>
-                        <span className="block product-spec-value">{spec.value}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <Link
-                    to="/contact"
-                    className="inline-block w-full text-center py-3 bg-primary-500 text-white rounded hover:bg-primary-600 transition-colors"
-                  >
-                    Request Details
-                  </Link>
+              <div className="p-7">
+                {/* Icon */}
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-5 ${product.iconBg}`}>
+                  {product.icon}
                 </div>
-              </motion.div>
-            ))}
-          </div>
+
+                {/* Name + tagline */}
+                <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-primary-700 transition-colors">
+                  {product.name}
+                </h3>
+                <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-4">
+                  {product.tagline}
+                </p>
+
+                {/* Description */}
+                <p className="text-sm text-gray-600 leading-relaxed mb-6">
+                  {product.description}
+                </p>
+
+                {/* Specs */}
+                <div className="grid grid-cols-3 gap-2 mb-7">
+                  {product.specs.map((s) => (
+                    <div
+                      key={s.label}
+                      className="bg-gray-50 rounded-lg p-2.5 text-center border border-gray-100"
+                    >
+                      <div className="text-[10px] font-medium text-gray-400 uppercase tracking-wide mb-0.5">
+                        {s.label}
+                      </div>
+                      <div className="text-sm font-bold text-gray-800">{s.value}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA */}
+                <Link
+                  to={product.path}
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-primary-600 hover:text-primary-800 group/link transition-colors"
+                >
+                  Learn more
+                  <ArrowRight
+                    size={14}
+                    className="transition-transform group-hover/link:translate-x-1"
+                  />
+                </Link>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Bottom CTA */}
+        <motion.div
+          className="mt-14 text-center"
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.7, delay: 0.6 }}
+        >
+          <Link
+            to="/contact"
+            className="inline-flex items-center gap-2 px-7 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-primary-200 hover:-translate-y-0.5"
+          >
+            Request Samples or Quote
+            <ArrowRight size={16} />
+          </Link>
         </motion.div>
       </div>
     </section>

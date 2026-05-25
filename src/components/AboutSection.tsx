@@ -1,190 +1,170 @@
-
-import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { BiomassParticleSystem } from '@/utils/particle-system';
-import ParticleCanvas from '@/components/ParticleCanvas';
+import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const AboutSection = () => {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.2
+  const [headingRef, headingInView] = useInView({ triggerOnce: true, threshold: 0.15 });
+  const [bentoRef, bentoInView] = useInView({ triggerOnce: true, threshold: 0.1 });
+
+  const fadeUp = (delay = 0) => ({
+    initial: { opacity: 0, y: 48 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 1.0, delay, ease: [0.16, 1, 0.3, 1] as const },
   });
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: "easeOut" }
-    }
-  };
-
-  const statsVariants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: (i: number) => ({
-      opacity: 1,
-      scale: 1,
-      transition: {
-        delay: i * 0.1,
-        duration: 0.6,
-        ease: "easeOut"
-      }
-    })
-  };
-
   return (
-    <section
-      ref={ref}
-      className="relative py-20 md:py-32 bg-white overflow-hidden"
-    >
-      {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-primary-50 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-float"></div>
-      <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-primary-100 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-float animation-delay-2000"></div>
+    <section className="relative bg-white overflow-hidden">
+      <div className="container mx-auto px-6 md:px-12">
 
-      {/* Ambient particle effect */}
-      <div className="absolute inset-0 pointer-events-none opacity-60">
-        <ParticleCanvas
-          id="about-particles"
-          options={{
-            particleCount: 40,
-            particleMinSize: 2,
-            particleMaxSize: 4,
-            baseHue: 120,
-            flowIntensity: 0.8,
-            speedFactor: 0.4,
-            connectionRadius: 150,
-            connectionOpacity: 0.05
-          }}
-        />
-      </div>
+        {/* ── Section label ── */}
+        <div className="flex items-center gap-6 pt-20 pb-10 border-b border-gray-100">
+          <span className="text-gray-400 text-[10px] font-mono uppercase tracking-[0.35em] shrink-0">
+            01 — About
+          </span>
+          <div className="flex-1 h-px bg-gray-100" />
+          <span className="hidden sm:block text-gray-300 text-[10px] font-mono uppercase tracking-[0.25em] shrink-0">
+            Rashmi 6 Paradigm · Est. 2015
+          </span>
+        </div>
 
-      <div className="container mx-auto px-6 md:px-12 relative">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Image with creative flourish */}
-          <motion.div
-            className="order-2 lg:order-1 relative group"
-            variants={itemVariants}
-            initial="hidden"
-            animate={inView ? 'visible' : 'hidden'}
-          >
+        {/* ── Editorial heading grid ── */}
+        <div ref={headingRef} className="grid grid-cols-1 lg:grid-cols-12 gap-0 py-16 md:py-24">
+
+          {/* Heading — 8 of 12 columns */}
+          <div className="lg:col-span-8 lg:pr-20">
+            <motion.h2
+              className="font-serif font-bold text-gray-900 leading-[0.93] tracking-tight"
+              style={{ fontSize: 'clamp(2.8rem, 5.5vw, 5.5rem)' }}
+              {...fadeUp(0)}
+              animate={headingInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 48 }}
+            >
+              Leading the{' '}
+              <span className="text-primary-600 italic">Green Revolution</span>
+              <br />
+              in Energy
+            </motion.h2>
+
             <motion.div
-              className="absolute -top-4 -left-4 w-24 h-24 bg-primary-200 rounded-lg z-0 group-hover:scale-110 transition-transform duration-500"
-              initial={{ scale: 0, opacity: 0 }}
-              animate={inView ? { scale: 1, opacity: 0.7 } : { scale: 0, opacity: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-            ></motion.div>
+              className="w-16 h-0.5 bg-primary-500 mt-8"
+              initial={{ scaleX: 0, originX: '0%' }}
+              animate={headingInView ? { scaleX: 1 } : { scaleX: 0 }}
+              transition={{ duration: 0.7, delay: 0.55, ease: 'easeOut' }}
+            />
+          </div>
 
-            <div className="relative z-10 transform group-hover:-translate-y-2 transition-transform duration-500">
-              <div className="rounded-lg overflow-hidden shadow-2xl">
-                <img
-                  src="/placeholder.svg"
-                  alt="Biomass Pellet Production"
-                  className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700"
+          {/* Body copy — 4 of 12 columns, bottom-aligned */}
+          <div className="lg:col-span-4 flex flex-col justify-end mt-10 lg:mt-0">
+            <motion.div
+              className="space-y-5"
+              initial={{ opacity: 0 }}
+              animate={headingInView ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 1.0, delay: 0.38 }}
+            >
+              <p className="text-[0.9375rem] text-gray-500 leading-[1.85] font-light">
+                Rashmi 6 Paradigm Limited is a venture of the Rashmi Group, producing
+                premium biomass pellets, activated carbon, and charcoal products that
+                help industries eliminate fossil fuel dependence.
+              </p>
+              <p className="text-[0.9375rem] text-gray-500 leading-[1.85] font-light">
+                With facilities in Kolkata and Kharagpur, we combine cutting-edge
+                engineering with 100% sustainable sourcing — powering industries while
+                preserving the planet for generations to come.
+              </p>
+              <Link
+                to="/about"
+                className="inline-flex items-center gap-2 text-primary-600 text-sm font-semibold group pt-1"
+              >
+                <span className="border-b border-primary-200 group-hover:border-primary-600 pb-0.5 transition-colors duration-200">
+                  Our full story
+                </span>
+                <ArrowRight
+                  size={14}
+                  className="group-hover:translate-x-1.5 transition-transform duration-200"
                 />
-                <div className="absolute inset-0 bg-primary-500 opacity-0 group-hover:opacity-10 transition-opacity duration-500"></div>
+              </Link>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* ── Bento stats grid ── */}
+        <div ref={bentoRef} className="grid grid-cols-12 gap-3 md:gap-4 pb-6">
+
+          {/* Stat 1 — 5/12 wide, tallest */}
+          <motion.div
+            className="col-span-6 md:col-span-5 border border-gray-100 rounded-2xl p-7 md:p-10 flex flex-col justify-between min-h-[140px] md:min-h-[180px]"
+            initial={{ opacity: 0, y: 24 }}
+            animate={bentoInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+            transition={{ duration: 0.7, delay: 0.0 }}
+          >
+            <div className="text-[2.5rem] md:text-[3.25rem] font-bold text-gray-900 leading-none tabular-nums">
+              5+
+            </div>
+            <div className="text-[10px] text-gray-400 uppercase tracking-[0.25em] font-medium mt-3">
+              Years of Excellence
+            </div>
+          </motion.div>
+
+          {/* Stat 2 — 4/12 */}
+          <motion.div
+            className="col-span-6 md:col-span-4 border border-gray-100 rounded-2xl p-7 md:p-10 flex flex-col justify-between min-h-[140px] md:min-h-[180px]"
+            initial={{ opacity: 0, y: 24 }}
+            animate={bentoInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+            transition={{ duration: 0.7, delay: 0.08 }}
+          >
+            <div className="text-[2.5rem] md:text-[3.25rem] font-bold text-gray-900 leading-none tabular-nums">
+              20K+
+            </div>
+            <div className="text-[10px] text-gray-400 uppercase tracking-[0.25em] font-medium mt-3">
+              Metric Tons / Year
+            </div>
+          </motion.div>
+
+          {/* Stat 3 — 3/12, accent color */}
+          <motion.div
+            className="col-span-12 md:col-span-3 bg-primary-600 border border-primary-600 rounded-2xl p-7 md:p-10 flex flex-col justify-between min-h-[100px] md:min-h-[180px]"
+            initial={{ opacity: 0, y: 24 }}
+            animate={bentoInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+            transition={{ duration: 0.7, delay: 0.16 }}
+          >
+            <div className="text-[2.5rem] md:text-[3.25rem] font-bold text-white leading-none tabular-nums">
+              38M
+            </div>
+            <div className="text-[10px] text-white/60 uppercase tracking-[0.25em] font-medium mt-3">
+              CO₂ Tons Saved
+            </div>
+          </motion.div>
+
+          {/* Stat 4 — full-width accent strip */}
+          <motion.div
+            className="col-span-12 bg-gray-50 border border-gray-100 rounded-2xl px-7 md:px-10 py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+            initial={{ opacity: 0, y: 20 }}
+            animate={bentoInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.7, delay: 0.24 }}
+          >
+            <div className="text-[2rem] font-bold text-gray-900 leading-none tabular-nums">
+              100%
+            </div>
+            <div className="flex-1 sm:text-right">
+              <div className="text-[10px] text-gray-400 uppercase tracking-[0.25em] font-medium">
+                Sustainable Sourcing
+              </div>
+              <div className="text-xs text-gray-400 mt-0.5">
+                Every raw material responsibly sourced from agricultural waste
               </div>
             </div>
-
-            <motion.div
-              className="absolute -bottom-6 -right-6 w-48 h-48 bg-primary-100 rounded-full mix-blend-multiply filter blur-lg opacity-70 z-0 group-hover:scale-125 group-hover:rotate-12 transition-all duration-700"
-              initial={{ scale: 0, opacity: 0 }}
-              animate={inView ? { scale: 1, opacity: 0.7 } : { scale: 0, opacity: 0 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
-            ></motion.div>
           </motion.div>
 
-          {/* Content */}
-          <motion.div
-            className="order-1 lg:order-2"
-            variants={containerVariants}
-            initial="hidden"
-            animate={inView ? 'visible' : 'hidden'}
-          >
-            <motion.span
-              variants={itemVariants}
-              className="inline-block text-primary-500 font-medium tracking-wider uppercase text-sm mb-2 relative"
-            >
-              About Us
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
-            </motion.span>
+        </div>
+      </div>
 
-            <motion.div
-              variants={itemVariants}
-            >
-              <h2 className="section-heading">
-                Leading the <span className="section-heading-accent">
-                  Green Revolution
-                </span> in Energy
-              </h2>
-              <div className="decorative-line"></div>
-            </motion.div>
-
-            <motion.div
-              variants={itemVariants}
-              className="bg-primary-500 w-20 h-1.5 mb-6 relative overflow-hidden"
-            >
-              <span className="absolute inset-0 bg-white transform -translate-x-full group-hover:translate-x-0 transition-transform duration-700"></span>
-            </motion.div>
-
-            <motion.div
-              className="content-frame-accent mb-6"
-              variants={itemVariants}
-            >
-              <p className="enhanced-paragraph hover:text-gray-800 transition-colors duration-300">
-                Rashmi 6 Paradigm Limited is a venture of the Rashmi Group, dedicated to producing premium quality biomass pellets, activated carbon, and charcoal products. Our focus is on delivering sustainable, environmentally friendly energy solutions that help industries reduce their carbon footprint by replacing traditional fossil fuels.
-              </p>
-            </motion.div>
-
-            <motion.div
-              className="content-frame mb-8 hover-lift"
-              variants={itemVariants}
-            >
-              <p className="enhanced-paragraph hover:text-gray-800 transition-colors duration-300">
-                With state-of-the-art facilities in Kolkata and Kharagpur, India, we combine innovation with sustainability to create products that power industries while preserving our planet for future generations.
-              </p>
-            </motion.div>
-
-            <motion.div
-              variants={containerVariants}
-              className="grid grid-cols-2 gap-6 pt-4"
-            >
-              {[
-                { value: "5+", label: "Years of Experience" },
-                { value: "20K+", label: "Tons Produced Annually" },
-                { value: "38M", label: "CO₂ Reduction (Tons)" },
-                { value: "100%", label: "Sustainable Sourcing" }
-              ].map((stat, index) => (
-                <motion.div
-                  key={index}
-                  custom={index}
-                  variants={statsVariants}
-                  whileHover={{
-                    scale: 1.05,
-                    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
-                  }}
-                  className="depth-card flex flex-col items-center justify-center p-6 card-3d"
-                >
-                  <span className="stat-value">
-                    {stat.value}
-                  </span>
-                  <span className="stat-label">{stat.label}</span>
-                </motion.div>
-              ))}
-            </motion.div>
-          </motion.div>
+      {/* ── Micro footer ── */}
+      <div className="border-t border-gray-100">
+        <div className="container mx-auto px-6 md:px-12 py-5 flex items-center gap-3">
+          <span className="w-1.5 h-1.5 rounded-full bg-primary-500 shrink-0" />
+          <span className="text-[10px] text-gray-300 uppercase tracking-[0.28em]">
+            Kharagpur, West Bengal, India
+          </span>
         </div>
       </div>
     </section>

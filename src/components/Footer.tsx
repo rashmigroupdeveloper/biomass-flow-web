@@ -1,94 +1,142 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
+import SplitReveal from '@/components/SplitReveal';
+import MagneticButton from '@/components/MagneticButton';
+import MarqueeTicker from '@/components/MarqueeTicker';
+import ScrollRevealLine from '@/components/ScrollRevealLine';
 
 const Footer = () => {
+  const year = new Date().getFullYear();
+  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
+
   return (
-    <footer className="bg-gray-900 text-white">
-      <div className="container mx-auto px-6 md:px-12 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div>
-            <Link to="/" className="inline-block mb-4">
-              <img 
-                src="/logo.png" 
-                alt="Rashmi6 Logo" 
-                className="h-12 w-auto"
+    <footer className="relative overflow-hidden" style={{ background: '#071a09' }}>
+
+      {/* Ambient glow */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse 60% 50% at 50% 0%, rgba(46,125,50,0.12) 0%, transparent 65%)',
+        }}
+      />
+
+      {/* Marquee above CTA */}
+      <div className="relative z-10 border-b" style={{ borderColor: 'rgba(255,255,255,0.04)', paddingBlock: '10px' }}>
+        <MarqueeTicker
+          items={[
+            { text: 'ISO 9001:2015 Certified', accent: true },
+            { text: 'ENplus A1 Standard', accent: false },
+            { text: 'FSC Chain of Custody', accent: true },
+            { text: 'Bureau Veritas Audited', accent: false },
+            { text: '20,000 MT Capacity', accent: true },
+            { text: 'Zero Field Burning', accent: false },
+            { text: 'Rashmi Group', accent: true },
+            { text: 'Kharagpur, West Bengal', accent: false },
+            { text: 'Bio Pellets · Activated Carbon · Charcoal Briquettes', accent: true },
+          ]}
+          speed={32}
+          direction="right"
+        />
+      </div>
+
+      {/* ── Main CTA block ── */}
+      <div ref={ref} className="container mx-auto px-6 md:px-12 pt-20 md:pt-28 pb-14 md:pb-20 relative z-10">
+
+        {/* Section label */}
+        <div className="flex items-center gap-5 mb-12 md:mb-16">
+          <span className="text-white/20 text-[10px] font-mono uppercase tracking-[0.35em] shrink-0">
+            Work with us
+          </span>
+          <ScrollRevealLine color="rgba(255,255,255,0.05)" />
+        </div>
+
+        {/* Giant CTA heading */}
+        <SplitReveal
+          as="h2"
+          className="font-serif font-bold text-white leading-[0.93] tracking-tight mb-10 md:mb-14"
+          style={{ fontSize: 'clamp(2.8rem, 7vw, 7.5rem)' }}
+          mode="chars"
+          delay={0.1}
+          stagger={0.015}
+        >
+          Powering Industry Sustainably.
+        </SplitReveal>
+
+        {/* CTA row */}
+        <motion.div
+          className="flex flex-col sm:flex-row items-start sm:items-center gap-5"
+          initial={{ opacity: 0, y: 24 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <MagneticButton
+            as="a"
+            href="/contact"
+            className="inline-flex items-center gap-3 px-7 py-3.5 rounded-full text-sm font-semibold transition-all duration-300"
+            style={{
+              background: 'rgba(76,175,80,0.15)',
+              border: '1px solid rgba(76,175,80,0.35)',
+              color: 'rgba(76,175,80,0.95)',
+            }}
+          >
+            Request a Quote
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M1 7h12M7 1l6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </MagneticButton>
+
+          <a
+            href="mailto:bioenergy.tender@rashmigroup.com"
+            className="text-white/35 text-sm hover:text-white/60 transition-colors font-mono"
+          >
+            bioenergy.tender@rashmigroup.com
+          </a>
+        </motion.div>
+      </div>
+
+      {/* ── Divider ── */}
+      <div className="border-t relative z-10" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+        <div className="container mx-auto px-6 md:px-12 py-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+
+            {/* Logo */}
+            <Link to="/" className="flex-shrink-0">
+              <img
+                src="/logo.png"
+                alt="Rashmi 6 Paradigm"
+                className="h-7 w-auto"
+                style={{ filter: 'brightness(0) invert(0.3)' }}
               />
             </Link>
-            <p className="text-gray-400 mb-6">
-              Leading the green revolution in energy with sustainable biomass solutions.
-            </p>
-            <div className="flex space-x-4">
-              <a href="#" className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary-500 transition-colors">
-                <span className="sr-only">Facebook</span>
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" />
-                </svg>
-              </a>
-              <a href="#" className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary-500 transition-colors">
-                <span className="sr-only">Twitter</span>
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
-                </svg>
-              </a>
-              <a href="#" className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary-500 transition-colors">
-                <span className="sr-only">LinkedIn</span>
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                </svg>
-              </a>
+
+            {/* Center: minimal nav */}
+            <div className="flex items-center gap-5">
+              {[
+                { label: 'Products', to: '/products/bio-pellets' },
+                { label: 'About', to: '/about' },
+                { label: 'Certificates', to: '/certificates' },
+                { label: 'Contact', to: '/contact' },
+              ].map((l) => (
+                <Link
+                  key={l.to}
+                  to={l.to}
+                  className="text-[11px] text-white/25 hover:text-white/50 transition-colors"
+                >
+                  {l.label}
+                </Link>
+              ))}
             </div>
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-bold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
-              <li><Link to="/" className="text-gray-400 hover:text-primary-400 transition-colors">Home</Link></li>
-              <li><Link to="/about" className="text-gray-400 hover:text-primary-400 transition-colors">About Us</Link></li>
-              <li><Link to="/products" className="text-gray-400 hover:text-primary-400 transition-colors">Products</Link></li>
-              <li><Link to="/process" className="text-gray-400 hover:text-primary-400 transition-colors">Process</Link></li>
-              <li><Link to="/impact" className="text-gray-400 hover:text-primary-400 transition-colors">Environmental Impact</Link></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-bold mb-4">Contact</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li>Kolkata, West Bengal - 700017, India</li>
-              <li>Phone: +91 33 40237200</li>
-              <li>Email: bioenergy.tender@rashmigroup.com</li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-bold mb-4">Subscribe</h3>
-            <p className="text-gray-400 mb-4">Stay updated with our latest news and offerings.</p>
-            <form className="flex">
-              <input 
-                type="email" 
-                placeholder="Your email" 
-                className="flex-1 px-4 py-2 rounded-l-md text-gray-900 focus:outline-none"
-              />
-              <button 
-                type="submit" 
-                className="bg-primary-500 hover:bg-primary-600 px-4 py-2 rounded-r-md transition-colors"
-              >
-                Go
-              </button>
-            </form>
-          </div>
-        </div>
-        
-        <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm mb-4 md:mb-0">
-            © {new Date().getFullYear()} Rashmi 6 Paradigm Limited. All rights reserved.
-          </p>
-          <div className="flex space-x-6 text-sm">
-            <Link to="/privacy" className="text-gray-400 hover:text-primary-400 transition-colors">Privacy Policy</Link>
-            <Link to="/terms" className="text-gray-400 hover:text-primary-400 transition-colors">Terms of Service</Link>
-            <Link to="/cookies" className="text-gray-400 hover:text-primary-400 transition-colors">Cookie Policy</Link>
+
+            {/* Copyright */}
+            <p className="text-[11px] text-white/20 font-mono">
+              © {year} Rashmi 6 Paradigm Ltd.
+            </p>
           </div>
         </div>
       </div>
+
     </footer>
   );
 };

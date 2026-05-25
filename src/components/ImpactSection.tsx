@@ -1,208 +1,269 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import ParticleCanvas from './ParticleCanvas';
 
-const ImpactSection = () => {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.2
-  });
+// ── Animated counter ──────────────────────────────────────────────────
+const Counter = ({
+  target,
+  suffix = '',
+  prefix = '',
+  duration = 1800,
+  inView,
+  delay = 0,
+  className = '',
+}: {
+  target: number;
+  suffix?: string;
+  prefix?: string;
+  duration?: number;
+  inView: boolean;
+  delay?: number;
+  className?: string;
+}) => {
+  const [count, setCount] = useState(0);
 
-  const carbonChartRef = useRef<HTMLDivElement>(null);
-  const emissionsChartRef = useRef<HTMLDivElement>(null);
-  const sustainabilityChartRef = useRef<HTMLDivElement>(null);
-
-  // Animation for charts when they come into view
   useEffect(() => {
-    if (inView) {
-      if (carbonChartRef.current) {
-        carbonChartRef.current.style.width = '38%';
-      }
-      if (emissionsChartRef.current) {
-        emissionsChartRef.current.style.width = '65%';
-      }
-      if (sustainabilityChartRef.current) {
-        sustainabilityChartRef.current.style.width = '90%';
-      }
-    }
-  }, [inView]);
+    if (!inView) return;
+    const t = setTimeout(() => {
+      const start = performance.now();
+      const tick = (now: number) => {
+        const p = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        setCount(Math.round(eased * target));
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }, delay * 1000);
+    return () => clearTimeout(t);
+  }, [inView, target, delay, duration]);
 
-  const metrics = [
-    {
-      title: "Carbon Reduction",
-      description: "A 5% reduction in coal consumption through biomass co-firing yields an annual reduction of approximately 38 million metric tons of CO2 emissions.",
-      percentage: 38,
-      color: "bg-primary-500",
-      ref: carbonChartRef
-    },
-    {
-      title: "Reduced Emissions",
-      description: "Biomass co-firing effectively lowers net CO2, PM, SO2, and often NOx emissions when compared to coal combustion.",
-      percentage: 65,
-      color: "bg-primary-600",
-      ref: emissionsChartRef
-    },
-    {
-      title: "Carbon Neutrality",
-      description: "The subsequent generation of plants effectively offsets the CO2 emissions from the combustion of agro-residues, making it carbon-neutral.",
-      percentage: 90,
-      color: "bg-primary-700",
-      ref: sustainabilityChartRef
-    }
+  return (
+    <span className={className}>
+      {prefix}{count}{suffix}
+    </span>
+  );
+};
+
+// ── Horizontal comparison bar ─────────────────────────────────────────
+const CompareBar = ({
+  label,
+  coalVal,
+  biomassVal,
+  unit,
+  inView,
+  delay = 0,
+}: {
+  label: string;
+  coalVal: number;
+  biomassVal: number;
+  unit: string;
+  inView: boolean;
+  delay?: number;
+}) => {
+  const max = Math.max(coalVal, biomassVal);
+  const coalPct = (coalVal / max) * 100;
+  const biomassPct = (biomassVal / max) * 100;
+
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-baseline justify-between mb-2">
+        <span className="text-white/55 text-xs uppercase tracking-widest font-medium">{label}</span>
+        <span className="text-white/20 text-[10px] font-mono">{unit}</span>
+      </div>
+
+      {/* Coal bar */}
+      <div className="flex items-center gap-3">
+        <span className="text-[10px] text-red-400/60 w-14 shrink-0 text-right">Coal</span>
+        <div className="flex-1 h-2 rounded-full bg-white/[0.06] overflow-hidden">
+          <motion.div
+            className="h-full rounded-full bg-red-500/55"
+            initial={{ width: 0 }}
+            animate={inView ? { width: `${coalPct}%` } : { width: 0 }}
+            transition={{ duration: 1.1, delay, ease: 'easeOut' }}
+          />
+        </div>
+        <span className="text-[10px] text-white/25 w-7 shrink-0 tabular-nums">{coalVal}</span>
+      </div>
+
+      {/* Biomass bar */}
+      <div className="flex items-center gap-3">
+        <span className="text-[10px] text-primary-400/70 w-14 shrink-0 text-right">Biomass</span>
+        <div className="flex-1 h-2 rounded-full bg-white/[0.06] overflow-hidden">
+          <motion.div
+            className="h-full rounded-full bg-primary-500"
+            initial={{ width: 0 }}
+            animate={inView ? { width: `${biomassPct}%` } : { width: 0 }}
+            transition={{ duration: 1.1, delay: delay + 0.12, ease: 'easeOut' }}
+          />
+        </div>
+        <span className="text-[10px] text-white/25 w-7 shrink-0 tabular-nums">{biomassVal}</span>
+      </div>
+    </div>
+  );
+};
+
+// ── Main section ──────────────────────────────────────────────────────
+const ImpactSection = () => {
+  const [headerRef, headerInView] = useInView({ triggerOnce: true, threshold: 0.2 });
+  const [heroRef, heroInView] = useInView({ triggerOnce: true, threshold: 0.3 });
+  const [chartRef, chartInView] = useInView({ triggerOnce: true, threshold: 0.2 });
+
+  const compareData = [
+    { label: 'CO₂ Emissions', coalVal: 95, biomassVal: 10, unit: 'g/MJ' },
+    { label: 'Sulfur Content', coalVal: 85, biomassVal: 10, unit: 'relative' },
+    { label: 'Particulate Matter', coalVal: 75, biomassVal: 18, unit: 'relative' },
+    { label: 'Renewability', coalVal: 0, biomassVal: 100, unit: '%' },
   ];
 
   return (
-    <section
-      ref={ref}
-      className="py-20 md:py-32 bg-primary-50 relative overflow-hidden"
-    >
-      {/* Environmental Impact Particle Animation */}
-      <div className="absolute inset-0 z-0">
-        <ParticleCanvas
-          id="environmentCanvas"
-          options={{
-            particleCount: 100,
-            particleMinSize: 2,
-            particleMaxSize: 5,
-            baseHue: 140, // Deeper green for environmental theme
-            backgroundColor: 'rgba(46, 125, 50, 0.04)',
-            flowIntensity: 0.9,
-            flowDirection: 'circular',
-            speedFactor: 0.5,
-            connectionRadius: 150,
-            connectionOpacity: 0.2,
-            mouseInteraction: true,
-            responsive: true,
-            densityFactor: 0.00007,
-          }}
-        />
-      </div>
+    <section className="relative bg-[#071a09] overflow-hidden py-20 md:py-32">
 
-      {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-primary-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70"></div>
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-70"></div>
+      {/* Ambient gradient */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse 55% 40% at 50% 100%, rgba(46,125,50,0.14) 0%, transparent 65%)',
+        }}
+      />
 
       <div className="container mx-auto px-6 md:px-12 relative z-10">
-        <div className="text-center mb-16 impact-text">
-          <motion.div
-            className="mb-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.8 }}
-          >
-            <h2 className="section-heading">
-              Environmental <span className="section-heading-accent text-white">Impact</span>
-            </h2>
-            <div className="decorative-line mx-auto"></div>
-          </motion.div>
 
-          <motion.div
-            className="glass-card max-w-2xl mx-auto"
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <p className="enhanced-paragraph">
-              Our commitment to sustainability goes beyond products. See how we're making a real difference for our planet.
-            </p>
-          </motion.div>
+        {/* Section label */}
+        <div ref={headerRef} className="flex items-center gap-6 pb-14 border-b border-white/[0.05]">
+          <span className="text-white/30 text-[10px] font-mono uppercase tracking-[0.35em] shrink-0">
+            04 — Impact
+          </span>
+          <div className="flex-1 h-px bg-white/[0.05]" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {metrics.map((metric, index) => (
+        {/* Section heading */}
+        <div className="py-14 md:py-20">
+          <motion.h2
+            className="font-serif font-bold text-white leading-[0.93] tracking-tight"
+            style={{ fontSize: 'clamp(2.8rem, 5.5vw, 5rem)' }}
+            initial={{ opacity: 0, y: 40 }}
+            animate={headerInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          >
+            Environmental{' '}
+            <span className="text-primary-400 italic">Impact</span>
+          </motion.h2>
+          <motion.p
+            className="text-white/35 text-[0.9375rem] leading-relaxed font-light max-w-lg mt-5"
+            initial={{ opacity: 0 }}
+            animate={headerInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.9, delay: 0.3 }}
+          >
+            Every pellet produced is a quantified step toward a carbon-neutral
+            industrial sector. These are the numbers that matter.
+          </motion.p>
+        </div>
+
+        {/* ── Hero split: big number LEFT / bar chart RIGHT ── */}
+        <div ref={heroRef} className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+
+          {/* Left: primary giant stat */}
+          <div className="lg:col-span-5">
             <motion.div
-              key={metric.title}
-              className="accent-corner-card hover-lift"
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.8, delay: index * 0.2 }}
+              initial={{ opacity: 0, y: 32 }}
+              animate={heroInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div className="mb-3">
-                <h3 className="process-step-title">{metric.title}</h3>
-              </div>
-              <div className="mb-6">
-                <p className="process-step-description">{metric.description}</p>
+              {/* Giant counter */}
+              <div
+                className="font-bold text-white leading-none tabular-nums"
+                style={{ fontSize: 'clamp(5rem, 13vw, 11rem)' }}
+              >
+                <Counter target={38} suffix="M" inView={heroInView} delay={0.1} />
               </div>
 
-              <div className="mt-6">
-                <div className="flex justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-600">Improvement</span>
-                  <span className="text-sm font-medium text-primary-600">{metric.percentage}%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
+              <div className="mt-4 mb-7 border-l-2 border-primary-500 pl-4">
+                <p className="text-white/60 text-sm leading-relaxed">
+                  Metric tons of CO₂ emissions reduced annually through 5%
+                  biomass co-firing with coal.
+                </p>
+              </div>
+
+              {/* Two secondary stats */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="border border-white/[0.07] rounded-xl p-5">
                   <div
-                    ref={metric.ref}
-                    className={`${metric.color} h-2.5 rounded-full transition-all duration-1000 ease-out`}
-                    style={{ width: '0%' }}
-                  ></div>
+                    className="font-bold text-white leading-none tabular-nums mb-2"
+                    style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)' }}
+                  >
+                    <Counter target={65} suffix="%" inView={heroInView} delay={0.4} />
+                  </div>
+                  <div className="text-[10px] text-white/35 uppercase tracking-widest">
+                    Emission Reduction
+                  </div>
+                </div>
+                <div className="border border-white/[0.07] rounded-xl p-5">
+                  <div
+                    className="font-bold text-white leading-none tabular-nums mb-2"
+                    style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)' }}
+                  >
+                    <Counter target={90} suffix="%" inView={heroInView} delay={0.55} />
+                  </div>
+                  <div className="text-[10px] text-white/35 uppercase tracking-widest">
+                    Carbon Neutral
+                  </div>
                 </div>
               </div>
             </motion.div>
-          ))}
+          </div>
+
+          {/* Right: horizontal bar comparison chart */}
+          <div ref={chartRef} className="lg:col-span-7">
+            <motion.div
+              className="space-y-8"
+              initial={{ opacity: 0, x: 24 }}
+              animate={heroInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.9, delay: 0.2 }}
+            >
+              {/* Chart header */}
+              <div className="flex items-center justify-between pb-5 border-b border-white/[0.06]">
+                <span
+                  className="font-serif font-bold text-white leading-tight"
+                  style={{ fontSize: 'clamp(1.1rem, 2vw, 1.5rem)' }}
+                >
+                  Coal vs.{' '}
+                  <span className="text-primary-400">Biomass</span>
+                </span>
+                <div className="flex items-center gap-4 text-[10px]">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-2 rounded-full bg-red-500/55" />
+                    <span className="text-white/30 uppercase tracking-widest">Coal</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-2 rounded-full bg-primary-500" />
+                    <span className="text-white/30 uppercase tracking-widest">Biomass</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bars */}
+              {compareData.map((d, i) => (
+                <motion.div
+                  key={d.label}
+                  initial={{ opacity: 0, x: 16 }}
+                  animate={chartInView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ duration: 0.7, delay: i * 0.1 }}
+                >
+                  <CompareBar
+                    label={d.label}
+                    coalVal={d.coalVal}
+                    biomassVal={d.biomassVal}
+                    unit={d.unit}
+                    inView={chartInView}
+                    delay={i * 0.1}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
         </div>
 
-        <motion.div
-          className="mt-16 glass-card hover-lift"
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-        >
-          <h3 className="section-heading text-center mb-6">Comparison: Coal vs. <span className="section-heading-accent">Biomass Energy</span></h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h4 className="text-lg font-bold mb-4 text-primary-800">Traditional Coal</h4>
-              <ul className="space-y-3">
-                <li className="flex items-center text-gray-600">
-                  <span className="w-5 h-5 bg-red-500 rounded-full mr-3"></span>
-                  <span>High CO₂ emissions</span>
-                </li>
-                <li className="flex items-center text-gray-600">
-                  <span className="w-5 h-5 bg-red-500 rounded-full mr-3"></span>
-                  <span>Non-renewable resource</span>
-                </li>
-                <li className="flex items-center text-gray-600">
-                  <span className="w-5 h-5 bg-red-500 rounded-full mr-3"></span>
-                  <span>High sulfur content</span>
-                </li>
-                <li className="flex items-center text-gray-600">
-                  <span className="w-5 h-5 bg-red-500 rounded-full mr-3"></span>
-                  <span>Mining damages ecosystems</span>
-                </li>
-                <li className="flex items-center text-gray-600">
-                  <span className="w-5 h-5 bg-red-500 rounded-full mr-3"></span>
-                  <span>Contributes to air pollution</span>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-bold mb-4 text-primary-500">Biomass Energy</h4>
-              <ul className="space-y-3">
-                <li className="flex items-center text-gray-600">
-                  <span className="w-5 h-5 bg-green-500 rounded-full mr-3"></span>
-                  <span>Carbon neutral lifecycle</span>
-                </li>
-                <li className="flex items-center text-gray-600">
-                  <span className="w-5 h-5 bg-green-500 rounded-full mr-3"></span>
-                  <span>Renewable resource</span>
-                </li>
-                <li className="flex items-center text-gray-600">
-                  <span className="w-5 h-5 bg-green-500 rounded-full mr-3"></span>
-                  <span>Lower sulfur emissions</span>
-                </li>
-                <li className="flex items-center text-gray-600">
-                  <span className="w-5 h-5 bg-green-500 rounded-full mr-3"></span>
-                  <span>Utilizes agricultural waste</span>
-                </li>
-                <li className="flex items-center text-gray-600">
-                  <span className="w-5 h-5 bg-green-500 rounded-full mr-3"></span>
-                  <span>Reduces landfill waste</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </motion.div>
       </div>
     </section>
   );

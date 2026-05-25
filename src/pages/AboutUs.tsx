@@ -3,7 +3,6 @@ import React, { useEffect, useRef } from 'react';
 import { motion, useAnimation, useScroll, useInView, useTransform } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import Footer from '@/components/Footer';
-import Navigation from '@/components/Navigation';
 
 const AboutUs = () => {
   // For parallax scrolling
@@ -99,8 +98,6 @@ const AboutUs = () => {
       </Helmet>
       
       <div className="min-h-screen bg-white">
-        <Navigation />
-        
         {/* Hero Section with Parallax Effect */}
         <section 
           ref={heroRef}

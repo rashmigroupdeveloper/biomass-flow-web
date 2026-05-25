@@ -1,6 +1,7 @@
 {
-  "name": "Biomass Flow",
-  "short_name": "Biomass Flow",
+  "name": "Rashmi 6 Paradigm Limited",
+  "short_name": "Rashmi 6",
+  "description": "Sustainable biomass energy solutions — Bio Pellets, Activated Carbon, Charcoal Briquettes",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -28,8 +29,9 @@
       "type": "image/png"
     }
   ],
-  "theme_color": "#4CAF50",
+  "theme_color": "#2e7d32",
   "background_color": "#ffffff",
   "display": "standalone",
-  "start_url": "/"
-} 
+  "start_url": "/",
+  "scope": "/"
+}
