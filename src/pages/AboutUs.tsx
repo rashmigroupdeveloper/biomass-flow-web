@@ -1,7 +1,8 @@
 
 import React, { useEffect, useRef } from 'react';
 import { motion, useAnimation, useScroll, useInView, useTransform } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import { SEO } from '@/components/SEO';
+import { organizationSchema, webPageSchema } from '@/lib/schemas';
 import Footer from '@/components/Footer';
 
 const AboutUs = () => {
@@ -92,10 +93,15 @@ const AboutUs = () => {
 
   return (
     <>
-      <Helmet>
-        <title>About Us | Rashmi 6 Paradigm</title>
-        <meta name="description" content="Learn about Rashmi 6 Paradigm, India's leading manufacturer of sustainable biomass products and our commitment to a greener future." />
-      </Helmet>
+      <SEO
+        title="About Us | Rashmi 6 Paradigm"
+        description="Learn about Rashmi 6 Paradigm, India's leading manufacturer of sustainable biomass products and our commitment to a greener future."
+        canonical="/about-us"
+        jsonLd={[
+          organizationSchema,
+          webPageSchema('About Us', 'Learn about Rashmi 6 Paradigm — India\'s leading manufacturer of sustainable biomass products.', 'https://rashmi6paradigm.com/about-us'),
+        ]}
+      />
       
       <div className="min-h-screen bg-white">
         {/* Hero Section with Parallax Effect */}

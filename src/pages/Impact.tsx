@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import { SEO } from '@/components/SEO';
+import { webPageSchema } from '@/lib/schemas';
 import { LeafIcon, GlobeIcon, DropletIcon, BatteryChargingIcon, SparklesIcon, TreesIcon } from 'lucide-react';
 
 interface ImpactStatProps {
@@ -374,10 +375,12 @@ const Impact: React.FC = () => {
 
   return (
     <div ref={containerRef} className="relative min-h-screen bg-gradient-to-b from-green-50 to-white pt-24 pb-16 overflow-hidden">
-      <Helmet>
-        <title>Environmental Impact | Rashmi 6 Paradigm</title>
-        <meta name="description" content="Discover the positive environmental impact of our sustainable biomass products and solutions." />
-      </Helmet>
+      <SEO
+        title="Environmental Impact | Rashmi 6 Paradigm"
+        description="Discover the positive environmental impact of our sustainable biomass products — reducing CO₂ emissions, eliminating agricultural waste, and powering clean industry."
+        canonical="/impact"
+        jsonLd={webPageSchema('Environmental Impact', 'The positive environmental impact of Rashmi 6 Paradigm biomass solutions.', 'https://rashmi6paradigm.com/impact')}
+      />
       
       <ImpactAnimation />
       

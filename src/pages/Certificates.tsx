@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
+import { SEO } from '@/components/SEO';
+import { webPageSchema } from '@/lib/schemas';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { X } from 'lucide-react';
@@ -73,11 +74,12 @@ const Certificates = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Certifications | Rashmi 6 Paradigm</title>
-        <meta name="description" content="ISO 9001, ISO 14001, ENplus, FSC and OHSAS certifications held by Rashmi 6 Paradigm Limited for quality, environmental, and product standards." />
-        <link rel="canonical" href="https://rashmi6paradigm.com/certificates" />
-      </Helmet>
+      <SEO
+        title="Certifications | Rashmi 6 Paradigm"
+        description="ISO 9001, ISO 14001, ENplus, FSC and OHSAS certifications held by Rashmi 6 Paradigm Limited for quality, environmental, and product standards."
+        canonical="/certificates"
+        jsonLd={webPageSchema('Certifications', 'ISO 9001, ISO 14001, ENplus, FSC and OHSAS certifications held by Rashmi 6 Paradigm Limited.', 'https://rashmi6paradigm.com/certificates')}
+      />
 
       <div className="relative" style={{ overflowX: 'clip' }}>
 

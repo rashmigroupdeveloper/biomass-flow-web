@@ -1,5 +1,7 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { SEO } from '@/components/SEO';
+import { charcoalBriquettesSchema, charcoalBriiquettesFAQSchema, breadcrumbSchema } from '@/lib/schemas';
+import { FAQSection } from '@/components/FAQSection';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
@@ -90,11 +92,21 @@ const CharcoalBriquettes = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Charcoal Briquettes | Rashmi 6 Paradigm</title>
-        <meta name="description" content="Sustainable charcoal briquettes for cooking, hospitality and industrial use. Clean-burning, high fixed-carbon alternative to wood charcoal." />
-        <link rel="canonical" href="https://rashmi6paradigm.com/products/charcoal-briquettes" />
-      </Helmet>
+      <SEO
+        title="Charcoal Briquettes Exporter India | BBQ & Shisha | Rashmi 6 Paradigm"
+        description="Coconut shell charcoal briquettes for BBQ, shisha/hookah & hospitality. Fixed carbon >75%, low smoke, clean-burning. Exporter to UAE, Netherlands & Gulf markets from India."
+        canonical="/products/charcoal-briquettes"
+        ogType="product"
+        jsonLd={[
+          charcoalBriquettesSchema,
+          charcoalBriiquettesFAQSchema,
+          breadcrumbSchema([
+            { name: 'Home', url: 'https://rashmi6paradigm.com/' },
+            { name: 'Products', url: 'https://rashmi6paradigm.com/products/charcoal-briquettes' },
+            { name: 'Charcoal Briquettes', url: 'https://rashmi6paradigm.com/products/charcoal-briquettes' },
+          ]),
+        ]}
+      />
 
       <div className="relative" style={{ overflowX: 'clip' }}>
 
@@ -327,6 +339,16 @@ const CharcoalBriquettes = () => {
             </div>
           </div>
         </section>
+
+        <FAQSection
+          title="Charcoal Briquettes — Frequently Asked Questions"
+          items={[
+            { question: 'What type of charcoal briquettes are best for shisha / hookah?', answer: 'Coconut shell charcoal briquettes are widely considered the best for shisha — high fixed carbon (>75%), low ash, minimal smoke, neutral taste, and 2–3 hour burn time. We supply flat and finger-shaped coconut shell briquettes specifically for the hospitality and export market.' },
+            { question: 'Do you export charcoal briquettes to the UAE and Middle East?', answer: 'Yes. We export regularly to the UAE, Netherlands, Maldives, and Gulf markets. We handle all export documentation, SGS quality certificates, and logistics. Contact us for FOB/CIF pricing and free samples.' },
+            { question: 'What is the fixed carbon content of your briquettes?', answer: 'Our coconut shell charcoal briquettes have fixed carbon >75%, ash <5%, moisture <8%, and burn time of 2–3 hours. We provide full test certificates from NABL-accredited labs with every shipment.' },
+            { question: 'What is the minimum export order quantity?', answer: 'Minimum export order is 1 FCL (20-foot container, approximately 18–20 MT). We also accept smaller domestic trial orders starting at 500 kg. Contact us to discuss your requirement.' },
+          ]}
+        />
 
         <Footer />
       </div>

@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { Helmet } from 'react-helmet-async';
+import { SEO } from '@/components/SEO';
+import { bioPelletsSchema, bioPelletsFAQSchema, breadcrumbSchema } from '@/lib/schemas';
+import { FAQSection } from '@/components/FAQSection';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
@@ -178,11 +180,21 @@ const BioPellets = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Bio Pellets | Rashmi 6 Paradigm</title>
-        <meta name="description" content="Premium bio pellets from agricultural waste. High-energy biomass fuel for industrial thermal applications with low moisture and ash." />
-        <link rel="canonical" href="https://rashmi6paradigm.com/products/bio-pellets" />
-      </Helmet>
+      <SEO
+        title="Bio Pellets Manufacturer Eastern India | Rashmi 6 Paradigm"
+        description="Agro-waste bio pellets for NTPC co-firing, industrial boilers, cement kilns & textile mills. 3,800–4,200 kcal/kg, ash <5%, moisture <10%. Bulk supplier from Kolkata, West Bengal."
+        canonical="/products/bio-pellets"
+        ogType="product"
+        jsonLd={[
+          bioPelletsSchema,
+          bioPelletsFAQSchema,
+          breadcrumbSchema([
+            { name: 'Home', url: 'https://rashmi6paradigm.com/' },
+            { name: 'Products', url: 'https://rashmi6paradigm.com/products/bio-pellets' },
+            { name: 'Bio Pellets', url: 'https://rashmi6paradigm.com/products/bio-pellets' },
+          ]),
+        ]}
+      />
 
       <div className="relative" style={{ overflowX: 'clip' }}>
 
@@ -405,6 +417,17 @@ const BioPellets = () => {
             </div>
           </div>
         </section>
+
+        <FAQSection
+          title="Bio Pellets — Frequently Asked Questions"
+          items={[
+            { question: 'What is the price of bio pellets per tonne in India?', answer: 'Bio pellet prices in India range from ₹7,500 to ₹13,000 per metric tonne depending on specification, quantity, and delivery location. Our bulk pricing for NTPC co-firing and industrial boilers starts at ₹9,500/MT ex-factory Kharagpur. Contact us for a customised quote.' },
+            { question: 'What specifications do bio pellets need to meet for NTPC co-firing?', answer: 'NTPC requires GCV ≥ 3,000 kcal/kg (our grade: 3,800–4,200), moisture ≤ 14% (ours: <10%), ash ≤ 10% (ours: <5%), diameter 6–8 mm, bulk density ≥ 600 kg/m³, and 100% Indian agricultural waste sourcing. We supply test certificates from NABL-accredited labs with every batch.' },
+            { question: 'What raw materials are used to make your bio pellets?', answer: 'We manufacture bio pellets from 100% agricultural waste — paddy straw, rice husk, sugarcane bagasse, groundnut shells, and mustard husk — sourced directly from farmers within 150 km of our Kharagpur facility in West Bengal.' },
+            { question: 'What is the minimum order quantity?', answer: 'Our minimum order is 5 MT for trial/sample orders. For monthly supply contracts we handle 50–500+ MT/month across West Bengal, Jharkhand, Odisha, and other states.' },
+            { question: 'Can bio pellets replace coal in industrial boilers?', answer: 'Yes. Bio pellets are a direct drop-in for coal in stoker, CFBC, and spreader-grate boilers. With GCV of 4,000 kcal/kg and ash <5%, they reduce fuel consumption by ~20% vs F-grade coal and cut CO₂ emissions by up to 80%.' },
+          ]}
+        />
 
         <Footer />
       </div>

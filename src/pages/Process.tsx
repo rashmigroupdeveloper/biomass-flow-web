@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import { SEO } from '@/components/SEO';
+import { webPageSchema } from '@/lib/schemas';
 
 interface ProcessStepProps {
   title: string;
@@ -260,10 +261,12 @@ const Process: React.FC = () => {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-b from-green-50 to-white pt-24 pb-16 overflow-hidden">
-      <Helmet>
-        <title>Our Process | Rashmi 6 Paradigm</title>
-        <meta name="description" content="Learn about the sustainable process behind our biomass products - from collection to distribution." />
-      </Helmet>
+      <SEO
+        title="Our Process | Rashmi 6 Paradigm"
+        description="Learn about the sustainable process behind our biomass products — from agricultural waste collection to pellet distribution."
+        canonical="/process"
+        jsonLd={webPageSchema('Our Process', 'Learn about the sustainable process behind our biomass products.', 'https://rashmi6paradigm.com/process')}
+      />
       
       <ProcessAnimation />
       

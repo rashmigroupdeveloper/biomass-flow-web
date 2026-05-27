@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Helmet } from 'react-helmet-async';
+import { SEO } from '@/components/SEO';
+import { webPageSchema } from '@/lib/schemas';
 import { motion } from 'framer-motion';
 import { Calendar, Globe, Search, Filter, Eye, Download, AlertCircle, Linkedin } from 'lucide-react';
 import RevealText from '@/components/ui/RevealText';
@@ -102,11 +103,12 @@ const Media = () => {
   
   return (
     <div className="min-h-screen bg-background">
-      <Helmet>
-        <title>Media & News | Rashmi 6 Paradigm</title>
-        <meta name="description" content="Latest news, press releases, and media coverage about Rashmi 6 Paradigm and our industry-leading biomass products." />
-        <meta name="keywords" content="Rashmi 6 Paradigm news, biomass industry news, company updates, press releases" />
-      </Helmet>
+      <SEO
+        title="Media & News | Rashmi 6 Paradigm"
+        description="Latest news, press releases, and media coverage about Rashmi 6 Paradigm and our industry-leading bio pellets, activated carbon, and charcoal briquettes."
+        canonical="/media"
+        jsonLd={webPageSchema('Media & News', 'Latest news and press releases from Rashmi 6 Paradigm Limited.', 'https://rashmi6paradigm.com/media')}
+      />
       
       {/* Hero Section */}
       <section className="pt-32 pb-16 relative overflow-hidden">

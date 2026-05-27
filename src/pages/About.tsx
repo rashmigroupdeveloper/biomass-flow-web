@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
+import { SEO } from '@/components/SEO';
+import { organizationSchema, webPageSchema } from '@/lib/schemas';
 import { motion, useInView } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import gsap from 'gsap';
@@ -33,7 +34,9 @@ function ScrubCounter({ target, suffix = '', label, sub }: {
         },
       },
     });
-    return () => tween.kill();
+    return () => {
+      tween.kill();
+    };
   }, [target]);
 
   return (
@@ -240,7 +243,9 @@ function BigNumberMoment() {
         },
       },
     });
-    return () => tween.kill();
+    return () => {
+      tween.kill();
+    };
   }, []);
 
   return (
@@ -298,11 +303,15 @@ const About = () => {
 
   return (
     <>
-      <Helmet>
-        <title>About Us | Rashmi 6 Paradigm</title>
-        <meta name="description" content="Learn about Rashmi 6 Paradigm Limited — our story, vision, mission and core values. Leading sustainable biomass manufacturer since 2015." />
-        <link rel="canonical" href="https://rashmi6paradigm.com/about" />
-      </Helmet>
+      <SEO
+        title="About Us | Rashmi 6 Paradigm"
+        description="Learn about Rashmi 6 Paradigm Limited — our story, vision, mission and core values. Leading sustainable biomass manufacturer since 2015."
+        canonical="/about"
+        jsonLd={[
+          organizationSchema,
+          webPageSchema('About Us', 'Learn about Rashmi 6 Paradigm Limited — our story, vision, mission and core values.', 'https://rashmi6paradigm.com/about'),
+        ]}
+      />
 
       <div className="relative" style={{ overflowX: 'clip' }}>
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
+import { SEO } from '@/components/SEO';
+import { webPageSchema } from '@/lib/schemas';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { toast } from '@/components/ui/use-toast';
@@ -44,11 +45,12 @@ const Contact = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Contact | Rashmi 6 Paradigm</title>
-        <meta name="description" content="Get in touch with Rashmi 6 Paradigm for bio pellets, activated carbon, and charcoal briquette inquiries, samples, and pricing." />
-        <link rel="canonical" href="https://rashmi6paradigm.com/contact" />
-      </Helmet>
+      <SEO
+        title="Contact | Rashmi 6 Paradigm"
+        description="Get in touch with Rashmi 6 Paradigm for bio pellets, activated carbon, and charcoal briquette inquiries, samples, and pricing."
+        canonical="/contact"
+        jsonLd={webPageSchema('Contact', 'Get in touch with Rashmi 6 Paradigm for bio pellets, activated carbon, and charcoal briquette inquiries.', 'https://rashmi6paradigm.com/contact')}
+      />
 
       <div className="relative" style={{ overflowX: 'clip' }}>
 

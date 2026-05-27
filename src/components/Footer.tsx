@@ -116,6 +116,7 @@ const Footer = () => {
               {[
                 { label: 'Products', to: '/products/bio-pellets' },
                 { label: 'About', to: '/about' },
+                { label: 'Blog', to: '/blog' },
                 { label: 'Certificates', to: '/certificates' },
                 { label: 'Contact', to: '/contact' },
               ].map((l) => (

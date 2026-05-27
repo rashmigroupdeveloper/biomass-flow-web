@@ -1,5 +1,7 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { SEO } from '@/components/SEO';
+import { activatedCarbonSchema, activatedCarbonFAQSchema, breadcrumbSchema } from '@/lib/schemas';
+import { FAQSection } from '@/components/FAQSection';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
@@ -97,11 +99,21 @@ const ActivatedCarbon = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Activated Carbon | Rashmi 6 Paradigm</title>
-        <meta name="description" content="High-performance activated carbon for water treatment, air purification and industrial filtration. Produced from coconut shells and biomass." />
-        <link rel="canonical" href="https://rashmi6paradigm.com/products/activated-carbon" />
-      </Helmet>
+      <SEO
+        title="Activated Carbon Manufacturer India | Coconut Shell & Biomass | Rashmi 6 Paradigm"
+        description="Coconut shell activated carbon for water treatment, gold recovery, air purification & pharma. Granular (GAC) and powder (PAC) grades. Indian manufacturer, global exporter to USA, Turkey, Chile."
+        canonical="/products/activated-carbon"
+        ogType="product"
+        jsonLd={[
+          activatedCarbonSchema,
+          activatedCarbonFAQSchema,
+          breadcrumbSchema([
+            { name: 'Home', url: 'https://rashmi6paradigm.com/' },
+            { name: 'Products', url: 'https://rashmi6paradigm.com/products/activated-carbon' },
+            { name: 'Activated Carbon', url: 'https://rashmi6paradigm.com/products/activated-carbon' },
+          ]),
+        ]}
+      />
 
       <div className="relative" style={{ overflowX: 'clip' }}>
 
@@ -324,6 +336,16 @@ const ActivatedCarbon = () => {
             </div>
           </div>
         </section>
+
+        <FAQSection
+          title="Activated Carbon — Frequently Asked Questions"
+          items={[
+            { question: 'What is coconut shell activated carbon used for?', answer: 'Coconut shell activated carbon is used for drinking water purification, effluent treatment, air filtration, gold recovery in mining, pharmaceutical manufacturing, food decolourisation, and solvent recovery. Its high hardness (97+) and iodine number (800–1,100 mg/g) make it the preferred grade for demanding water and gold recovery applications.' },
+            { question: 'What is the difference between GAC and PAC?', answer: 'GAC (granular) is used in fixed-bed filter columns for continuous water treatment and can be reactivated 2–4 times. PAC (powder) is dosed directly into water streams for rapid, intermittent treatment of taste, odour, and contamination events. We supply both grades.' },
+            { question: 'Do you export activated carbon from India?', answer: 'Yes. We export coconut shell and biomass activated carbon to the USA, Turkey, Chile, UAE, and other markets. We provide full NABL test certificates, ISO 9001 & 14001 quality documentation, and handle all export logistics. Contact us for FOB/CIF pricing.' },
+            { question: 'What certifications do your products hold?', answer: 'Our facility is ISO 9001:2015 and ISO 14001:2015 certified. All products are tested at NABL-accredited laboratories. We provide certificates for iodine number, BET surface area, ash content, moisture, hardness, and pH with every order.' },
+          ]}
+        />
 
         <Footer />
       </div>

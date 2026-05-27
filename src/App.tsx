@@ -28,6 +28,12 @@ const Impact           = lazy(() => import("@/pages/Impact"));
 const CSR              = lazy(() => import("@/pages/CSR"));
 const Sustainability   = lazy(() => import("@/pages/Sustainability"));
 const Media            = lazy(() => import("@/pages/Media"));
+const Blog             = lazy(() => import("@/pages/Blog"));
+const BlogBiomassPrice = lazy(() => import("@/pages/blog/BiomassParticlesPriceWestBengal"));
+const BlogNTPC         = lazy(() => import("@/pages/blog/NTPCCofiringWestBengal"));
+const BlogVsCoal       = lazy(() => import("@/pages/blog/BioPelletsVsCoal"));
+const BlogActivatedCarbon = lazy(() => import("@/pages/blog/ActivatedCarbonWaterTreatment"));
+const BlogEmpanelment  = lazy(() => import("@/pages/blog/NTPCSupplierEmpanelment"));
 
 // Import styles
 import '@/styles/fonts.css';
@@ -66,6 +72,12 @@ const AppInner: React.FC = () => {
             <Route path="/csr"                        element={<CSR />} />
             <Route path="/sustainability"             element={<Sustainability />} />
             <Route path="/media"                      element={<Media />} />
+            <Route path="/blog"                       element={<Blog />} />
+            <Route path="/blog/biomass-pellets-price-west-bengal-2026" element={<BlogBiomassPrice />} />
+            <Route path="/blog/ntpc-biomass-cofiring-west-bengal-guide" element={<BlogNTPC />} />
+            <Route path="/blog/bio-pellets-vs-coal-industrial-boilers-india" element={<BlogVsCoal />} />
+            <Route path="/blog/coconut-shell-activated-carbon-water-treatment-india" element={<BlogActivatedCarbon />} />
+            <Route path="/blog/ntpc-biomass-pellet-supplier-empanelment-india-2026" element={<BlogEmpanelment />} />
             <Route path="*"                           element={<NotFound />} />
           </Routes>
         </Suspense>

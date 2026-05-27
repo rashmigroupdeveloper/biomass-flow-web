@@ -1,17 +1,20 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import { SEO } from '@/components/SEO';
+import { webPageSchema } from '@/lib/schemas';
 import { Card, CardContent } from '@/components/ui/card';
 import { Shield, HandHeart, Users, TreeDeciduous, Earth, Award } from 'lucide-react';
 
 const CSR = () => {
   return (
     <>
-      <Helmet>
-        <title>Corporate Social Responsibility | Rashmi 6 Paradigm</title>
-        <meta name="description" content="Our commitment to corporate social responsibility and community development through sustainable biomass solutions." />
-      </Helmet>
+      <SEO
+        title="Corporate Social Responsibility | Rashmi 6 Paradigm"
+        description="Rashmi 6 Paradigm's commitment to corporate social responsibility — empowering farming communities and building a sustainable future through biomass energy."
+        canonical="/csr"
+        jsonLd={webPageSchema('Corporate Social Responsibility', 'Rashmi 6 Paradigm CSR initiatives and community development.', 'https://rashmi6paradigm.com/csr')}
+      />
 
       {/* Hero Section */}
       <section className="relative pt-24 pb-20 bg-gradient-to-b from-green-50 to-white">

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { SEO } from '@/components/SEO';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Footer from '@/components/Footer';
@@ -22,6 +23,11 @@ const NotFound = () => {
 
   return (
     <>
+      <SEO
+        title="Page Not Found | Rashmi 6 Paradigm"
+        description="The page you are looking for does not exist. Return to the Rashmi 6 Paradigm homepage."
+        noIndex
+      />
       <div
         className="min-h-screen flex flex-col items-center justify-center relative"
         style={{ background: '#071a09', overflowX: 'clip' }}

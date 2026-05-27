@@ -1,17 +1,20 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
+import { SEO } from '@/components/SEO';
+import { webPageSchema } from '@/lib/schemas';
 import { Card, CardContent } from '@/components/ui/card';
 import { Recycle, Globe, TreeDeciduous, Factory, Lightbulb, ChartLine } from 'lucide-react';
 
 const Sustainability = () => {
   return (
     <>
-      <Helmet>
-        <title>Sustainability | Rashmi 6 Paradigm</title>
-        <meta name="description" content="Our commitment to sustainability and creating a more environmentally friendly future through biomass solutions." />
-      </Helmet>
+      <SEO
+        title="Sustainability | Rashmi 6 Paradigm"
+        description="Rashmi 6 Paradigm's sustainability approach — circular economy, carbon neutrality, and long-term environmental stewardship through biomass energy solutions."
+        canonical="/sustainability"
+        jsonLd={webPageSchema('Sustainability', 'Rashmi 6 Paradigm sustainability commitment and environmental stewardship.', 'https://rashmi6paradigm.com/sustainability')}
+      />
 
       {/* Hero Section */}
       <section className="relative pt-24 pb-20 bg-gradient-to-b from-green-50 to-white overflow-hidden">

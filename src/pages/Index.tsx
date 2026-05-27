@@ -1,5 +1,6 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { SEO } from '@/components/SEO';
+import { localBusinessSchema, websiteSchema } from '@/lib/schemas';
 import CustomCursor from '@/components/CustomCursor';
 import Hero from '@/components/Hero';
 import AboutSection from '@/components/AboutSection';
@@ -11,14 +12,12 @@ import Footer from '@/components/Footer';
 
 const Index = () => (
   <>
-    <Helmet>
-      <title>Rashmi 6 Paradigm — Sustainable Biomass Energy Solutions</title>
-      <meta
-        name="description"
-        content="Rashmi 6 Paradigm Limited — India's leading manufacturer of Bio Pellets, Activated Carbon and Charcoal Briquettes. Clean energy from agricultural waste."
-      />
-      <link rel="canonical" href="https://rashmi6paradigm.com/" />
-    </Helmet>
+    <SEO
+      title="Rashmi 6 Paradigm — Bio Pellets, Activated Carbon & Charcoal Briquettes from Eastern India"
+      description="Rashmi 6 Paradigm Limited, Kolkata — manufacturer of agro-waste bio pellets for NTPC co-firing & industrial boilers, coconut shell activated carbon for water treatment & gold recovery, and charcoal briquettes for export."
+      canonical="/"
+      jsonLd={[localBusinessSchema, websiteSchema]}
+    />
 
     <div className="relative" style={{ overflowX: 'clip' }}>
       {/* Custom cursor — desktop only */}

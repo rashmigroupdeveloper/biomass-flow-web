@@ -1,6 +1,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { SEO } from '@/components/SEO';
+import { webPageSchema } from '@/lib/schemas';
 import Footer from '@/components/Footer';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,6 +11,12 @@ import { ArrowRight, CheckCircle } from 'lucide-react';
 const QualityPolicy = () => {
   return (
     <div className="relative bg-white" style={{ overflowX: 'clip' }}>
+      <SEO
+        title="Quality Policy | Rashmi 6 Paradigm"
+        description="Rashmi 6 Paradigm's quality policy — our standards, commitments, and certifications ensuring the highest quality biomass products for our customers."
+        canonical="/policy"
+        jsonLd={webPageSchema('Quality Policy', 'Rashmi 6 Paradigm quality policy and standards.', 'https://rashmi6paradigm.com/policy')}
+      />
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 px-6 md:px-12 bg-primary-50">
         <div className="max-w-6xl mx-auto">
