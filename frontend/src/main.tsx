@@ -53,10 +53,8 @@ const detectDeviceCapabilities = () => {
     const gl = canvas.getContext('webgl') as WebGLRenderingContext | null;
 
     if (gl) {
-      // @ts-expect-error - WEBGL_debug_renderer_info may not be in all TypeScript definitions
       const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
       if (debugInfo) {
-        // @ts-expect-error - UNMASKED_RENDERER_WEBGL may not be in all TypeScript definitions
         const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
         // Check for known low-performance GPU indicators
         hasLowGPU = /Intel|HD Graphics|GMA|Radeon HD 2|GeForce 8|Mali-4|Adreno 3|PowerVR/i.test(renderer);
