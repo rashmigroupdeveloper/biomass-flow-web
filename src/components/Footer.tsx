@@ -13,8 +13,6 @@ const Footer = () => {
 
   return (
     <footer className="relative overflow-hidden" style={{ background: '#071a09' }}>
-
-      {/* Ambient glow */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -22,7 +20,6 @@ const Footer = () => {
         }}
       />
 
-      {/* Marquee above CTA */}
       <div className="relative z-10 border-b" style={{ borderColor: 'rgba(255,255,255,0.04)', paddingBlock: '10px' }}>
         <MarqueeTicker
           items={[
@@ -34,17 +31,14 @@ const Footer = () => {
             { text: 'Zero Field Burning', accent: false },
             { text: 'Rashmi Group', accent: true },
             { text: 'Kharagpur, West Bengal', accent: false },
-            { text: 'Bio Pellets · Activated Carbon · Charcoal Briquettes', accent: true },
+            { text: 'Bio Pellets - Activated Carbon - Charcoal Briquettes', accent: true },
           ]}
           speed={32}
           direction="right"
         />
       </div>
 
-      {/* ── Main CTA block ── */}
       <div ref={ref} className="container mx-auto px-6 md:px-12 pt-20 md:pt-28 pb-14 md:pb-20 relative z-10">
-
-        {/* Section label */}
         <div className="flex items-center gap-5 mb-12 md:mb-16">
           <span className="text-white/20 text-[10px] font-mono uppercase tracking-[0.35em] shrink-0">
             Work with us
@@ -52,7 +46,6 @@ const Footer = () => {
           <ScrollRevealLine color="rgba(255,255,255,0.05)" />
         </div>
 
-        {/* Giant CTA heading */}
         <SplitReveal
           as="h2"
           className="font-serif font-bold text-white leading-[0.93] tracking-tight mb-10 md:mb-14"
@@ -64,7 +57,6 @@ const Footer = () => {
           Powering Industry Sustainably.
         </SplitReveal>
 
-        {/* CTA row */}
         <motion.div
           className="flex flex-col sm:flex-row items-start sm:items-center gap-5"
           initial={{ opacity: 0, y: 24 }}
@@ -96,23 +88,19 @@ const Footer = () => {
         </motion.div>
       </div>
 
-      {/* ── Divider ── */}
       <div className="border-t relative z-10" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-        <div className="container mx-auto px-6 md:px-12 py-6">
+        <div className="container mx-auto px-6 md:px-12 py-3">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-
-            {/* Logo */}
             <Link to="/" className="flex-shrink-0">
               <img
                 src="/logo.png"
                 alt="Rashmi 6 Paradigm"
-                className="h-7 w-auto"
-                style={{ filter: 'brightness(0) invert(0.3)' }}
+                className="h-14 w-auto"
+                style={{ filter: 'brightness(0) invert(0.9)' }}
               />
             </Link>
 
-            {/* Center: minimal nav */}
-            <div className="flex items-center gap-5">
+            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
               {[
                 { label: 'Products', to: '/products/bio-pellets' },
                 { label: 'About', to: '/about' },
@@ -130,14 +118,12 @@ const Footer = () => {
               ))}
             </div>
 
-            {/* Copyright */}
             <p className="text-[11px] text-white/20 font-mono">
-              © {year} Rashmi 6 Paradigm Ltd.
+              &copy; {year} Rashmi 6 Paradigm Ltd.
             </p>
           </div>
         </div>
       </div>
-
     </footer>
   );
 };

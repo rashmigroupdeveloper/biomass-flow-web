@@ -10,15 +10,16 @@ gsap.registerPlugin(ScrollTrigger);
 
 const TICKER_ITEMS = [
   { text: 'Bio Pellets', accent: true },
-  { text: 'Activated Carbon', accent: false },
-  { text: 'Charcoal Briquettes', accent: true },
+  { text: 'Biochar Solutions', accent: false },
+  { text: 'Activated Carbon', accent: true },
+  { text: 'Charcoal Briquettes', accent: false },
+  { text: 'Global Supply Chain', accent: true },
   { text: 'ISO 9001:2015 Certified', accent: false },
   { text: 'ENplus A1 Standard', accent: true },
   { text: 'FSC Chain of Custody', accent: false },
   { text: '20,000 MT Annual Capacity', accent: true },
-  { text: 'Eastern India Origin', accent: false },
-  { text: 'Zero Field Burning', accent: true },
-  { text: 'Rashmi 6 Paradigm Ltd', accent: false },
+  { text: 'Zero Field Burning', accent: false },
+  { text: 'Rashmi 6 Paradigm Ltd', accent: true },
 ];
 
 const Hero = () => {
@@ -72,7 +73,7 @@ const Hero = () => {
     const chars = el.querySelectorAll('.char');
     gsap.fromTo(
       chars,
-      { y: '115%', rotateX: 45, opacity: 0 },
+      { y: '100%', rotateX: 45, opacity: 0 },
       {
         y: '0%',
         rotateX: 0,
@@ -85,7 +86,7 @@ const Hero = () => {
     );
   }, []);
 
-  const words = ['Turning', 'Waste', 'Into', 'Energy'];
+  const words = ['Powering', 'Industrial', 'Decarbonization', 'Through', 'Sustainable', 'Energy'];
 
   return (
     <div
@@ -138,15 +139,15 @@ const Hero = () => {
         </motion.div>
 
         {/* Main heading — character split */}
-        <div className="mb-7 overflow-hidden perspective-1000">
+        <div className="mb-7 perspective-1000">
           <h1
             ref={headingRef}
-            className="font-serif font-bold text-white leading-[0.93] tracking-tight"
-            style={{ fontSize: 'clamp(3.5rem, 9vw, 8.5rem)', perspective: 800 }}
+            className="font-serif font-bold text-white leading-[1.0] tracking-tight"
+            style={{ fontSize: 'clamp(2.8rem, 6.5vw, 6rem)', perspective: 800 }}
           >
             {words.map((word, wi) => (
               <React.Fragment key={wi}>
-                <span style={{ display: 'inline-block', overflow: 'hidden', verticalAlign: 'bottom', marginRight: '0.18em' }}>
+                <span style={{ display: 'inline-block', marginRight: '0.18em' }}>
                   {word.split('').map((char, ci) => (
                     <span
                       key={ci}
@@ -161,20 +162,30 @@ const Hero = () => {
                     </span>
                   ))}
                 </span>
-                {wi === 1 && <br />}
+                {(wi === 1 || wi === 2) && <br />}
               </React.Fragment>
             ))}
           </h1>
         </div>
 
-        {/* Subhead */}
+        {/* Sub-heading Tagline */}
+        <motion.div
+          className="text-xs md:text-sm font-medium tracking-widest text-primary-400 mb-5 max-w-3xl uppercase font-mono px-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.9, delay: 0.8 }}
+        >
+          Advanced Biomass Fuels &bull; Biochar &bull; Carbon Solutions &bull; Global Biomass Supply Chain
+        </motion.div>
+
+        {/* Short Introduction */}
         <motion.p
-          className="text-base md:text-lg text-white/50 leading-relaxed font-light max-w-md mb-10"
+          className="text-base md:text-lg text-white/60 leading-relaxed font-light max-w-2xl mb-10 px-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.9, delay: 1.0 }}
         >
-          Premium Bio Pellets, Activated Carbon &amp; Charcoal Briquettes — sustainable biomass solutions from Eastern India for a cleaner tomorrow.
+          A clean energy and advanced carbon solutions company of Rashmi Group, delivering renewable biomass fuels, bio-carbon products, and sustainable industrial energy solutions for global industries.
         </motion.p>
 
         {/* CTAs */}
@@ -202,24 +213,7 @@ const Hero = () => {
         </motion.div>
 
         {/* Stats bar */}
-        <motion.div
-          className="grid grid-cols-3 gap-8 max-w-lg w-full pt-8"
-          style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.9, delay: 1.4 }}
-        >
-          {[
-            { value: '20K+', label: 'Tons / Year' },
-            { value: '38M', label: 'CO₂ Tons Saved' },
-            { value: '5+', label: 'Years of Innovation' },
-          ].map((s) => (
-            <div key={s.label} className="text-center">
-              <div className="text-2xl md:text-3xl font-bold text-white tabular-nums">{s.value}</div>
-              <div className="text-[10px] text-white/35 mt-1 uppercase tracking-widest font-mono">{s.label}</div>
-            </div>
-          ))}
-        </motion.div>
+
       </div>
 
       {/* Scroll indicator */}

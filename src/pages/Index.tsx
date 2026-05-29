@@ -4,8 +4,10 @@ import { localBusinessSchema, websiteSchema } from '@/lib/schemas';
 import CustomCursor from '@/components/CustomCursor';
 import Hero from '@/components/Hero';
 import AboutSection from '@/components/AboutSection';
-import ProductsSection from '@/components/ProductsSection';
+import ProductPortfolio from '@/components/ProductPortfolio';
 import ProcessSection from '@/components/ProcessSection';
+import InfrastructureSection from '@/components/InfrastructureSection';
+import TechnologySection from '@/components/TechnologySection';
 import ImpactSection from '@/components/ImpactSection';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
@@ -28,7 +30,9 @@ const Index = () => (
       <main>
         <Hero />
         <AboutSection />
-        <ProductsSection />
+        <ProductPortfolio />
+        <InfrastructureSection />
+        <TechnologySection />
         <ProcessSection />
         <ImpactSection />
         <ContactSection />

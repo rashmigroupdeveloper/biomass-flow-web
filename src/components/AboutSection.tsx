@@ -1,11 +1,55 @@
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+const categories = [
+  {
+    id: 'fuels',
+    title: 'Biomass Fuels',
+    desc: 'Advanced renewable energy alternatives',
+    image: '/pel2.jpg',
+    caption: 'High-density biomass pellets produced from agricultural residues.'
+  },
+  {
+    id: 'biochar',
+    title: 'Biochar Solutions',
+    desc: 'Carbon sequestration & soil enhancement',
+    image: '/green-plant-sprout-biochar-soil-biochar-increases-carbon-content-soil-increasing-its-fertility-providing-optimal-conditions-plant-growth.jpg',
+    caption: 'Premium biochar promoting sustainable farming and carbon capture.'
+  },
+  {
+    id: 'carbon',
+    title: 'Carbon Solutions',
+    desc: 'Activated carbon & industrial filtration',
+    image: '/Charcoal_Briquettes.jpg',
+    caption: 'High-surface-area activated carbon for water and air purification.'
+  },
+  {
+    id: 'supply',
+    title: 'Biomass Supply Chain',
+    desc: 'Global sourcing & logistics compliance',
+    image: '/pikaso_texttoimage_35mm-film-photography-indian-green-farm-with-bioch.jpeg',
+    caption: 'Vast agricultural sourcing network ensuring stable global supply.'
+  }
+];
+
 const AboutSection = () => {
   const [headingRef, headingInView] = useInView({ triggerOnce: true, threshold: 0.15 });
   const [bentoRef, bentoInView] = useInView({ triggerOnce: true, threshold: 0.1 });
+  const [activeIndex, setActiveIndex] = useState(0);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % categories.length);
+    }, 4500);
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
 
   const fadeUp = (delay = 0) => ({
     initial: { opacity: 0, y: 48 },
@@ -20,7 +64,7 @@ const AboutSection = () => {
         {/* ── Section label ── */}
         <div className="flex items-center gap-6 pt-20 pb-10 border-b border-gray-100">
           <span className="text-gray-400 text-[10px] font-mono uppercase tracking-[0.35em] shrink-0">
-            01 — About
+            01 — About Us
           </span>
           <div className="flex-1 h-px bg-gray-100" />
           <span className="hidden sm:block text-gray-300 text-[10px] font-mono uppercase tracking-[0.25em] shrink-0">
@@ -29,61 +73,141 @@ const AboutSection = () => {
         </div>
 
         {/* ── Editorial heading grid ── */}
-        <div ref={headingRef} className="grid grid-cols-1 lg:grid-cols-12 gap-0 py-16 md:py-24">
+        <div ref={headingRef} className="pt-16 pb-2">
+          <motion.h2
+            className="font-serif font-bold text-gray-900 leading-[0.95] tracking-tight"
+            style={{ fontSize: 'clamp(2.5rem, 5vw, 4.8rem)' }}
+            {...fadeUp(0)}
+            animate={headingInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 48 }}
+          >
+            Building a{' '}
+            <span className="text-primary-600 italic font-normal">Sustainable</span>
+            <br />
+            Industrial Future
+          </motion.h2>
+          <motion.div
+            className="w-20 h-0.5 bg-primary-500 mt-6"
+            initial={{ scaleX: 0, originX: '0%' }}
+            animate={headingInView ? { scaleX: 1 } : { scaleX: 0 }}
+            transition={{ duration: 0.7, delay: 0.55, ease: 'easeOut' }}
+          />
+        </div>
 
-          {/* Heading — 8 of 12 columns */}
-          <div className="lg:col-span-8 lg:pr-20">
-            <motion.h2
-              className="font-serif font-bold text-gray-900 leading-[0.93] tracking-tight"
-              style={{ fontSize: 'clamp(2.8rem, 5.5vw, 5.5rem)' }}
-              {...fadeUp(0)}
+        {/* ── Content Grid ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 pb-20 items-start">
+          {/* Left Column: 3 Paragraphs */}
+          <div className="lg:col-span-7 space-y-6">
+            <motion.p
+              className="text-[0.98rem] md:text-[1.05rem] text-gray-600 leading-[1.85] font-light"
+              {...fadeUp(0.1)}
               animate={headingInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 48 }}
             >
-              Leading the{' '}
-              <span className="text-primary-600 italic">Green Revolution</span>
-              <br />
-              in Energy
-            </motion.h2>
-
-            <motion.div
-              className="w-16 h-0.5 bg-primary-500 mt-8"
-              initial={{ scaleX: 0, originX: '0%' }}
-              animate={headingInView ? { scaleX: 1 } : { scaleX: 0 }}
-              transition={{ duration: 0.7, delay: 0.55, ease: 'easeOut' }}
-            />
-          </div>
-
-          {/* Body copy — 4 of 12 columns, bottom-aligned */}
-          <div className="lg:col-span-4 flex flex-col justify-end mt-10 lg:mt-0">
-            <motion.div
-              className="space-y-5"
-              initial={{ opacity: 0 }}
-              animate={headingInView ? { opacity: 1 } : { opacity: 0 }}
-              transition={{ duration: 1.0, delay: 0.38 }}
+              <strong>Rashmi 6 Paradigm Limited</strong> is the sustainable energy and advanced carbon solutions division of Rashmi Group, one of India’s leading diversified industrial conglomerates with a strong presence across Iron &amp; Steel, Cement, Power, Ferro Alloys, Mining, Infrastructure, and Global Trade.
+            </motion.p>
+            <motion.p
+              className="text-[0.98rem] md:text-[1.05rem] text-gray-600 leading-[1.85] font-light"
+              {...fadeUp(0.2)}
+              animate={headingInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 48 }}
             >
-              <p className="text-[0.9375rem] text-gray-500 leading-[1.85] font-light">
-                Rashmi 6 Paradigm Limited is a venture of the Rashmi Group, producing
-                premium biomass pellets, activated carbon, and charcoal products that
-                help industries eliminate fossil fuel dependence.
-              </p>
-              <p className="text-[0.9375rem] text-gray-500 leading-[1.85] font-light">
-                With facilities in Kolkata and Kharagpur, we combine cutting-edge
-                engineering with 100% sustainable sourcing — powering industries while
-                preserving the planet for generations to come.
-              </p>
+              Driven by innovation, sustainability, and industrial excellence, we specialize in renewable biomass fuels, biochar, activated carbon, lump charcoal, and global biomass sourcing solutions designed to help industries reduce carbon emissions and transition toward cleaner energy alternatives.
+            </motion.p>
+            <motion.p
+              className="text-[0.98rem] md:text-[1.05rem] text-gray-600 leading-[1.85] font-light"
+              {...fadeUp(0.3)}
+              animate={headingInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 48 }}
+            >
+              With advanced manufacturing infrastructure, global partnerships, and export-focused operations, we are committed to supporting industries worldwide in achieving ESG compliance, NET-ZERO targets, and long-term sustainability goals.
+            </motion.p>
+
+            <motion.div
+              className="pt-4"
+              {...fadeUp(0.4)}
+              animate={headingInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 48 }}
+            >
               <Link
                 to="/about"
-                className="inline-flex items-center gap-2 text-primary-600 text-sm font-semibold group pt-1"
+                className="inline-flex items-center gap-2.5 px-6 py-3 border border-primary-600 hover:bg-primary-600 text-primary-600 hover:text-white font-semibold rounded-full transition-all duration-300 group text-sm"
               >
-                <span className="border-b border-primary-200 group-hover:border-primary-600 pb-0.5 transition-colors duration-200">
-                  Our full story
-                </span>
+                <span>Read Our Corporate Journey</span>
                 <ArrowRight
-                  size={14}
+                  size={15}
                   className="group-hover:translate-x-1.5 transition-transform duration-200"
                 />
               </Link>
             </motion.div>
+          </div>
+
+          {/* Right Column: Interactive Category/Image Showcase */}
+          <div className="lg:col-span-5 flex flex-col gap-6">
+            <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-2xl border border-gray-100 bg-gray-50 group/img">
+              {/* Overlay with current active caption */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent z-10 pointer-events-none" />
+              
+              <div className="absolute bottom-0 inset-x-0 p-6 z-20 pointer-events-none">
+                <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-primary-400 font-semibold mb-1 block">
+                  {categories[activeIndex].title}
+                </span>
+                <p className="text-white text-sm font-light leading-relaxed">
+                  {categories[activeIndex].caption}
+                </p>
+              </div>
+
+              {/* Dynamic Image Crossfade */}
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={activeIndex}
+                  src={categories[activeIndex].image}
+                  alt={categories[activeIndex].title}
+                  className="w-full h-full object-cover"
+                  initial={{ opacity: 0, scale: 1.02 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                />
+              </AnimatePresence>
+            </div>
+
+            {/* Selector list */}
+            <div className="flex flex-col gap-2 bg-gray-50/70 p-2 rounded-2xl border border-gray-100">
+              {categories.map((cat, idx) => {
+                const isActive = idx === activeIndex;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => {
+                      setActiveIndex(idx);
+                      // Reset timer on manual click
+                      if (timerRef.current) clearInterval(timerRef.current);
+                    }}
+                    className={`flex items-start gap-4 px-4 py-3 rounded-xl transition-all duration-300 text-left relative ${
+                      isActive 
+                        ? 'bg-white shadow-md shadow-gray-100 border border-gray-100' 
+                        : 'hover:bg-white/40 border border-transparent'
+                    }`}
+                  >
+                    <span
+                      className={`text-xs font-mono font-bold leading-none py-1 px-2 rounded ${
+                        isActive ? 'bg-primary-50 text-primary-600' : 'bg-gray-100 text-gray-400'
+                      }`}
+                    >
+                      0{idx + 1}
+                    </span>
+                    <div className="flex flex-col gap-0.5">
+                      <span
+                        className={`text-sm font-semibold transition-colors duration-200 ${
+                          isActive ? 'text-gray-900' : 'text-gray-500'
+                        }`}
+                      >
+                        {cat.title}
+                      </span>
+                      <span className="text-[11px] text-gray-400 font-light leading-none">
+                        {cat.desc}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 

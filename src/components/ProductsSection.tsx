@@ -6,49 +6,70 @@ import { ArrowRight, Flame, Droplets, Wind } from 'lucide-react';
 
 const products = [
   {
-    icon: <Flame className="w-6 h-6" />,
-    name: 'Bio Pellets',
-    tagline: 'Premium compressed biomass fuel',
-    description:
-      'Made from selected paddy straws, plant stalks and agro residues. High energy density with low moisture, designed for industrial thermal applications.',
-    specs: [
-      { label: 'Moisture', value: '<9%' },
-      { label: 'Calorific Value', value: '4000±200 kcal/kg' },
-      { label: 'Ash Content', value: '<5%' },
-    ],
-    path: '/products/bio-pellets',
+    icon: <Flame className="w-6 h-6" />, // using flame as placeholder
+    name: 'Biomass Pellets',
+    tagline: 'High-efficiency industrial fuel',
+    description: 'High-efficiency industrial fuel manufactured from wood waste, sawdust, and agro residues for thermal applications and biomass co-firing. Offers high calorific value, low emissions, and reliable combustion performance.',
+    specs: [],
+    path: '/products/biomass-pellets',
     accent: 'bg-green-50 border-green-200',
     iconBg: 'bg-green-100 text-green-700',
+    image: '/images/pellets.jpg'
   },
   {
-    icon: <Droplets className="w-6 h-6" />,
+    icon: <Droplets className="w-6 h-6" />, // placeholder
+    name: 'Black (Torrefied) Pellets',
+    tagline: 'Advanced high-carbon renewable fuel',
+    description: 'Advanced high-carbon renewable fuel engineered for industrial decarbonization and coal replacement applications.',
+    specs: [],
+    path: '/products/torrefied-pellets',
+    accent: 'bg-gray-50 border-gray-200',
+    iconBg: 'bg-gray-100 text-gray-700',
+    image: '/images/torrefied.jpg'
+  },
+  {
+    icon: <Wind className="w-6 h-6" />, // placeholder
+    name: 'Biochar',
+    tagline: 'Carbon-rich soil amendment',
+    description: 'Innovative carbon‑rich material used in steel, fertilizer, agriculture, carbon sequestration, and environmental applications. Improves soil health while contributing to long‑term carbon reduction initiatives.',
+    specs: [],
+    path: '/products/biochar',
+    accent: 'bg-amber-50 border-amber-200',
+    iconBg: 'bg-amber-100 text-amber-700',
+    image: '/images/biochar.jpg'
+  },
+  {
+    icon: <Droplets className="w-6 h-6" />, // reuse droplet icon
     name: 'Activated Carbon',
-    tagline: 'High-performance filtration media',
-    description:
-      'Produced from coconut shells and biomass, our activated carbon delivers superior adsorption for water treatment, air purification and industrial processes.',
-    specs: [
-      { label: 'Iodine Value', value: '≥900 mg/g' },
-      { label: 'Moisture', value: '<5%' },
-      { label: 'Ash Content', value: '<4%' },
-    ],
+    tagline: 'High-performance filtration',
+    description: 'High‑performance adsorption and filtration solutions for industrial and environmental processes.',
+    specs: [],
     path: '/products/activated-carbon',
     accent: 'bg-blue-50 border-blue-200',
     iconBg: 'bg-blue-100 text-blue-700',
+    image: '/images/activated-carbon.jpg'
   },
   {
-    icon: <Wind className="w-6 h-6" />,
-    name: 'Charcoal Briquettes',
-    tagline: 'Sustainable charcoal solutions',
-    description:
-      'Uniform-density briquettes from compressed biomass char — a clean, consistent alternative to wood charcoal for cooking, hospitality and industrial use.',
-    specs: [
-      { label: 'Fixed Carbon', value: '>75%' },
-      { label: 'Calorific Value', value: '6500+ kcal/kg' },
-      { label: 'Ash Content', value: '<8%' },
-    ],
-    path: '/products/charcoal-briquettes',
+    icon: <Wind className="w-6 h-6" />, // placeholder
+    name: 'Lump Charcoal',
+    tagline: 'Industrial-grade charcoal',
+    description: 'Industrial‑grade charcoal with high fixed carbon and low ash content for metallurgical and industrial applications.',
+    specs: [],
+    path: '/products/lump-charcoal',
     accent: 'bg-amber-50 border-amber-200',
     iconBg: 'bg-amber-100 text-amber-700',
+    image: '/images/lump-charcoal.jpg'
+  },
+  {
+    icon: <Flame className="w-6 h-6" />, // placeholder
+    name: 'Palm Kernel Shell (PKS)',
+    tagline: 'Premium renewable biomass fuel',
+    description: 'Premium renewable biomass fuel sourced through Indonesian operations, offering high calorific value, low ash, and consistent industrial performance for global energy markets.',
+    specs: [],
+    path: '/products/pks',
+    accent: 'bg-green-50 border-green-200',
+    iconBg: 'bg-green-100 text-green-700',
+    image: '/images/pks.jpg'
   },
 ];
 

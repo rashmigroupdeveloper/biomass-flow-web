@@ -1,15 +1,33 @@
 import React, { useState } from 'react';
 import { SEO } from '@/components/SEO';
 import { webPageSchema } from '@/lib/schemas';
+import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { toast } from '@/components/ui/use-toast';
 import Footer from '@/components/Footer';
 import SplitReveal from '@/components/SplitReveal';
-import ScrollRevealLine from '@/components/ScrollRevealLine';
+import { submitContactForm } from '@/api/contact';
+
+const SITE_ORIGIN = 'https://rashmi6paradigm.com';
+
+const PRODUCT_LABELS: Record<string, string> = {
+  'bio-pellets': 'Bio Pellets',
+  'activated-carbon': 'Activated Carbon',
+  'charcoal-briquettes': 'Charcoal Briquettes',
+  multiple: 'Multiple products',
+  other: 'General inquiry',
+};
+
+function buildContactSubject(company: string, productSlug: string): string {
+  const product = PRODUCT_LABELS[productSlug] ?? productSlug;
+  return `${product} - ${company.trim()}`;
+}
 
 const Contact = () => {
+  const location = useLocation();
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
+  const canonicalPath = location.pathname === '/contactus/contactus' ? '/contactus/contactus' : '/contact';
 
   const [formData, setFormData] = useState({
     company: '',
@@ -25,18 +43,52 @@ const Contact = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
+    try {
+      const payload = {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: '',
+        subject: buildContactSubject(formData.company, formData.product),
+        message: formData.message.trim(),
+        selectedProducts: formData.product ? [formData.product] : undefined,
+        recaptchaToken: '',
+      };
+
+      const data = await submitContactForm(payload);
+
+      if (!data.success) {
+        const detail =
+          data.errors?.length ? data.errors.join(' ') : data.message;
+        toast({
+          title: 'Could not send inquiry',
+          description: detail,
+          variant: 'destructive',
+          duration: 8000,
+        });
+        return;
+      }
+
       toast({
         title: 'Inquiry received',
-        description: "We'll respond within 1 business day.",
-        duration: 5000,
+        description: data.referenceId
+          ? `${data.message} Reference: ${data.referenceId}.`
+          : data.message,
+        duration: 6000,
       });
       setFormData({ company: '', name: '', email: '', product: '', message: '' });
+    } catch {
+      toast({
+        title: 'Network error',
+        description: 'Could not reach the server. Check that the API is running and VITE_API_URL is set correctly.',
+        variant: 'destructive',
+        duration: 8000,
+      });
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   const fieldClass =
@@ -48,8 +100,12 @@ const Contact = () => {
       <SEO
         title="Contact | Rashmi 6 Paradigm"
         description="Get in touch with Rashmi 6 Paradigm for bio pellets, activated carbon, and charcoal briquette inquiries, samples, and pricing."
-        canonical="/contact"
-        jsonLd={webPageSchema('Contact', 'Get in touch with Rashmi 6 Paradigm for bio pellets, activated carbon, and charcoal briquette inquiries.', 'https://rashmi6paradigm.com/contact')}
+        canonical={canonicalPath}
+        jsonLd={webPageSchema(
+          'Contact',
+          'Get in touch with Rashmi 6 Paradigm for bio pellets, activated carbon, and charcoal briquette inquiries.',
+          `${SITE_ORIGIN}${canonicalPath}`
+        )}
       />
 
       <div className="relative" style={{ overflowX: 'clip' }}>

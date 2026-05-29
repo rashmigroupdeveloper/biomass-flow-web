@@ -35,7 +35,7 @@ export default function SplitReveal({
       // @ts-expect-error dynamic tag
       <Tag ref={ref} className={className} style={{ ...style, display: 'block' }}>
         {words.map((word, i) => (
-          <span key={i} style={{ display: 'inline-block', overflow: 'hidden', verticalAlign: 'bottom' }}>
+          <span key={i} style={{ display: 'inline-block' }}>
             <motion.span
               style={{ display: 'inline-block' }}
               initial={{ y: '110%', opacity: 0 }}
@@ -64,7 +64,7 @@ export default function SplitReveal({
             {chars.map((char, ci) => {
               const idx = charIndex++;
               return (
-                <span key={ci} style={{ display: 'inline-block', overflow: 'hidden', verticalAlign: 'bottom' }}>
+                <span key={ci} style={{ display: 'inline-block' }}>
                   <motion.span
                     style={{ display: 'inline-block' }}
                     initial={{ y: '115%', rotateX: 45, opacity: 0 }}

@@ -17,6 +17,7 @@ const NotFound = () => {
         headingRef.current.style.transform = `translate(${dx * 12}px, ${dy * 8}px)`;
       }
     };
+
     window.addEventListener('mousemove', onMove);
     return () => window.removeEventListener('mousemove', onMove);
   }, []);
@@ -28,11 +29,11 @@ const NotFound = () => {
         description="The page you are looking for does not exist. Return to the Rashmi 6 Paradigm homepage."
         noIndex
       />
+
       <div
         className="min-h-screen flex flex-col items-center justify-center relative"
         style={{ background: '#071a09', overflowX: 'clip' }}
       >
-        {/* Ambient glow */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -41,7 +42,6 @@ const NotFound = () => {
         />
 
         <div className="relative z-10 flex flex-col items-center text-center px-6">
-          {/* Ghost number - mouse-tracked */}
           <div
             ref={headingRef}
             className="font-serif font-bold text-white/[0.06] select-none pointer-events-none leading-none"
@@ -76,7 +76,7 @@ const NotFound = () => {
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-white transition-all duration-300"
                 style={{ background: 'rgba(76,175,80,0.9)', border: '1px solid rgba(76,175,80,0.3)' }}
               >
-                ← Return Home
+                &larr; Return Home
               </Link>
               <div className="flex items-center gap-5">
                 {[
@@ -99,7 +99,7 @@ const NotFound = () => {
 
         <div className="absolute bottom-8 flex justify-center w-full">
           <span className="text-white/15 text-[10px] font-mono uppercase tracking-[0.4em]">
-            Rashmi 6 Paradigm · Sustainable Biomass Energy
+            Rashmi 6 Paradigm &middot; Sustainable Biomass Energy
           </span>
         </div>
       </div>

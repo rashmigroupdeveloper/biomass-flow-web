@@ -22,6 +22,8 @@ const CharcoalBriquettes = lazy(() => import("@/pages/CharcoalBriquettes"));
 const QualityPolicy    = lazy(() => import("@/pages/QualityPolicy"));
 const Certificates     = lazy(() => import("@/pages/Certificates"));
 const Contact          = lazy(() => import("@/pages/Contact"));
+const Career           = lazy(() => import("@/pages/Career"));
+const VendorRegistration = lazy(() => import("@/pages/VendorRegistration"));
 const NotFound         = lazy(() => import("@/pages/NotFound"));
 const Process          = lazy(() => import("@/pages/Process"));
 const Impact           = lazy(() => import("@/pages/Impact"));
@@ -34,6 +36,8 @@ const BlogNTPC         = lazy(() => import("@/pages/blog/NTPCCofiringWestBengal"
 const BlogVsCoal       = lazy(() => import("@/pages/blog/BioPelletsVsCoal"));
 const BlogActivatedCarbon = lazy(() => import("@/pages/blog/ActivatedCarbonWaterTreatment"));
 const BlogEmpanelment  = lazy(() => import("@/pages/blog/NTPCSupplierEmpanelment"));
+const News            = lazy(() => import("@/pages/News"));
+const AnimationShowcase = lazy(() => import("@/pages/AnimationShowcase"));
 
 // Import styles
 import '@/styles/fonts.css';
@@ -67,6 +71,9 @@ const AppInner: React.FC = () => {
             <Route path="/policy"                     element={<QualityPolicy />} />
             <Route path="/certificates"               element={<Certificates />} />
             <Route path="/contact"                    element={<Contact />} />
+            <Route path="/contactus/contactus"        element={<Contact />} />
+            <Route path="/contactus/career"         element={<Career />} />
+            <Route path="/contactus/venderregister" element={<VendorRegistration />} />
             <Route path="/process"                    element={<Process />} />
             <Route path="/impact"                     element={<Impact />} />
             <Route path="/csr"                        element={<CSR />} />
@@ -78,6 +85,8 @@ const AppInner: React.FC = () => {
             <Route path="/blog/bio-pellets-vs-coal-industrial-boilers-india" element={<BlogVsCoal />} />
             <Route path="/blog/coconut-shell-activated-carbon-water-treatment-india" element={<BlogActivatedCarbon />} />
             <Route path="/blog/ntpc-biomass-pellet-supplier-empanelment-india-2026" element={<BlogEmpanelment />} />
+            <Route path="/news"                       element={<News />} />
+            <Route path="/animation-showcase"         element={<AnimationShowcase />} />
             <Route path="*"                           element={<NotFound />} />
           </Routes>
         </Suspense>
